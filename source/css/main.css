@@ -1,0 +1,70 @@
+html, body {
+    height: 100%
+}
+.none-text-decoration{
+    text-decoration: none;
+}
+
+.background{
+    background-color: #21D4FD;
+    background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%);
+}
+
+.main_block{
+    background: white;
+    padding: 25px 30px;
+    border-radius: 15px;
+}
+
+.logo{
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+    font-size: 2em;
+}
+
+.login_form{
+    margin-bottom: 20px;
+}
+
+.login_btn{
+    border-radius: 25px;
+}
+
+.login_social_lable{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.social_login_block{
+    margin-bottom: 25px;
+}
+.login_round_btn{
+    height: 50px;
+    width: 50px;
+    background-color: #1b1e21;
+    margin-right: 10px;
+    border-radius: 30px;
+    box-shadow: 0 3px 6px 1px #bdbdbd59;
+}
+.login_round_btn:hover{
+       box-shadow: 0 0px 8px 2px #007bff;
+}
+
+.vk{
+    background-color: #4a76a8;
+    background: url("icons/vk.svg");
+}
+.google{
+    background: url("icons/google.svg");
+}
+.yandex{
+   background: url("icons/yandex.svg");
+}
+.mailru{
+    background: url("icons/mailru.svg");
+}
+
+.registration{
+    text-align: center;
+}

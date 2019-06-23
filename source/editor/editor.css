@@ -1,0 +1,258 @@
+html, body {
+    height: 100%
+}
+body{
+    overflow: hidden;
+    background: #f5f5f5;
+}
+/* HEADER*/
+.back_to_diagram_list_box{
+    height: 49px;
+}
+.back_to_diagram_list{
+    width: 24px;
+    height: 24px;
+    margin-top: 11px;
+    background-image: url("../css/icons/go_back.svg");
+}
+.header_text{
+    margin-top: 10px;
+    color:white;
+}
+
+div#logo{
+    font-size: 1.5em;
+    color: white;
+    padding: 5px 0 8px 15px;
+}
+
+.header{
+    background-color: #3f51b5;
+    box-shadow: 0 1px 20px 0px #bdbdbd;
+}
+
+.error{
+    color: red;
+}
+
+/* SIDEBAR*/
+
+.sidebar{
+    min-width: 200px;
+    background: #3f51b5;
+    z-index: 100;
+}
+.work_zone_container{
+    position: fixed;
+}
+.work_zone{
+    margin-top: 50px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.canvas {
+    width: 2000px;
+    height: 1500px;
+    background: white;
+}
+
+.box{
+    position: absolute;
+    top:100px;
+    left: 100px;
+    width: 165px;
+    min-height: 50px;
+    text-align: center;
+    background-color: white;
+    box-shadow: 0 3px 6px 1px #bdbdbd59;
+    border: 1px solid #bdbdbd;
+    border-radius: 10px;
+    padding: 10px;
+}
+.relationship{
+    width: 160px;
+    position: absolute;
+    top:100px;
+    left: 100px;
+    text-align: center;
+}
+.diamond {
+    position: relative;
+    top:0;
+    left: 0;
+    width: 56px;
+    height: 53px;
+    -webkit-transform: rotate(-36deg) skew(20deg);
+    -moz-transform: rotate(-36deg) skew(20deg);
+    -ms-transform: rotate(-36deg) skew(20deg);
+    -o-transform: rotate(-36deg) skew(20deg);
+    transform: rotate(-36deg) skew(20deg);
+    margin: 0 auto;
+}
+.diamond_text{
+    height: 30px;
+    width: 120px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    -webkit-transform: rotate(45deg) skew(-1deg);
+    -moz-transform: rotate(45deg) skew(-1deg);
+    -ms-transform: rotate(45deg) skew(-1deg);
+    -o-transform: rotate(45deg) skew(-1deg);
+    transform: rotate(45deg) skew(-1deg);
+}
+
+.desc_diamond{
+    word-break: break-all;
+}
+
+.attribute{
+    border-radius: 45px;
+}
+.is_primary_key{
+    text-decoration: underline;
+}
+
+.tie_text{
+    font-size: 16px;
+    font-weight: normal;
+
+}
+
+/* BOTTOMS*/
+.dark_bottom{
+    border-radius: 80px;
+    background-color: #3f51b5;
+    box-shadow: 0 3px 6px 1px #bdbdbd59;
+    margin-right: 10px;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 5px;
+    cursor: default;
+}
+.light_bottom{
+    border-radius: 80px;
+    background-color: #ffffff;
+    border: 1px solid #3f51b4;
+    box-shadow: 0 3px 6px 1px #bdbdbd59;
+    margin-bottom: 10px;
+    color: #3F51B4;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 5px;
+    cursor: default;
+}
+.red_bottom{
+    background-color: red;
+    color: white;
+    border: none;
+}
+.round_bottom {
+    height: 60px;
+    width: 60px;
+}
+
+.btn_text{
+    display: inline-block;
+    color: #3F51B4;
+    margin-right: 15px;
+    font-weight: 600;
+}
+.btn_icon{
+    margin: 5px 5px 5px 10px;
+}
+
+.btn_icon_blue{
+    margin: 5px;
+}
+
+.btn_bg_color{
+    background-color: #3f51b5;
+}
+.option_bottoms{
+    padding: 20px;
+}
+.toggle_options_bottom_case{
+    display: none;
+}
+
+.fix-bottom{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+/*MAIN OPTION BOTTOM*/
+.options{
+    position: absolute;
+    top: -1px;
+    left: 160px;
+}
+.box .box_option_bottom {
+    display: none;
+}
+.box:hover .box_option_bottom{
+    width: 170px;
+    text-align: left;
+    font-size: 12px;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+
+/*relationship*/
+.relationship .options{
+
+}
+.relationship .box_option_bottom {
+    display: none;
+}
+.relationship:hover .box_option_bottom{
+    width: 160px;
+    text-align: left;
+    font-size: 12px;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+
+.box_option_bottom .light_bottom{
+    padding-left: 10px;
+}
+
+/* modal-windows */
+
+h6#mssql_connect_description{
+    margin-right: 10px;
+    align-self: center;
+}
+
+button#btn_disconnect{
+    display: none;
+}
+
+/* export-img-window */
+
+#preview_image{
+    vertical-align: middle;
+    width: 100%;
+    border-style: none;
+    object-fit: fill;
+}
+
+#insert_sql_to_server{
+    -webkit-appearance: none;
+}
+
+.MSSQL_error{
+    height: 150px;
+    width: 100%;
+    resize: none;
+}
+
+#mssql_result_description{
+    margin-bottom: 10px;
+}

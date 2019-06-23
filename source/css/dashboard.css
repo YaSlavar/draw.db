@@ -1,0 +1,51 @@
+.background{
+    background: #f9f9f9 none;
+}
+
+.close-button{
+    align-self: start;
+}
+
+.head_panel{
+    margin-top: 25px;
+    padding: 25px;
+}
+
+.main_block{
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+}
+
+.avatar {
+    width: 65px;
+    height: 65px;
+    border-radius: 155px;
+    overflow: hidden;
+    object-fit: cover;
+}
+img.avatar_size{
+    width: 65px;
+}
+
+.diagram_list{
+    margin: 10px 0;
+}
+
+.tile{
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.diagram_title_block{
+    padding: 16px 0;
+    margin: 0;
+}
+
+.diagram_title{
+    display: block;
+    color: #343a40;
+    font-weight: 700;
+    font-family: Montserrat, sans-serif;
+    padding: 0 0 2em 2em;
+}
