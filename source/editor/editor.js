@@ -708,7 +708,7 @@ function open_server_connect_window() {
     disconnect();
 
 
-    function connect_and_insert_to_server(editor){
+    function connect_and_insert_to_server(editor, result_viewer){
 
         $('#insert_sql_to_server').off('click').on('click', function (event) {
 
@@ -779,7 +779,26 @@ function open_server_connect_window() {
                 }
 
                 if (result){
-                    $('.MSSQL_error').append(result['message'] + "\n");
+                    result_viewer.insert(result['message'] + "\n");
+
+
+                    // TODO: Доделать отображение результата выполнения запроса.
+                    $(document).ready(function() {
+                        $('#result_table').dataTable( {
+                            data: result['result'],
+                            columns: [
+                                { title: "Name" },
+                                { title: "Position" },
+                                { title: "Office" },
+                                { title: "Extn." },
+                                { title: "Start date" },
+                                { title: "Salary" }
+                            ]
+                        } );
+                    } );
+
+                }else{
+                    result_viewer.insert("Сервер вернул пустой ответ!\n");
                 }
 
             }
@@ -876,7 +895,19 @@ function open_server_connect_window() {
     editor.insert(SQL_str);
 
 
-    connect_and_insert_to_server(editor);
+    var result_viewer = ace.edit("result_viewer", {
+        theme: "ace/theme/sqlserver",
+        mode: "ace/mode/sqlserver",
+        maxLines: 10,
+        wrap: true,
+        showGutter: false,
+        readOnly: true,
+        autoScrollEditorIntoView: true
+    });
+    result_viewer.session.setValue("");
+
+
+    connect_and_insert_to_server(editor, result_viewer);
 
 }
 

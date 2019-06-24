@@ -234,7 +234,7 @@ button#btn_disconnect{
     display: none;
 }
 
-#sql_code_editor {
+#sql_code_editor, #result_viewer {
     font-size: 14px;
 }
 

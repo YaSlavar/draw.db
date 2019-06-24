@@ -194,7 +194,8 @@
 
                   <div id="output_block">
                       <h6 class="modal-title" id="mssql_result_description">Результат выполнения запроса на сервере: </h6>
-                      <textarea class="MSSQL_error" title="Результат выполнения запроса на сервере"></textarea>
+                      <div id="result_viewer"></div>
+                      <table id="result_table"></table>
                   </div>
 
               </div>
