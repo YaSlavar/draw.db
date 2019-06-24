@@ -13,6 +13,7 @@
     <?if(isset($_GET['edit']) and is_array($_SESSION['user'])){?>
         <link rel="stylesheet" href="lib/highlight/styles/default.css">
         <script src="lib/highlight/highlight.pack.js"></script>
+        <script src="lib/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
         <link rel="stylesheet" href="editor/editor.css">
     <?}elseif (!isset($_GET['edit'])){?>
         <link rel="stylesheet" href="css/main.css">

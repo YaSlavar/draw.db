@@ -671,6 +671,7 @@ function open_server_connect_window() {
     function swich_connect_status() {
 
         var check = mssql_connect_check();
+        var btn_disconnect = $('#btn_disconnect');
 
         if (check['connect'] === false) {
             mssql_connect_description.text("Подключение не установлено, пожалуйста пройдите авторизацию, чтобы продолжить создание физической модели.");
@@ -682,12 +683,14 @@ function open_server_connect_window() {
         return check['connect'];
     }
 
-    var btn_disconnect = $('#btn_disconnect');
+    function disconnect() {
 
-    btn_disconnect.click(function () {
-        mssql_disconnect();
-        swich_connect_status();
-    });
+        $('#btn_disconnect').off('click').on('click', function () {
+            mssql_disconnect();
+            swich_connect_status();
+        });
+
+    }
 
     var data_diagram = save_diagram();
 
@@ -702,11 +705,12 @@ function open_server_connect_window() {
 
     swich_connect_status();
 
+    disconnect();
 
-    function connect_and_insert_to_server(source_SQL_str){
 
-        $('#insert_sql_to_server').click(function (event) {
+    function connect_and_insert_to_server(editor){
 
+        $('#insert_sql_to_server').off('click').on('click', function (event) {
 
 
             if (mssql_connect_check()['connect'] === false) {
@@ -763,95 +767,119 @@ function open_server_connect_window() {
 
             }else{
 
+                SQL_str = editor.getValue();
+
                 swich_connect_status();
 
                 try{
-                    var result = mssql_query(source_SQL_str);
+                    var result = mssql_query(SQL_str);
                     console.log(result);
                 }catch (err) {
                     console.log(err)
                 }
-                if (result['code']){
+
+                if (result){
                     $('.MSSQL_error').append(result['message'] + "\n");
                 }
 
             }
+
+
         });
     }
 
-    function get_main_PK(main_id){
-        var result;
 
-        jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
 
-            if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)){
-                result = attribute;
-                return false;
-            }
-        });
-        return result;
-    }
+    function get_sql_code(data_diagram){
 
-    jQuery.each(data_diagram['mains'], function (main_index, main) {
-        var SQL_str = "";
-        var all_attributes = [];
+        function get_main_PK(data_diagram, main_id){
+            var result;
 
-        SQL_str += "CREATE TABLE " + main['name'] + " (\n";
+            jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
 
-        jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
+                if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)){
+                    result = attribute;
+                    return false;
+                }
+            });
+            return result;
+        }
 
-            var PK_str = "";
-            var attr_str = "";
+        var RESULT_SQL_CODE = [];
 
-            if (attribute['parent'] === main_index) {
-                if (attribute['primary_key'] === "true") {
-                    PK_str += "  " + attribute['name'] + " " + attribute['data_type'] + "(" + attribute['len_data'] + ")" + " " + "NOT NULL CONSTRAINT PK_" + attribute['name'] + " PRIMARY KEY(" + attribute['name'] + ")";
-                    all_attributes.push(PK_str);
-                } else {
-                    attr_str += "  " + attribute['name'] + " " + attribute['data_type'] + "(" + attribute['len_data'] + ")";
+        jQuery.each(data_diagram['mains'], function (main_index, main) {
+
+            var SQL_str = "";
+            var all_attributes = [];
+
+            SQL_str += "CREATE TABLE " + main['name'] + " (\n";
+
+            jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
+
+                var PK_str = "";
+                var attr_str = "";
+
+                if (attribute['parent'] === main_index) {
+                    if (attribute['primary_key'] === "true") {
+                        PK_str += "  " + attribute['name'] + " " + attribute['data_type'] + "(" + attribute['len_data'] + ")" + " " + "NOT NULL CONSTRAINT PK_" + attribute['name'] + " PRIMARY KEY(" + attribute['name'] + ")";
+                        all_attributes.push(PK_str);
+                    } else {
+                        attr_str += "  " + attribute['name'] + " " + attribute['data_type'] + "(" + attribute['len_data'] + ")";
+                        all_attributes.push(attr_str);
+                    }
+                }
+
+            });
+
+            jQuery.each(data_diagram['relationships'], function (rel_index, relationship) {
+
+                var attr_str = "";
+
+                if(relationship['second'] === main_index){
+                    var first_main_PK = get_main_PK(data_diagram, relationship['first']),
+                        first_main_PK_name = first_main_PK['name'],
+                        first_main_PK_type = first_main_PK['data_type'],
+                        first_main_PK_len = first_main_PK['len_data'];
+
+                    var first_main_name = data_diagram['mains'][relationship['first']]['name'],
+                        second_main_name = data_diagram['mains'][relationship['second']]['name'];
+
+                    attr_str += "  " + first_main_PK_name + "_FK " + first_main_PK_type + "(" + first_main_PK_len + "), \n  " +
+                        "CONSTRAINT FK_" + first_main_name + "_" + second_main_name + " FOREIGN KEY (" +  first_main_PK_name +
+                        "_FK) REFERENCES " + first_main_name + "(" + first_main_PK_name + ")";
+
                     all_attributes.push(attr_str);
                 }
-            }
 
+            });
+
+            SQL_str += all_attributes.join(',\n') + "\n);\n\n";
+
+            RESULT_SQL_CODE.push(SQL_str);
         });
 
-        jQuery.each(data_diagram['relationships'], function (rel_index, relationship) {
+        return RESULT_SQL_CODE;
+    }
 
-            var attr_str = "";
 
-            if(relationship['second'] === main_index){
-                var first_main_PK = get_main_PK(relationship['first']),
-                    first_main_PK_name = first_main_PK['name'],
-                    first_main_PK_type = first_main_PK['data_type'],
-                    first_main_PK_len = first_main_PK['len_data'];
 
-                var first_main_name = data_diagram['mains'][relationship['first']]['name'],
-                    second_main_name = data_diagram['mains'][relationship['second']]['name'];
+    var SQL_str = get_sql_code(data_diagram).join('\n');
 
-                attr_str += "  " + first_main_PK_name + "_FK " + first_main_PK_type + "(" + first_main_PK_len + "), \n  " +
-                    "CONSTRAINT FK_" + first_main_name + "_" + second_main_name + " FOREIGN KEY (" +  first_main_PK_name +
-                    "_FK) REFERENCES " + first_main_name + "(" + first_main_PK_name + ")";
-
-                all_attributes.push(attr_str);
-            }
-
-        });
-
-        SQL_str += all_attributes.join(',\n') + "\n);\n\n";
-
-        sql_code_viewer.append(SQL_str);
-        $('pre code').each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
-
-        var source_SQL_str = SQL_str.replace(new RegExp("\n",'g'), "").replace(new RegExp("  ",'g'), "");
-
-        connect_and_insert_to_server(source_SQL_str);
+    var editor = ace.edit("sql_code_editor", {
+        theme: "ace/theme/sqlserver",
+        mode: "ace/mode/sqlserver",
+        maxLines: 20,
+        wrap: true,
+        autoScrollEditorIntoView: true
     });
+    editor.session.setValue("");
+    editor.insert(SQL_str);
+
+
+    connect_and_insert_to_server(editor);
+
 }
 
-
 $(document).ready(function () {
-
 
 });

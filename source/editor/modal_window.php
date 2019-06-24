@@ -183,13 +183,20 @@
             </button>
           </div>
               <div class="modal-body">
-                  <div class="input-group mb-3">
-                      <h6 class="modal-title" id="mssql_connect_description"></h6>
-                      <button id="btn_disconnect" type="button" class="btn btn-danger">Разъеденить!</button>
+
+                  <div id="input_block" class="mb-3">
+                      <div class="input-group mb-2">
+                          <h6 class="modal-title" id="mssql_connect_description"></h6>
+                          <button id="btn_disconnect" type="button" class="btn btn-danger">Разъеденить!</button>
+                      </div>
+                      <div id="sql_code_editor"></div>
                   </div>
-                  <pre><code class="sql" id="sql_code_viewer"></code></pre>
-                  <h6 class="modal-title" id="mssql_result_description">Результат выполнения запроса на сервере: </h6>
-                  <textarea class="MSSQL_error" title="Результат выполнения запроса на сервере"></textarea>
+
+                  <div id="output_block">
+                      <h6 class="modal-title" id="mssql_result_description">Результат выполнения запроса на сервере: </h6>
+                      <textarea class="MSSQL_error" title="Результат выполнения запроса на сервере"></textarea>
+                  </div>
+
               </div>
             <div class="modal-footer">
                 <button id="insert_sql_to_server" type="button" class="btn btn-primary btn_bg_color">Создать физическую модель на сервере</button>

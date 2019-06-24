@@ -234,6 +234,10 @@ button#btn_disconnect{
     display: none;
 }
 
+#sql_code_editor {
+    font-size: 14px;
+}
+
 /* export-img-window */
 
 #preview_image{
@@ -251,8 +255,4 @@ button#btn_disconnect{
     height: 150px;
     width: 100%;
     resize: none;
-}
-
-#mssql_result_description{
-    margin-bottom: 10px;
 }
