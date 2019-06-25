@@ -189,18 +189,19 @@
                           <h6 class="modal-title" id="mssql_connect_description"></h6>
                           <button id="btn_disconnect" type="button" class="btn btn-danger">Разъеденить!</button>
                       </div>
+                      <h6 class="modal-title" id="mssql_result_description">Запрос для выполнения на сервере: </h6>
                       <div id="sql_code_editor"></div>
                   </div>
 
                   <div id="output_block">
                       <h6 class="modal-title" id="mssql_result_description">Результат выполнения запроса на сервере: </h6>
-                      <div id="result_viewer"></div>
-                      <table id="result_table"></table>
+                      <div id="result_viewer" class="mb-2"></div>
+                      <table id="result_table" class="table table-striped table-bordered" style="width:80%"></table>
                   </div>
 
               </div>
             <div class="modal-footer">
-                <button id="insert_sql_to_server" type="button" class="btn btn-primary btn_bg_color">Создать физическую модель на сервере</button>
+                <button id="insert_sql_to_server" type="button" class="btn btn-primary btn_bg_color">Выполнить запрос!</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
             </div>
         </div>

@@ -708,6 +708,43 @@ function open_server_connect_window() {
     disconnect();
 
 
+    function format_server_result(server_result) {
+
+        function get_attributes_list(server_result) {
+            var columns = [];
+            $.each(server_result[0], function (key, value) {
+                columns.push({title: key});
+            });
+            return columns;
+        }
+
+        var columns =  get_attributes_list(server_result);
+        var dataset = [];
+
+        $.each(server_result, function (index, dataline_obj) {
+
+            var dataline = [];
+
+            $.each(dataline_obj, function (key, value) {
+                if (typeof value === "object") {
+
+                    var blkstr = "";
+
+                    $.each(value, function(idx2,val2) {
+                        blkstr += idx2 + ":" + val2 + "\n";
+                    });
+
+                    dataline.push(blkstr);
+                }else{
+                    dataline.push(value);
+                }
+            });
+            dataset.push(dataline);
+        });
+
+        return {columns: columns, dataset: dataset};
+    }
+
     function connect_and_insert_to_server(editor, result_viewer){
 
         $('#insert_sql_to_server').off('click').on('click', function (event) {
@@ -718,7 +755,7 @@ function open_server_connect_window() {
                 get_sql_code_window.modal("toggle");
                 mssql_connect_window.modal("toggle");
 
-                $('#form_new_mssql_connect').submit(function (event) {
+                $('#form_new_mssql_connect').off('submit').submit(function (event) {
 
                     event.preventDefault();
 
@@ -740,8 +777,7 @@ function open_server_connect_window() {
                         }catch (e) {
                             console.log(e);
                         }
-
-                        console.log(connect);
+                        
 
                         if (connect['code'] === 18456){
 
@@ -778,24 +814,30 @@ function open_server_connect_window() {
                     console.log(err)
                 }
 
-                if (result){
+                if (result && result.length !== 0){
+
                     result_viewer.insert(result['message'] + "\n");
 
 
-                    // TODO: Доделать отображение результата выполнения запроса.
-                    $(document).ready(function() {
+
+                    if (typeof result['result'] !== "undefined" && result['result'].length !== 0) {
+
+                        var formatted_server_result = format_server_result(result['result']);
+
+
+                        $('#result_table_wrapper').remove();
+                        $("#output_block").append("<table id=\"result_table\" class=\"table table-striped table-bordered\" style=\"width:80%\"></table>");
+
+
                         $('#result_table').dataTable( {
-                            data: result['result'],
-                            columns: [
-                                { title: "Name" },
-                                { title: "Position" },
-                                { title: "Office" },
-                                { title: "Extn." },
-                                { title: "Start date" },
-                                { title: "Salary" }
-                            ]
-                        } );
-                    } );
+                            'data': formatted_server_result['dataset'],
+                            'columns': formatted_server_result['columns'],
+                            "scrollX": true,
+                            'language': {
+                                'url': "../lib/datatables/russian.json"
+                            }
+                        });
+                    }
 
                 }else{
                     result_viewer.insert("Сервер вернул пустой ответ!\n");
@@ -806,7 +848,6 @@ function open_server_connect_window() {
 
         });
     }
-
 
 
     function get_sql_code(data_diagram){
@@ -900,7 +941,6 @@ function open_server_connect_window() {
         mode: "ace/mode/sqlserver",
         maxLines: 10,
         wrap: true,
-        showGutter: false,
         readOnly: true,
         autoScrollEditorIntoView: true
     });
