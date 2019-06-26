@@ -537,10 +537,8 @@ function open_screenshot_window() {
 
     save_diagram_img();
 
-
-        var get_diagram_img = $("#get_diagram_img");
-
-        get_diagram_img.modal('toggle');
+    var get_diagram_img = $("#get_diagram_img");
+    get_diagram_img.modal('toggle');
 
 }
 

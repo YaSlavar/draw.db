@@ -33,13 +33,25 @@ img.avatar_size{
 }
 
 .tile{
-    padding: 10px;
+    padding: 0px;
     margin-top: 20px;
 }
 
 .diagram_title_block{
     padding: 16px 0;
     margin: 0;
+}
+
+.diagram_img_block{
+    height: 150px;
+}
+
+.diagram_img{
+    object-fit: cover;
+    object-position: 50% 0;
+    height: 150px;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
 }
 
 .diagram_title{

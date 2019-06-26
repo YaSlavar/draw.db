@@ -11,7 +11,7 @@
 
 <div class="background container-fluid h-100">
     <div class="row h-100 justify-content-center">
-        <div class="col-xl-9 col-lg-9 col-md-10 col-sm-11 col-12">
+        <div class="col-xl-9 col-lg-9 col-md-10 col-sm-12 col-12">
 
             <header class="main_block head_panel">
                 <div class="row align-items-center">
@@ -34,7 +34,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="col-sm-auto">
+                    <div class="col-sm-auto justify-content-end">
                         <div class="logout">
                             <a href="?logout=true">Выход</a>
                         </div>
@@ -43,13 +43,17 @@
             </header>
 
             <section class="diagram_list row">
-                <div class="col">
-                    <?
-                    $author_id = $_SESSION['user']['user_id'];
-                    $select = $db->query("SELECT * FROM diagrams WHERE author_id = $author_id");
-                    while ($res = $select->fetchArray()) {
-                        ?>
+
+                <?
+                $author_id = $_SESSION['user']['user_id'];
+                $select = $db->query("SELECT * FROM diagrams WHERE author_id = $author_id");
+                while ($res = $select->fetchArray()) {
+                    ?>
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 start_week">
                         <div class="main_block tile">
+                            <div class="diagram_img_block">
+                                <img class="diagram_img" src="user_data/<?echo($res['diagram_id'].".png")?>" alt="">
+                            </div>
                             <div class="diagram_title_block row">
                                 <a class="diagram_title col" href="../index.php?edit=<?
                                 echo($res['diagram_id']); ?>">
@@ -68,10 +72,11 @@
                                 </div>
                             </div>
                         </div>
-                        <?
-                    }
-                    ?>
-                </div>
+                    </div>
+                    <?
+                }
+                ?>
+
             </section>
         </div>
     </div>
