@@ -9,7 +9,7 @@
 $image = $_POST['image'];
 $name = $_POST['diagram_id'];
 
-$location = "user_data";
+$location = "../user_data";
 
 $image = str_replace('data:image/png;base64,', '', $image);
 $decoded = base64_decode($image);

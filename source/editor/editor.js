@@ -517,24 +517,31 @@ function save_diagram_img() {
                 success: function () {
                     console.log("Снимок диаграммы сохранен!");
                 }
+            }).done(function (img) {
+
+                var png_img = "data:image/png;base64," + img;
+
+                var preview_image = $('#preview_image');
+                preview_image.attr('src', png_img);
+
+                var download_diagram_img = $('#download_diagram_img');
+                download_diagram_img.attr('href', png_img);
+
             });
         });
 
-    }, 600);
+    }, 300);
 }
 
 function open_screenshot_window() {
 
     save_diagram_img();
-    var get_diagram_img = $("#get_diagram_img");
-    var preview_image = $('#preview_image');
-    var download_diagram_img = $('#download_diagram_img');
 
 
-    get_diagram_img.modal('toggle');
+        var get_diagram_img = $("#get_diagram_img");
 
-    preview_image.attr("src", "user_data/"+ get_diagram_id() +".png");
-    download_diagram_img.attr("href", "user_data/"+ get_diagram_id() +".png");
+        get_diagram_img.modal('toggle');
+
 }
 
 
