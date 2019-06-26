@@ -13,7 +13,7 @@ body{
     width: 24px;
     height: 24px;
     margin-top: 11px;
-    background-image: url("../css/icons/go_back.svg");
+    background-image: url("../dashboard/css/icons/go_back.svg");
 }
 .header_text{
     margin-top: 10px;

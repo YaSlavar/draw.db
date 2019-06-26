@@ -1,11 +1,10 @@
 function randInt() {
-    min = 0;
-    max = 999;
-    result = Math.floor(Math.random() * (max - min + 1)) + min + String(Date.now());
-    return result;
+    let min = 0;
+    let max = 999;
+    return Math.floor(Math.random() * (max - min + 1)) + min + String(Date.now());
 }
 
-function get_diagram_id(){
+function get_diagram_id() {
     var url_string = window.location.href;
     var url = new URL(url_string);
     return url.searchParams.get("edit");
@@ -13,6 +12,7 @@ function get_diagram_id(){
 
 
 function create_new_diagram() {
+
     var diagram_name_input = $('input[name="diagram_name"]');
     diagram_name_input.val("");
 
@@ -30,16 +30,30 @@ function create_new_diagram() {
             Out_JSON['diagram_name'] = name_new_diagram;
 
             $.ajax({
-              type: "POST",
-              url: "editor/save.php",
-              data: Out_JSON
-            }).done(function( msg ) {
-                window.location.href = "?edit="+Out_JSON['diagram_id'];
+                type: "POST",
+                url: "editor/save.php",
+                data: Out_JSON
+            }).done(function (msg) {
+                window.location.href = "?edit=" + Out_JSON['diagram_id'];
             });
             create_new_diagram_window.modal("toggle");
         }
         diagram_name_input.val("");
         return false;
+    });
+
+}
+
+
+// todo : дописать удаление диаграмм
+function delete_diagram(diagram_id) {
+
+    $.ajax({
+        type: "POST",
+        url: "editor/save.php",
+        data: Out_JSON
+    }).done(function (msg) {
+        window.location.href = "?edit=" + Out_JSON['diagram_id'];
     });
 
 }

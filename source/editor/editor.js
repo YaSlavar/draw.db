@@ -511,7 +511,7 @@ function save_diagram_img() {
 
             $.ajax({
                 type: "POST",
-                url: "save_diagram_img.php",
+                url: "editor/save_diagram_img.php",
                 async: false,
                 data: REQUEST_DATA,
                 success: function () {
@@ -777,7 +777,7 @@ function open_server_connect_window() {
                         }catch (e) {
                             console.log(e);
                         }
-                        
+
 
                         if (connect['code'] === 18456){
 
