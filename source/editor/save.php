@@ -159,11 +159,18 @@ function clean_diagramm($diagram_id, $db){
     $claen_links->execute();
 }
 
+function delete_diagramm($diagram_id, $db){
+    $delete_diagramm = $db->prepare('DELETE FROM diagrams WHERE diagram_id = :diagram_id');
+    $delete_diagramm->bindValue(':diagram_id', $diagram_id);
+    $delete_diagramm->execute();
+}
 
 
+// TODO: Написать функцию удаления диаграммы!
 if(isset($_POST['diagram_id'])){
     $diagram_id = $_POST['diagram_id'];
     $diagram_name = $_POST['diagram_name'];
+    $command = $_POST['command'];
     print_r($diagram_id);
 
     $select = $db ->query("SELECT * FROM diagrams WHERE diagram_id = $diagram_id");
@@ -172,13 +179,19 @@ if(isset($_POST['diagram_id'])){
 
     if(is_array($check_saved_diagram)){
         if($check_saved_diagram['author_id'] == $_SESSION['user']['user_id']){
-            clean_diagramm($diagram_id, $db);
-            save_elements($diagram_id, $db);
+
+            if($command === "delete"){
+                clean_diagramm($diagram_id, $db);
+                delete_diagramm($diagram_id, $db);
+            }else{
+                clean_diagramm($diagram_id, $db);
+                save_elements($diagram_id, $db);
+            }
+
         }else{
             $diagram_id = mt_rand(0, 999).(string)date('YmdHis');
             create_diagramm($diagram_id, $diagram_name, $db);
             save_elements($diagram_id, $db);
-            // TODO: Вызвать ошибку сохранения по причине отсутствия прав
         }
     }else{
         create_diagramm($diagram_id, $diagram_name, $db);

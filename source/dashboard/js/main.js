@@ -4,25 +4,19 @@ function randInt() {
     return Math.floor(Math.random() * (max - min + 1)) + min + String(Date.now());
 }
 
-function get_diagram_id() {
-    var url_string = window.location.href;
-    var url = new URL(url_string);
-    return url.searchParams.get("edit");
-}
-
 
 function create_new_diagram() {
 
-    var diagram_name_input = $('input[name="diagram_name"]');
+    let diagram_name_input = $('input[name="diagram_name"]');
     diagram_name_input.val("");
 
-    var create_new_diagram_window = $("#craete_new_diagram");
+    let create_new_diagram_window = $("#craete_new_diagram");
     create_new_diagram_window.modal("toggle");
 
     $("#form_new_diagram").submit(function (event) {
         event.preventDefault();
-        var Out_JSON = {};
-        var name_new_diagram = diagram_name_input.val();
+        let Out_JSON = {};
+        let name_new_diagram = diagram_name_input.val();
 
         if (name_new_diagram !== "") {
 
@@ -33,7 +27,7 @@ function create_new_diagram() {
                 type: "POST",
                 url: "editor/save.php",
                 data: Out_JSON
-            }).done(function (msg) {
+            }).done(function () {
                 window.location.href = "?edit=" + Out_JSON['diagram_id'];
             });
             create_new_diagram_window.modal("toggle");
@@ -45,15 +39,38 @@ function create_new_diagram() {
 }
 
 
-// todo : дописать удаление диаграмм
+// TODO: дописать удаление
 function delete_diagram(diagram_id) {
 
-    $.ajax({
-        type: "POST",
-        url: "editor/save.php",
-        data: Out_JSON
-    }).done(function (msg) {
-        window.location.href = "?edit=" + Out_JSON['diagram_id'];
+    let Out_JSON = {
+        "diagram_id": diagram_id,
+        "command": "delete"
+    };
+
+    let diagram_info = load_diagram(diagram_id);
+
+    let check_delete_modal_window = $('#check_for_deletion');
+    let btn_delete_diagram = $('#btn_delete_diagram');
+    let delete_message = $('#delete_message');
+
+    delete_message.text("Вы действительно хотите удалить диграмму: \"" + diagram_info['diagram_name'] + "\"?");
+
+    check_delete_modal_window.modal("toggle");
+
+
+    btn_delete_diagram.off('click').on('click', function (event) {
+        $.ajax({
+            type: "POST",
+            url: "editor/save.php",
+            // TODO: ТУТ!!!!
+            data: Out_JSON
+        }).done(function (msg) {
+            let diagram_block = $('.diagram_block[diagram_id=' + diagram_id + ']');
+            diagram_block.remove();
+
+            check_delete_modal_window.modal("toggle");
+        });
     });
+
 
 }

@@ -14,7 +14,13 @@
 .main_block{
     background: white;
     border-radius: 15px;
-    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    transition: all .2s ease-in-out;
+}
+
+.main_block:hover {
+    -webkit-transform: scale(1.03, 1.03);
+    transform: scale(1.03, 1.03);
 }
 
 .avatar {
@@ -28,13 +34,21 @@ img.avatar_size{
     width: 65px;
 }
 
-.diagram_list{
+.create_diagramm{
     margin: 10px 0;
+}
+
+.logout{
+    text-align: center;
+}
+
+.diagram_list{
+    margin: 0;
 }
 
 .tile{
     padding: 0px;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .diagram_title_block{
@@ -60,4 +74,9 @@ img.avatar_size{
     font-weight: 700;
     font-family: Montserrat, sans-serif;
     padding: 0 0 2em 2em;
+}
+
+.no_diagrams_title{
+    height: 400px;
+    width: 100%;
 }

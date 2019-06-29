@@ -7,7 +7,7 @@
  */
 ?>
 
-<? include_once("editor/modal_window.php"); ?>
+<? include_once("modal_window.php"); ?>
 
 <div class="background container-fluid h-100">
     <div class="row h-100 justify-content-center">
@@ -15,13 +15,13 @@
 
             <header class="main_block head_panel">
                 <div class="row align-items-center">
-                    <div class="col-sm-auto">
-                        <? if ($_SESSION['user']['avatar'] != '') { ?>
+                    <? if ($_SESSION['user']['avatar'] != '') { ?>
+                        <div class="col-sm-auto col-3">
                             <div class="avatar">
                                 <img class="avatar_size" src="<? echo($_SESSION['user']['avatar']); ?>" alt="avatar">
                             </div>
-                        <? } ?>
-                    </div>
+                        </div>
+                    <? } ?>
                     <div class="col">
                         <h5 class="name">
                             <? echo($_SESSION['user']['name']); ?>
@@ -47,40 +47,68 @@
                 <?
                 $author_id = $_SESSION['user']['user_id'];
                 $select = $db->query("SELECT * FROM diagrams WHERE author_id = $author_id");
-                while ($res = $select->fetchArray()) {
-                    ?>
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 start_week">
-                        <div class="main_block tile">
-                            <div class="diagram_img_block">
-                                <img class="diagram_img" src="user_data/<?echo($res['diagram_id'].".png")?>" alt="">
-                            </div>
-                            <div class="diagram_title_block row">
-                                <a class="diagram_title col" href="../index.php?edit=<?
-                                echo($res['diagram_id']); ?>">
-                                    <?
-                                    echo($res['diagram_name']);
-                                    ?>
-                                </a>
-                                <div class="close_buttom_block col-1">
-                                    <button id="delete_<? echo($res['diagram_id']); ?>" type="button"
-                                            class="close close-button" aria-label="Close" data-toggle="tooltip"
-                                            onclick="delete_diagram(<?
-                                            echo($res['diagram_id']); ?>);" data-placement="left"
-                                            title="Удалить диаграмму">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+
+                $data = Array();
+
+                while ($res = $select->fetchArray(SQLITE3_ASSOC)) {
+                    array_push($data, $res);
+                }
+
+
+                if (count($data) > 0) {
+
+                    while ($res = $select->fetchArray(SQLITE3_ASSOC)) {
+                        ?>
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 diagram_block" diagram_id="<?
+                        echo($res['diagram_id']); ?>">
+                            <a href="?edit=<?
+                            echo($res['diagram_id']); ?>">
+                                <div class="main_block tile">
+                                    <div class="diagram_img_block">
+                                        <img class="diagram_img" src="user_data/<?
+                                        echo($res['diagram_id'] . ".png?id=" . date("YmdHis")) ?>" alt="">
+                                    </div>
+                                    <div class="diagram_title_block row">
+                                        <a class="diagram_title col" href="?edit=<?
+                                        echo($res['diagram_id']); ?>">
+                                            <?
+                                            echo($res['diagram_name']);
+                                            ?>
+                                        </a>
+                                        <div class="close_buttom_block col-1">
+                                            <button id="delete_<? echo($res['diagram_id']); ?>" type="button"
+                                                    class="close close-button" aria-label="Close" data-toggle="tooltip"
+                                                    onclick="delete_diagram(<?
+                                                    echo($res['diagram_id']); ?>);" data-placement="left"
+                                                    title="Удалить диаграмму">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
+                        <?
+                    }
+
+                } else {
+
+                    ?>
+                    <div class="no_diagrams_title d-flex justify-content-center align-items-center">
+                        <p class="text-center">Список диаграмм пуст!</p>
                     </div>
                     <?
                 }
+
                 ?>
 
             </section>
         </div>
     </div>
 </div>
+
+
+<script src="../editor/editor.js"></script>
 
 <script>
     $(document).ready(function () {

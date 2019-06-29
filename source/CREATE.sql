@@ -4,7 +4,7 @@ CREATE TABLE users (
     social_id VARCHAR(255),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255),
-		social_page VARCHAR(1024),
+    social_page VARCHAR(1024),
     sex VARCHAR(10),
     birthday DATE,
     avatar VARCHAR(1024),
@@ -16,7 +16,7 @@ CREATE TABLE diagrams (
 	diagram_id INTEGER PRIMARY KEY,
 	author_id INTEGER,
 	diagram_name VARCHAR(255),
-	prewiew VARCHAR(255),
+	create_date DATE,
 	FOREIGN KEY (author_id) REFERENCES users(user_id)
 );
 

@@ -1,9 +1,14 @@
-
 //SYSTEM
 
 function set_error(text) {
     $(".error").text(text);
     return false;
+}
+
+function get_diagram_id() {
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    return url.searchParams.get("edit");
 }
 
 
@@ -269,8 +274,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                 edited_attribute.attr("primary_key", primary_key);
                 if (primary_key === true) {
                     edited_attribute_text.addClass("is_primary_key");
-                }
-                else {
+                } else {
                     edited_attribute_text.removeClass("is_primary_key");
                 }
             } else {
@@ -496,7 +500,6 @@ function save_diagram() {
 }
 
 
-
 function save_diagram_img() {
 
     setTimeout(function () {
@@ -545,58 +548,78 @@ function open_screenshot_window() {
 
 //LOAD
 
-function load_diagram() {
+function load_diagram(diagram_id) {
+
     var Out_JSON = {};
-    Out_JSON['diagram_id'] = get_diagram_id();
 
-    $.ajax({
-        type: "POST",
-        url: "editor/load.php",
-        data: Out_JSON
-    }).done(function (msg) {
-        var JSON_answer = JSON.parse(msg);
+    if (typeof diagram_id === "number") {
 
-        $('#diagram_name').text(JSON_answer['diagram_name']);
+        Out_JSON['diagram_id'] = diagram_id;
 
-        var result = JSON.parse(msg);
+        let result = $.ajax({
+            type: "POST",
+            url: "editor/load.php",
+            async: false,
+            data: Out_JSON
+        }).responseText;
 
-        var mains = result['mains'];
-        var attributes = result['attributes'];
-        var relationships = result['relationships'];
-        var links = result['links'];
+        return JSON.parse(result);
+
+    } else {
+
+        Out_JSON['diagram_id'] = get_diagram_id();
+
+        $.ajax({
+            type: "POST",
+            url: "editor/load.php",
+            data: Out_JSON
+        }).done(function (msg) {
+            var JSON_answer = JSON.parse(msg);
+
+            $('#diagram_name').text(JSON_answer['diagram_name']);
+
+            result = JSON.parse(msg);
+
+            var mains = result['mains'];
+            var attributes = result['attributes'];
+            var relationships = result['relationships'];
+            var links = result['links'];
 
 
-        jQuery.each(mains, function (i, elem) {
-            var position = JSON.parse(elem['position']);
+            jQuery.each(mains, function (i, elem) {
+                var position = JSON.parse(elem['position']);
 
-            $(".work_zone_container").append(add_main_block(elem['main_id'], elem['name']));
-            $(".main#" + elem['main_id']).offset(position);
+                $(".work_zone_container").append(add_main_block(elem['main_id'], elem['name']));
+                $(".main#" + elem['main_id']).offset(position);
+            });
+
+            jQuery.each(attributes, function (i, elem) {
+                var position = JSON.parse(elem['position']);
+
+                $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+                $(".attribute#" + elem['attribute_id']).offset(position);
+            });
+
+            jQuery.each(relationships, function (i, elem) {
+                var position = JSON.parse(elem['position']);
+
+                $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_description'], elem['first_main'], elem['second_main']));
+                $(".relationship#" + elem['relationship_id']).offset(position);
+            });
+
+            jQuery.each(links, function (i, elem) {
+                var canvas = $(".canvas");
+                canvas.append(add_link(elem['parent_id'], elem['link_id']));
+                canvas.html(canvas.html());
+            });
+            draggable_box();
+
+            save_diagram_img();
         });
+    }
 
-        jQuery.each(attributes, function (i, elem) {
-            var position = JSON.parse(elem['position']);
-
-            $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
-            $(".attribute#" + elem['attribute_id']).offset(position);
-        });
-
-        jQuery.each(relationships, function (i, elem) {
-            var position = JSON.parse(elem['position']);
-
-            $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_description'], elem['first_main'], elem['second_main']));
-            $(".relationship#" + elem['relationship_id']).offset(position);
-        });
-
-        jQuery.each(links, function (i, elem) {
-            var canvas = $(".canvas");
-            canvas.append(add_link(elem['parent_id'], elem['link_id']));
-            canvas.html(canvas.html());
-        });
-        draggable_box();
-
-        save_diagram_img();
-    });
 }
+
 
 
 // MSSQL FUNCTIONS
@@ -680,10 +703,10 @@ function open_server_connect_window() {
 
         if (check['connect'] === false) {
             mssql_connect_description.text("Подключение не установлено, пожалуйста пройдите авторизацию, чтобы продолжить создание физической модели.");
-            btn_disconnect.css({"display" : "none"});
+            btn_disconnect.css({"display": "none"});
         } else {
-            mssql_connect_description.text('Установлено соединение! База данных:\" '+ check['database'] +' \" на сервере:\"' + check['server'] + '\"');
-            btn_disconnect.css({"display" : "block"});
+            mssql_connect_description.text('Установлено соединение! База данных:\" ' + check['database'] + ' \" на сервере:\"' + check['server'] + '\"');
+            btn_disconnect.css({"display": "block"});
         }
         return check['connect'];
     }
@@ -723,7 +746,7 @@ function open_server_connect_window() {
             return columns;
         }
 
-        var columns =  get_attributes_list(server_result);
+        var columns = get_attributes_list(server_result);
         var dataset = [];
 
         $.each(server_result, function (index, dataline_obj) {
@@ -735,12 +758,12 @@ function open_server_connect_window() {
 
                     var blkstr = "";
 
-                    $.each(value, function(idx2,val2) {
+                    $.each(value, function (idx2, val2) {
                         blkstr += idx2 + ":" + val2 + "\n";
                     });
 
                     dataline.push(blkstr);
-                }else{
+                } else {
                     dataline.push(value);
                 }
             });
@@ -750,7 +773,7 @@ function open_server_connect_window() {
         return {columns: columns, dataset: dataset};
     }
 
-    function connect_and_insert_to_server(editor, result_viewer){
+    function connect_and_insert_to_server(editor, result_viewer) {
 
         $('#insert_sql_to_server').off('click').on('click', function (event) {
 
@@ -774,31 +797,31 @@ function open_server_connect_window() {
                     var password_value = password.val();
                     var database_value = database.val();
 
-                    if (server_name_value !== "" && login_value !== "" && password_value !== "" && database_value !== ""){
+                    if (server_name_value !== "" && login_value !== "" && password_value !== "" && database_value !== "") {
 
-                        try{
+                        try {
                             var connect = mssql_connect(server_name_value, database_value, login_value, password_value);
                             console.log(connect);
-                        }catch (e) {
+                        } catch (e) {
                             console.log(e);
                         }
 
 
-                        if (connect['code'] === 18456){
+                        if (connect['code'] === 18456) {
 
                             login.addClass('is-invalid');
                             password.addClass('is-invalid');
                             database.addClass('is-invalid');
                             $('#form_new_mssql_connect').addClass('was-validated');
 
-                        }else{
+                        } else {
 
                             swich_connect_status();
 
                             get_sql_code_window.modal("toggle");
                             mssql_connect_window.modal("toggle");
                         }
-                    }else{
+                    } else {
                         server_name.addClass('is-invalid');
                         $('#form_new_mssql_connect').addClass('was-validated');
                     }
@@ -806,23 +829,22 @@ function open_server_connect_window() {
                     return false;
                 });
 
-            }else{
+            } else {
 
                 SQL_str = editor.getValue();
 
                 swich_connect_status();
 
-                try{
+                try {
                     var result = mssql_query(SQL_str);
                     console.log(result);
-                }catch (err) {
+                } catch (err) {
                     console.log(err)
                 }
 
-                if (result && result.length !== 0){
+                if (result && result.length !== 0) {
 
                     result_viewer.insert(result['message'] + "\n");
-
 
 
                     if (typeof result['result'] !== "undefined" && result['result'].length !== 0) {
@@ -834,7 +856,7 @@ function open_server_connect_window() {
                         $("#output_block").append("<table id=\"result_table\" class=\"table table-striped table-bordered\" style=\"width:80%\"></table>");
 
 
-                        $('#result_table').dataTable( {
+                        $('#result_table').dataTable({
                             'data': formatted_server_result['dataset'],
                             'columns': formatted_server_result['columns'],
                             "scrollX": true,
@@ -844,7 +866,7 @@ function open_server_connect_window() {
                         });
                     }
 
-                }else{
+                } else {
                     result_viewer.insert("Сервер вернул пустой ответ!\n");
                 }
 
@@ -855,14 +877,14 @@ function open_server_connect_window() {
     }
 
 
-    function get_sql_code(data_diagram){
+    function get_sql_code(data_diagram) {
 
-        function get_main_PK(data_diagram, main_id){
+        function get_main_PK(data_diagram, main_id) {
             var result;
 
             jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
 
-                if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)){
+                if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)) {
                     result = attribute;
                     return false;
                 }
@@ -900,7 +922,7 @@ function open_server_connect_window() {
 
                 var attr_str = "";
 
-                if(relationship['second'] === main_index){
+                if (relationship['second'] === main_index) {
                     var first_main_PK = get_main_PK(data_diagram, relationship['first']),
                         first_main_PK_name = first_main_PK['name'],
                         first_main_PK_type = first_main_PK['data_type'],
@@ -910,7 +932,7 @@ function open_server_connect_window() {
                         second_main_name = data_diagram['mains'][relationship['second']]['name'];
 
                     attr_str += "  " + first_main_PK_name + "_FK " + first_main_PK_type + "(" + first_main_PK_len + "), \n  " +
-                        "CONSTRAINT FK_" + first_main_name + "_" + second_main_name + " FOREIGN KEY (" +  first_main_PK_name +
+                        "CONSTRAINT FK_" + first_main_name + "_" + second_main_name + " FOREIGN KEY (" + first_main_PK_name +
                         "_FK) REFERENCES " + first_main_name + "(" + first_main_PK_name + ")";
 
                     all_attributes.push(attr_str);
@@ -925,7 +947,6 @@ function open_server_connect_window() {
 
         return RESULT_SQL_CODE;
     }
-
 
 
     var SQL_str = get_sql_code(data_diagram).join('\n');

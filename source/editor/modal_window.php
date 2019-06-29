@@ -31,37 +31,6 @@
 </div>
 
 
-
-<div class="modal_window">
-    <div class="modal fade" id="craete_new_diagram" tabindex="-1" role="dialog" aria-labelledby="message_box" aria-hidden="false">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="message_box_title">Создание новой диаграммы</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-            <form id="form_new_diagram" method="post">
-              <div class="modal-body">
-                  <div class="modal-body">
-                    <input type="hidden" name="edit" value="" id="diagram_id">
-                    <input type="text" name="diagram_name" class="form-control" placeholder="Введите название новой диаграммы">
-                  </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                <button id="btn_new_diagram" type="submit" class="btn btn-primary btn_bg_color">Создать!</button>
-              </div>
-            </form>
-        </div>
-      </div>
-    </div>
-</div>
-
-
-
-
 <div class="modal_window">
     <div class="modal fade" id="new_main" tabindex="-1" role="dialog" aria-labelledby="new_diagramm" aria-hidden="false">
       <div class="modal-dialog modal-dialog-centered" role="document">
