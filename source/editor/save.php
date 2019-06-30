@@ -10,10 +10,10 @@
 require_once('../config.php');
 
 
+function save_elements($diagram_id, $db)
+{
 
-function save_elements($diagram_id, $db){
-
-    if (is_array($_POST['mains'])){
+    if (is_array($_POST['mains'])) {
         foreach ($_POST['mains'] as $key => $item) {
             $main_id = $key;
             $main_name = $item['name'];
@@ -39,14 +39,14 @@ function save_elements($diagram_id, $db){
     }
 
 
-    if (is_array($_POST['attributes'])){
+    if (is_array($_POST['attributes'])) {
         foreach ($_POST['attributes'] as $key => $item) {
             $attribute_id = $key;
             $attribute_name = $item['name'];
             $parent_id = $item['parent'];
             $data_type = $item['data_type'];
             $data_len = $item['len_data'];
-            $is_PK = $item['primary_key'] === 'true'? true: false;
+            $is_PK = $item['primary_key'] === 'true' ? true : false;
             $position = json_encode($item['position']);
 
             $select = $db->query("SELECT * FROM attributes WHERE attribute_id = $attribute_id");
@@ -72,8 +72,8 @@ function save_elements($diagram_id, $db){
     }
 
 
-    if (is_array($_POST['links'])){
-       foreach ($_POST['links'] as $key => $item) {
+    if (is_array($_POST['links'])) {
+        foreach ($_POST['links'] as $key => $item) {
             $link_id = $key;
             $parent_id = $item['parent'];
             $position = json_encode($item['position']);
@@ -97,8 +97,7 @@ function save_elements($diagram_id, $db){
     }
 
 
-
-    if (is_array($_POST['relationships'])){
+    if (is_array($_POST['relationships'])) {
         foreach ($_POST['relationships'] as $key => $item) {
             $relationship_id = $key;
             $first_main = $item['first'];
@@ -131,7 +130,8 @@ function save_elements($diagram_id, $db){
 
 }
 
-function create_diagramm($diagram_id, $diagram_name, $db){
+function create_diagramm($diagram_id, $diagram_name, $db)
+{
     $author_id = $_SESSION['user']['user_id'];
     $relationships = $db->prepare('INSERT INTO diagrams(diagram_id, author_id, diagram_name) VALUES (:diagram_id, :author_id, :diagram_name)');
     $relationships->bindValue(':diagram_id', $diagram_id);
@@ -141,7 +141,8 @@ function create_diagramm($diagram_id, $diagram_name, $db){
     $relationships->execute();
 }
 
-function clean_diagramm($diagram_id, $db){
+function clean_diagramm($diagram_id, $db)
+{
     $claen_mains = $db->prepare('DELETE FROM mains WHERE diagram_id = :diagram_id');
     $claen_mains->bindValue(':diagram_id', $diagram_id);
     $claen_mains->execute();
@@ -159,41 +160,51 @@ function clean_diagramm($diagram_id, $db){
     $claen_links->execute();
 }
 
-function delete_diagramm($diagram_id, $db){
+function delete_diagramm($diagram_id, $db)
+{
     $delete_diagramm = $db->prepare('DELETE FROM diagrams WHERE diagram_id = :diagram_id');
     $delete_diagramm->bindValue(':diagram_id', $diagram_id);
     $delete_diagramm->execute();
+    try{
+        unlink("../user_data/".$diagram_id.".png");
+    }catch (Exception $err){
+        echo('{"error": "'.$err.'"}');
+    }
+
+
 }
 
 
 // TODO: Написать функцию удаления диаграммы!
-if(isset($_POST['diagram_id'])){
+if (isset($_POST['diagram_id'])) {
     $diagram_id = $_POST['diagram_id'];
     $diagram_name = $_POST['diagram_name'];
     $command = $_POST['command'];
-    print_r($diagram_id);
 
-    $select = $db ->query("SELECT * FROM diagrams WHERE diagram_id = $diagram_id");
+    $select = $db->query("SELECT * FROM diagrams WHERE diagram_id = $diagram_id");
     $check_saved_diagram = $select->fetchArray();
 
 
-    if(is_array($check_saved_diagram)){
-        if($check_saved_diagram['author_id'] == $_SESSION['user']['user_id']){
+    if (is_array($check_saved_diagram)) {
+        if ($check_saved_diagram['author_id'] == $_SESSION['user']['user_id']) {
 
-            if($command === "delete"){
+            if ($command === "delete") {
                 clean_diagramm($diagram_id, $db);
                 delete_diagramm($diagram_id, $db);
-            }else{
+                echo('{"status": "delete_ok", "error" : "none"}');
+
+            } else {
                 clean_diagramm($diagram_id, $db);
                 save_elements($diagram_id, $db);
             }
 
-        }else{
-            $diagram_id = mt_rand(0, 999).(string)date('YmdHis');
+        } else {
+            $diagram_id = mt_rand(0, 999) . (string)date('YmdHis');
             create_diagramm($diagram_id, $diagram_name, $db);
             save_elements($diagram_id, $db);
         }
-    }else{
+
+    } else {
         create_diagramm($diagram_id, $diagram_name, $db);
         save_elements($diagram_id, $db);
     }

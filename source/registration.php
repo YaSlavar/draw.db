@@ -137,21 +137,25 @@ if (isset($_POST['registration'])) {
 <script>
     $(document).ready(function () {
         $("#registration").submit(function (event) {
+
             var RegJSON = {};
             var name_new_user = $('input[name="name"]').val();
             var email_new_user = $('input[name="login"]').val();
             var password_new_user = $('input[name="password"]').val();
+
             if (name_new_user !== '' && email_new_user !== '' && password_new_user !== '') {
+
                 RegJSON['name'] = name_new_user;
                 RegJSON['login'] = email_new_user;
                 RegJSON['password'] = password_new_user;
                 RegJSON['registration'] = true;
+
                 $.ajax({
                     type: "POST",
                     url: "registration.php",
                     data: RegJSON
                 }).done(function (msg) {
-                    var status = JSON.parse(msg);
+                    let status = JSON.parse(msg);
                     if (status["error"] === "user_registred") {
                         $('#email_invalid_feedback').html('Пользователь с таким адресом электронной почты уже зарегистрирован!')
                         $('input#login').addClass('is-invalid');
@@ -160,6 +164,7 @@ if (isset($_POST['registration'])) {
                     }
                 });
             }
+
             $('#registration').addClass('was-validated');
             return false;
         });

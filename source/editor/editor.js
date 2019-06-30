@@ -6,8 +6,8 @@ function set_error(text) {
 }
 
 function get_diagram_id() {
-    var url_string = window.location.href;
-    var url = new URL(url_string);
+    let url_string = window.location.href;
+    let url = new URL(url_string);
     return url.searchParams.get("edit");
 }
 
@@ -181,7 +181,88 @@ function add_link(parent_id, link_id) {
 }
 
 
+function validate_value(value_type, value) {
+
+    let check_list = {"total_false": 0};
+
+    function check_not_free_value(value) {
+
+        if (value === "" || value === undefined) {
+            check_list['check_not_free_value'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_not_free_value'] = true;
+        }
+    }
+
+    function check_space(value) {
+
+        let pattern = new RegExp('\\s', 'ig');
+
+        if (pattern.test(value)) {
+            check_list['check_space'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_space'] = true;
+        }
+    }
+
+    function check_num_in_start_of_string(value) {
+
+        let pattern = new RegExp('^[0-9]', 'ig');
+
+        if (pattern.test(value)) {
+            check_list['check_num_in_start_of_string'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_num_in_start_of_string'] = true;
+        }
+
+    }
+
+    function check_uniq_attribute(value) {
+
+        let attributes_name_list;
+        let diagram_info = load_diagram(Number(get_diagram_id()));
+
+        attributes_name_list = [];
+
+        $.each(diagram_info['attributes'], function (i, elem) {
+            attributes_name_list.push(elem['name']);
+        });
+
+        if (attributes_name_list.includes(value)) {
+            check_list['check_uniq'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_uniq'] = true;
+        }
+    }
+
+
+    switch (value_type) {
+        case 'main': {
+            check_not_free_value(value);
+            check_space(value);
+            check_num_in_start_of_string(value);
+
+            return check_list;
+        }
+        case 'attribute': {
+            check_not_free_value(value);
+            check_space(value);
+            check_num_in_start_of_string(value);
+            check_uniq_attribute(value);
+
+            return check_list;
+        }
+    }
+}
+
+
+
 function add_main(edit_main_id = NaN) {
+
     var main_id = randInt();
 
     var name_new_main_input = $('input[name="main_name"]');
@@ -202,20 +283,62 @@ function add_main(edit_main_id = NaN) {
     main_edit_window.modal("toggle");
 
 
-    $("#form_new_main").submit(function (event) {
-        var name_new_main = name_new_main_input.val();
+    name_new_main_input.off('change').on('change', function (event) {
 
-        if (name_new_main !== "") {
-            main_edit_window.modal("toggle");
-            if (isNaN(edit_main_id)) {
-                $(".work_zone_container").append(add_main_block(main_id, name_new_main));
-            } else {
-                $("#" + edit_main_id).children(".main_text").text(name_new_main);
+        let name_new_main = name_new_main_input.val();
+        let check_list = validate_value('main', name_new_main);
+
+        let main_invalid_feedback = $('#main_name_invalid_feedback');
+
+        if (check_list['total_false'] > 0) {
+
+            let error_list = Array();
+
+            if (!check_list['check_not_free_value']) {
+                error_list.push("Название не может быть пустой строкой!");
             }
-            draggable_box();
+
+            if (!check_list['check_space']) {
+                error_list.push("В названии сущности присутствуют пробельные символы!");
+            }
+
+            if (!check_list['check_num_in_start_of_string']) {
+                error_list.push("Название не может начинаться с цифры!");
+            }
+
+            let error_str = error_list.join("<br>");
+
+            main_invalid_feedback.removeClass('valid-feedback');
+            main_invalid_feedback.addClass('invalid-feedback');
+            main_invalid_feedback.html(error_str);
+            name_new_main_input.removeClass('is-valid');
+            name_new_main_input.addClass('is-invalid');
+
+        } else {
+            main_invalid_feedback.removeClass('invalid-feedback');
+            main_invalid_feedback.addClass('valid-feedback');
+            main_invalid_feedback.html("Название допустимо!");
+            name_new_main_input.removeClass('is-invalid');
+            name_new_main_input.addClass('is-valid');
+
+
+            $("#btn_new_main").off('click').on('click', function (event) {
+
+
+                let name_new_main = name_new_main_input.val();
+
+                main_edit_window.modal("toggle");
+                if (isNaN(edit_main_id)) {
+                    $(".work_zone_container").append(add_main_block(main_id, name_new_main));
+                } else {
+                    $("#" + edit_main_id).children(".main_text").text(name_new_main);
+                }
+                draggable_box();
+
+            });
+
         }
-        $(this).off(event);
-        return false;
+
     });
 }
 
@@ -309,6 +432,7 @@ function add_relationship(edit_rel_id) {
     set_error("");
 
     // Действия над формами модального окна
+
     var work_zone_container = $(".work_zone_container");
     var main = work_zone_container.children('.main');
     main.each(function (i, elem) {
@@ -322,6 +446,7 @@ function add_relationship(edit_rel_id) {
         '<option value="N:N">N:N</option>');
 
     var edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
+
     if ($('div').is(edited_relationship)) {
         $('#new_relationship_title').text("Изменение связи");
         $('#btn_new_relationship').text("Измененить!");
@@ -363,7 +488,9 @@ function add_relationship(edit_rel_id) {
 
 
         if (first_main_id !== "" && second_main_id !== "" && first_main_id[0] !== second_main_id[0]) {
+
             var edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
+
             if ($('div').is(edited_relationship)) {
                 edited_relationship.attr('first', first_main_id);
                 edited_relationship.attr('second', second_main_id);
@@ -403,7 +530,6 @@ function remove_main(main_id) {
     canvas = $(".canvas");
     links = canvas.children('[parent="' + main_id + '"]');
 
-    console.log(links);
     links.each(function (i, elem) {
         $('.link[parent="' + $(elem).attr("parent") + '"]').remove();
     });
@@ -619,7 +745,6 @@ function load_diagram(diagram_id) {
     }
 
 }
-
 
 
 // MSSQL FUNCTIONS

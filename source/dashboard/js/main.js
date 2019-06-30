@@ -62,13 +62,20 @@ function delete_diagram(diagram_id) {
         $.ajax({
             type: "POST",
             url: "editor/save.php",
-            // TODO: ТУТ!!!!
             data: Out_JSON
         }).done(function (msg) {
-            let diagram_block = $('.diagram_block[diagram_id=' + diagram_id + ']');
-            diagram_block.remove();
 
-            check_delete_modal_window.modal("toggle");
+            let status = JSON.parse(msg);
+
+            if(status['error'] === 'none') {
+                let diagram_block = $('.diagram_block[diagram_id=' + diagram_id + ']');
+                diagram_block.remove();
+
+                check_delete_modal_window.modal("toggle");
+            }else{
+                console.log("При удалении диаграммы произошла ошибка: " + status['error']);
+            }
+
         });
     });
 
