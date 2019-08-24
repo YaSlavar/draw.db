@@ -7,8 +7,9 @@ RUN apt-get install -my wget gnupg
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | iconv -f windows-1251 | apt-key add -
 RUN curl https://packages.microsoft.com/config/debian/8/prod.list > /etc/apt/sources.list.d/mssql-release.list
 
+
 # install SQL Server drivers
-RUN apt-get update && ACCEPT_EULA=Y apt-get install -y unixodbc-dev msodbcsql17 && ACCEPT_EULA=Y apt-get install -y mssql-tools
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y unixodbc-dev && ACCEPT_EULA=Y apt-get install -y msodbcsql17 && ACCEPT_EULA=Y apt-get install -y mssql-tools
 
 # Install libxml2
 RUN apt-get update && apt-get install -y \
@@ -47,6 +48,6 @@ RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer \
     && chmod a+x /usr/local/bin/composer
 
-RUN chmod +x /opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.3.so.1.1
+#RUN chmod +x /opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.3.so.1.1
 
 WORKDIR /usr/share/nginx/html
