@@ -24,8 +24,7 @@
                         <label for="attribute_name">Название новой сущности:</label>
                         <input type="text" name="main_name"  class="form-control name_diagramm"
                                placeholder="Введите название новой сущности">
-                        <div id="main_name_invalid_feedback">
-                        </div>
+                        <div id="main_name_invalid_feedback"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
@@ -55,6 +54,7 @@
                             <label for="attribute_name">Название нового атрибута</label>
                             <input type="text" name="attribute_name" class="form-control name_attribute"
                                    placeholder="Введите название нового атрибута">
+                            <div id="attribute_name_invalid_feedback"></div>
                         </div>
                         <div class="form-group">
                             <label for="attr_datatype">Тип данных атрибута</label>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button id="btn_new_attribute" type="submit" class="btn btn-primary btn_bg_color">Добавить!
+                        <button id="btn_new_attribute" type="button" class="btn btn-primary btn_bg_color">Добавить!
                         </button>
                     </div>
                 </form>

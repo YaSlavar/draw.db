@@ -108,7 +108,7 @@
 </div>
 
 
-<script src="../editor/editor.js"></script>
+<script src="editor/editor.js"></script>
 
 <script>
     $(document).ready(function () {
