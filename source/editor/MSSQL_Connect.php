@@ -111,7 +111,7 @@ if ($_POST['type'] === 'check'){
                 array_push($result, $dataArray);
 
             }
-            $RESULT_DATE['message'] = "Запрос '".$_POST['query']."' успешно выполнен!";
+            $RESULT_DATE['message'] = "Запрос \n'".$_POST['query']."'\nуспешно выполнен!";
             $RESULT_DATE['result'] = $result;
             print_r(json_encode($RESULT_DATE));
             exit;

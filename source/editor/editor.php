@@ -1,18 +1,18 @@
     <header class="header fixed-top">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-auto">
+                <div class="col-sm-auto col-auto">
                     <a href="?diagram_list=true" class="d-flex back_to_diagram_list_box">
                         <div class="back_to_diagram_list"></div>
-                        <div class="header_text">К списку диаграмм</div>
+                        <div class="header_text d-none d-sm-block">К списку диаграмм</div>
                     </a>
                 </div>
-                <div id="logo" class="col-sm-auto">
+                <div id="logo" class="col-sm-auto col d-none d-sm-block">
                     DB Logic Assistant
                 </div>
-                <div class="col"></div>
-                <div id="diagram_name" class="col-sm-auto header_text"></div>
-                <div id="author_name" class="col-sm-auto header_text"><?echo($_SESSION['user']['name']);?></div>
+                <div class="col d-none d-sm-block"></div>
+                <div id="diagram_name" class="col-sm-auto col-4 header_text"></div>
+                <div id="author_name" class="col-sm-auto d-none d-sm-block header_text"><?echo($_SESSION['user']['name']);?></div>
             </div>
         </div>
     </header>

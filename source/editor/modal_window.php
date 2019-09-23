@@ -60,7 +60,7 @@
                             <label for="attr_datatype">Тип данных атрибута</label>
                             <select class="form-control" name="attr_datatype" title=""></select>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row attribute_data_len">
                             <label for="attr_data_len" class="col-8 col-form-label">Количество символов (длина
                                 атрибута)</label>
                             <div class="col-4">
@@ -144,7 +144,7 @@
                     <div id="input_block" class="mb-3">
                         <div class="input-group mb-2">
                             <h6 class="modal-title" id="mssql_connect_description"></h6>
-                            <button id="btn_disconnect" type="button" class="btn btn-danger">Разъеденить!</button>
+                            <button id="btn_disconnect" type="button" class="btn btn-danger">Разъединить!</button>
                         </div>
                         <h6 class="modal-title" id="mssql_result_description">Запрос для выполнения на сервере: </h6>
                         <div id="sql_code_editor"></div>
@@ -225,7 +225,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button id="btn_new_connect" type="submit" class="btn btn-primary btn_bg_color">Соеденить!
+                        <button id="btn_new_connect" type="submit" class="btn btn-primary btn_bg_color">Соеднить!
                         </button>
                     </div>
                 </form>

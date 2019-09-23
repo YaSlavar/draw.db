@@ -14,7 +14,10 @@ $location = "../user_data";
 $image = str_replace('data:image/png;base64,', '', $image);
 $decoded = base64_decode($image);
 
-file_put_contents($location . "/" . $name . ".png", $decoded, LOCK_EX);
+$image_name = $name . ".png";
+$image_path = $location . "/" . $image_name;
+
+file_put_contents($image_path, $decoded, LOCK_EX);
 
 
-echo $image;
+echo $image_name;

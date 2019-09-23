@@ -127,7 +127,7 @@ function save_elements($diagram_id, $db)
         }
     }
 
-
+echo ($diagram_id);
 }
 
 function create_diagramm($diagram_id, $diagram_name, $db)

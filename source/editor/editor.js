@@ -15,25 +15,23 @@ function get_diagram_id() {
 //DRAGGABLE
 
 function setting_link() {
-    var work_zone_container = $(".work_zone_container");
-    var main = work_zone_container.children('.main');
+    let work_zone_container = $(".work_zone_container");
+    let main = work_zone_container.children('.main');
     main.each(function (i, elem) {
-        var main_id = $(elem).attr("id");
-        var main = $("#" + main_id);
+        let main_id = $(elem).attr("id");
+        let main = $("#" + main_id);
 
-        var attribute = work_zone_container.children('[parent="' + main_id + '"]');
-        var first_relationship = work_zone_container.children('.relationship[first=' + main_id + ']');
-        var second_relationship = work_zone_container.children('.relationship[second=' + main_id + ']');
-        var relationship = $.extend(first_relationship, second_relationship);
-        // console.log(relationship);
-        // console.log(first_relationship);
-        // console.log(second_relationship);
+        let attribute = work_zone_container.children('[parent="' + main_id + '"]');
+        let first_relationship = work_zone_container.children('.relationship[first=' + main_id + ']');
+        let second_relationship = work_zone_container.children('.relationship[second=' + main_id + ']');
+        let relationship = $.extend(first_relationship, second_relationship);
+
         attribute.each(function (i, elem) {
-            var attribute_id = $(elem).attr("id");
-            var attribute = $('.attribute[id="' + attribute_id + '"]');
-            var link = $('.link[id="' + attribute_id + '"]');
-            var main_pos = main.position();
-            var attribute_pos = attribute.position();
+            let attribute_id = $(elem).attr("id");
+            let attribute = $('.attribute[id="' + attribute_id + '"]');
+            let link = $('.link[id="' + attribute_id + '"]');
+            let main_pos = main.position();
+            let attribute_pos = attribute.position();
             link.attr({
                 "x1": attribute_pos["left"] + Number(attribute.innerWidth() / 2),
                 "y1": attribute_pos["top"] + Number(attribute.innerHeight() / 2),
@@ -43,22 +41,22 @@ function setting_link() {
         });
 
         relationship.each(function (i, elem) {
-            var relationship_id = $(elem).attr("id");
-            var relationship = $('.relationship[id="' + relationship_id + '"]');
+            let relationship_id = $(elem).attr("id");
+            let relationship = $('.relationship[id="' + relationship_id + '"]');
 
-            var first_main_id = relationship.attr("first");
-            var second_main_id = relationship.attr("second");
-            var second_main;
+            let first_main_id = relationship.attr("first");
+            let second_main_id = relationship.attr("second");
+            let second_main;
             if (main_id === first_main_id) {
                 second_main = $("#" + second_main_id);
             } else if (main_id === second_main_id) {
                 second_main = $("#" + first_main_id);
             }
 
-            var link = $('.link[parent="' + relationship_id + '"]');
-            var main_pos = main.position();
-            var second_main_pos = second_main.position();
-            var relationship_pos = relationship.position();
+            let link = $('.link[parent="' + relationship_id + '"]');
+            let main_pos = main.position();
+            let second_main_pos = second_main.position();
+            let relationship_pos = relationship.position();
 
             link.each(function (i, elem) {
                 if (i === 0) {
@@ -84,14 +82,13 @@ function setting_link() {
 
 
 function draggable_box() {
-
-    var work_zone_container = $(".work_zone_container");
-    var main = work_zone_container.children('.main');
-    var relationship = work_zone_container.children('.relationship');
+    let work_zone_container = $(".work_zone_container");
+    let main = work_zone_container.children('.main');
+    let relationship = work_zone_container.children('.relationship');
 
     main.each(function (i, elem) {
-        var main_id = $(elem).attr("id");
-        var attribute = work_zone_container.children('[parent="' + main_id + '"]');
+        let main_id = $(elem).attr("id");
+        let attribute = work_zone_container.children('[parent="' + main_id + '"]');
 
         $('.main[id="' + main_id + '"]').draggable({
             cursor: "move",
@@ -144,7 +141,7 @@ function add_main_block(main_id, name_new_main) {
 
 
 function add_attribute_block(attribute_id, main_id, name_new_main, data_type, len_data, primary_key) {
-    var is_pk = "";
+    let is_pk = "";
     if (primary_key === true) {
         is_pk = "is_primary_key"
     }
@@ -181,12 +178,10 @@ function add_link(parent_id, link_id) {
 }
 
 
-function validate_value(change_type="add", value_type, value) {
-
+function validate_value(change_type = "add", value_type, value) {
     let check_list = {"total_false": 0};
 
     function check_not_free_value(value) {
-
         if (value === "" || value === undefined) {
             check_list['check_not_free_value'] = false;
             check_list['total_false'] += 1;
@@ -196,7 +191,6 @@ function validate_value(change_type="add", value_type, value) {
     }
 
     function check_space(value) {
-
         let pattern = new RegExp('\\s', 'ig');
 
         if (pattern.test(value)) {
@@ -208,7 +202,6 @@ function validate_value(change_type="add", value_type, value) {
     }
 
     function check_num_in_start_of_string(value) {
-
         let pattern = new RegExp('^[0-9]', 'ig');
 
         if (pattern.test(value)) {
@@ -221,7 +214,6 @@ function validate_value(change_type="add", value_type, value) {
     }
 
     function check_uniq_attribute(value) {
-
         let diagram_info = load_diagram(Number(get_diagram_id()));
         let attributes_name_list = [];
 
@@ -238,7 +230,6 @@ function validate_value(change_type="add", value_type, value) {
     }
 
     function check_uniq_main(value) {
-
         let diagram_info = load_diagram(Number(get_diagram_id()));
         let mains_name_list = [];
 
@@ -254,13 +245,12 @@ function validate_value(change_type="add", value_type, value) {
         }
     }
 
-
     switch (value_type) {
         case 'main': {
             check_not_free_value(value);
             check_space(value);
             check_num_in_start_of_string(value);
-            if (change_type === "add"){
+            if (change_type === "add") {
                 check_uniq_main(value);
             }
             return check_list;
@@ -278,16 +268,14 @@ function validate_value(change_type="add", value_type, value) {
 }
 
 
-
 function add_main(edit_main_id = NaN) {
+    let main_id = randInt();
 
-    var main_id = randInt();
-
-    var name_new_main_input = $('input[name="main_name"]');
+    let name_new_main_input = $('input[name="main_name"]');
     name_new_main_input.val("");
 
+    let edited_main = $('.main[id="' + edit_main_id + '"]');
 
-    var edited_main = $('.main[id="' + edit_main_id + '"]');
     if ($('div').is(edited_main)) {
         $('#new_diagramm_title').text("Изменение сущности");
         $('#btn_new_main').text("Измененить!");
@@ -300,23 +288,21 @@ function add_main(edit_main_id = NaN) {
     var main_edit_window = $("#new_main");
     main_edit_window.modal("toggle");
 
-
-    name_new_main_input.off('change').on('change', function (event) {
+    name_new_main_input.off('change').on('change', function () {
 
         let name_new_main = name_new_main_input.val();
-
         let change_type = "add";
+
         if ($('div').is(edited_main)) {
             change_type = "change";
         }
-        let check_list = validate_value(change_type, 'main', name_new_main);
 
+        let check_list = validate_value(change_type, 'main', name_new_main);
         let main_invalid_feedback = $('#main_name_invalid_feedback');
 
-        console.log(check_list);
+        // console.log(check_list);
 
         if (check_list['total_false'] > 0) {
-
             let error_list = Array();
 
             if (!check_list['check_not_free_value']) {
@@ -352,45 +338,43 @@ function add_main(edit_main_id = NaN) {
             name_new_main_input.removeClass('is-invalid');
             name_new_main_input.addClass('is-valid');
 
-
-            $("#btn_new_main").off('click').on('click', function (event) {
-
+            $("#btn_new_main").off('click').on('click', function () {
 
                 let name_new_main = name_new_main_input.val();
-
                 main_edit_window.modal("toggle");
+
                 if (isNaN(edit_main_id)) {
                     $(".work_zone_container").append(add_main_block(main_id, name_new_main));
                 } else {
                     $("#" + edit_main_id).children(".main_text").text(name_new_main);
                 }
                 draggable_box();
-
             });
-
         }
-
     });
 }
 
-
+// TODO: Добавить проверку на единственный PRIMARY KEY
 function add_attribute(main_id, edit_attr_id = NaN) {
-    var attribute_id = randInt();
+    let attribute_id = randInt();
 
-    var new_attribute_window = $("#new_attribute");
+    let new_attribute_window = $("#new_attribute");
     new_attribute_window.modal("toggle");
 
-    var input_name_new_attribute = $('input[name="attribute_name"]');
-    var input_attr_datatype = $('select[name="attr_datatype"]');
-    var input_len_datatype = $('input[name="attr_data_len"]');
-    var primary_key_checkbox = $('input[name="primary_key"]');
+    let input_name_new_attribute = $('input[name="attribute_name"]');
+    let input_attr_datatype = $('select[name="attr_datatype"]');
+    let input_len_datatype = $('input[name="attr_data_len"]');
+    let primary_key_checkbox = $('input[name="primary_key"]');
+
+    let input_len_datatype_group = $('.attribute_data_len');
 
     input_name_new_attribute.val("");
     input_attr_datatype.empty();
     input_len_datatype.val(0);
     primary_key_checkbox.prop('checked', false);
 
-    input_attr_datatype.append('<option value="int">int</option>' +
+    input_attr_datatype.append(
+        '<option value="int">int</option>' +
         '<option value="char">char</option>' +
         '<option value="float">float</option>' +
         '<option value="money">money</option>' +
@@ -399,6 +383,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     );
 
     let edited_attribute = $('.attribute[id="' + edit_attr_id + '"]');
+
     if ($('div').is(edited_attribute)) {
         $('#new_attribute_title').text("Изменение атрибута");
         $('#btn_new_attribute').text("Измененить!");
@@ -411,14 +396,26 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         $('#btn_new_attribute').text("Добавить!");
     }
 
+    input_attr_datatype.off('change').on('change', function () {
+        if (input_attr_datatype.val() === "int") {
+            input_len_datatype_group.css("display", "none");
+        } else {
+            input_len_datatype_group.css("display", "flex");
+        }
+    });
 
+    input_name_new_attribute.off('change').on('change', function () {
+        let name_new_attribute = input_name_new_attribute.val();
+        let data_type = input_attr_datatype.val();
+        let len_data;
 
-    input_name_new_attribute.off('change').on('change', function (event) {
+        if (data_type === "int") {
+            len_data = null;
+        } else {
+            len_data = input_len_datatype.val();
+        }
 
-        var name_new_attribute = input_name_new_attribute.val();
-        var data_type = input_attr_datatype.val();
-        var len_data = input_len_datatype.val();
-        var primary_key = primary_key_checkbox.prop("checked");
+        let primary_key = primary_key_checkbox.prop("checked");
 
         let change_type = "add";
         if ($('div').is(edited_attribute)) {
@@ -426,11 +423,9 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         }
 
         let check_list = validate_value(change_type, 'attribute', name_new_attribute);
-
         let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
 
         if (check_list['total_false'] > 0) {
-
             let error_list = Array();
 
             if (!check_list['check_not_free_value']) {
@@ -466,8 +461,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
             input_name_new_attribute.removeClass('is-invalid');
             input_name_new_attribute.addClass('is-valid');
 
-
-            $("#btn_new_attribute").off('click').on('click', function (event) {
+            $("#btn_new_attribute").off('click').on('click', function () {
 
                 new_attribute_window.modal("toggle");
 
@@ -484,7 +478,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                     }
                 } else {
                     $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, name_new_attribute, data_type, len_data, primary_key));
-                    var canvas = $(".canvas");
+                    let canvas = $(".canvas");
                     canvas.append(add_link(main_id, attribute_id));
                     // перерисовка svg
                     canvas.html(canvas.html());
@@ -497,13 +491,13 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
 
 function add_relationship(edit_rel_id) {
-    var new_relationship_window = $("#new_relationship");
+    let new_relationship_window = $("#new_relationship");
 
     // инициализация и очистка форм
-    var rel_first_main = $('select[name="rel_first_main"]');
-    var rel_second_main = $('select[name="rel_second_main"]');
-    var rel_type = $('select[name="rel_type"]');
-    var rel_description = $('input[name="rel_description"]');
+    let rel_first_main = $('select[name="rel_first_main"]');
+    let rel_second_main = $('select[name="rel_second_main"]');
+    let rel_type = $('select[name="rel_type"]');
+    let rel_description = $('input[name="rel_description"]');
 
     rel_first_main.empty();
     rel_second_main.empty();
@@ -513,20 +507,23 @@ function add_relationship(edit_rel_id) {
     set_error("");
 
     // Действия над формами модального окна
+    let work_zone_container = $(".work_zone_container");
+    let main = work_zone_container.children('.main');
 
-    var work_zone_container = $(".work_zone_container");
-    var main = work_zone_container.children('.main');
     main.each(function (i, elem) {
-        var main_name = $(elem).children(".main_text").text();
-        var main_id = $(elem).attr("id");
+        let main_name = $(elem).children(".main_text").text();
+        let main_id = $(elem).attr("id");
         rel_first_main.append('<option value="' + main_id + '">' + main_name + '</option>');
         rel_second_main.append('<option value="' + main_id + '">' + main_name + '</option>');
     });
-    rel_type.append('<option value="1:1">1:1</option>' +
-        '<option value="1:N">1:N</option>' +
-        '<option value="N:N">N:N</option>');
 
-    var edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
+    rel_type.append(
+        '<option value="1:1">1:1</option>' +
+        '<option value="1:N">1:N</option>' +
+        '<option value="N:N">N:N</option>'
+    );
+
+    let edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
 
     if ($('div').is(edited_relationship)) {
         $('#new_relationship_title').text("Изменение связи");
@@ -555,22 +552,21 @@ function add_relationship(edit_rel_id) {
         var second_main_val = rel_second_main.val();
         rel_first_main.children('[value=' + second_main_val + ']').css("display", "none");
     });
+
     // --- Действия над формами модального окна ---
 
     $("#form_new_relationship").submit(function (event) {
-        var relationship_id = randInt();
-        var first_link = randInt();
-        var second_link = randInt();
+        let relationship_id = randInt();
+        let first_link = randInt();
+        let second_link = randInt();
 
-        var first_main_id = rel_first_main.val();
-        var second_main_id = rel_second_main.val();
-        var rel_type_val = rel_type.val();
-        var rel_desc = rel_description.val();
-
+        let first_main_id = rel_first_main.val();
+        let second_main_id = rel_second_main.val();
+        let rel_type_val = rel_type.val();
+        let rel_desc = rel_description.val();
 
         if (first_main_id !== "" && second_main_id !== "" && first_main_id[0] !== second_main_id[0]) {
-
-            var edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
+            let edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
 
             if ($('div').is(edited_relationship)) {
                 edited_relationship.attr('first', first_main_id);
@@ -579,7 +575,7 @@ function add_relationship(edit_rel_id) {
                 edited_relationship.children('.desc_diamond').text(rel_desc);
             } else {
                 $(".work_zone_container").append(add_relationship_block(relationship_id, rel_type_val, rel_desc, first_main_id, second_main_id));
-                var canvas = $(".canvas");
+                let canvas = $(".canvas");
                 canvas.append(add_link(relationship_id, first_link));
                 canvas.append(add_link(relationship_id, second_link));
                 // перерисовка svg
@@ -602,22 +598,23 @@ function remove_main(main_id) {
     $('.main[id="' + main_id + '"]').remove();
     $('.relationship[parent="' + main_id + '"]').remove();
 
-    work_zone_container = $(".work_zone_container");
-    attributes = work_zone_container.children('[parent="' + main_id + '"]');
+    let work_zone_container = $(".work_zone_container");
+    let attributes = work_zone_container.children('[parent="' + main_id + '"]');
+
     attributes.each(function (i, elem) {
         $('.attribute[parent="' + $(elem).attr("parent") + '"]').remove();
     });
 
-    canvas = $(".canvas");
-    links = canvas.children('[parent="' + main_id + '"]');
+    let canvas = $(".canvas");
+    let links = canvas.children('[parent="' + main_id + '"]');
 
     links.each(function (i, elem) {
         $('.link[parent="' + $(elem).attr("parent") + '"]').remove();
     });
 
-
     draggable_box();
 }
+
 
 function remove_attr(attr_id) {
     $('.attribute[id="' + attr_id + '"]').remove();
@@ -631,30 +628,31 @@ function remove_relationship(rel_id) {
     draggable_box();
 }
 
-
 // SAVE
 
 function save_diagram() {
-    var Out_JSON = {};
-    var mains = {};
-    var attributes = {};
-    var relationships = {};
-    var links = {};
+    let Out_JSON = {};
+    let mains = {};
+    let attributes = {};
+    let relationships = {};
+    let links = {};
 
-    var work_zone_container = $(".work_zone_container");
+    let work_zone_container = $(".work_zone_container");
+    let main = work_zone_container.children('.main');
 
-    var main = work_zone_container.children('.main');
     main.each(function (i, elem) {
-        var id = $(elem).attr('id');
+        let id = $(elem).attr('id');
         mains[id] = {};
         mains[id]['position'] = $(elem).offset();
         mains[id]['name'] = $(elem).children('.main_text').text();
     });
+
     Out_JSON['mains'] = mains;
 
-    var attribute = work_zone_container.children('.attribute');
+    let attribute = work_zone_container.children('.attribute');
+
     attribute.each(function (i, elem) {
-        var id = $(elem).attr('id');
+        let id = $(elem).attr('id');
         attributes[id] = {};
         attributes[id]['parent'] = $(elem).attr('parent');
         attributes[id]['data_type'] = $(elem).attr('data_type');
@@ -663,11 +661,13 @@ function save_diagram() {
         attributes[id]['name'] = $(elem).children('.attribute_text').text();
         attributes[id]['position'] = $(elem).offset();
     });
+
     Out_JSON['attributes'] = attributes;
 
-    var relationship = work_zone_container.children('.relationship');
+    let relationship = work_zone_container.children('.relationship');
+
     relationship.each(function (i, elem) {
-        var id = $(elem).attr('id');
+        let id = $(elem).attr('id');
         relationships[id] = {};
         relationships[id]['first'] = $(elem).attr('first');
         relationships[id]['second'] = $(elem).attr('second');
@@ -675,11 +675,13 @@ function save_diagram() {
         relationships[id]['rel_description'] = $(elem).children('.desc_diamond').text();
         relationships[id]['position'] = $(elem).offset();
     });
+
     Out_JSON['relationships'] = relationships;
 
-    var link = $('.canvas').children('.link');
+    let link = $('.canvas').children('.link');
+
     link.each(function (i, elem) {
-        var id = $(elem).attr('id');
+        let id = $(elem).attr('id');
         links[id] = {};
         links[id]['parent'] = $(elem).attr('parent');
         links[id]['position'] = {
@@ -711,9 +713,8 @@ function save_diagram_img() {
 
     setTimeout(function () {
 
-        var img = html2canvas(document.getElementById('screenshot_zone')).then(function (canvas) {
-
-            var REQUEST_DATA = {};
+        let img = html2canvas(document.getElementById('screenshot_zone')).then(function (canvas) {
+            let REQUEST_DATA = {};
             img = canvas.toDataURL("image/png", 1);
 
             REQUEST_DATA['image'] = img.replace(/^data:image\/(png|jpg);base64,/, "");
@@ -729,35 +730,29 @@ function save_diagram_img() {
                 }
             }).done(function (img) {
 
-                var png_img = "data:image/png;base64," + img;
+                let image_path = "user_data/" + img;
 
-                var preview_image = $('#preview_image');
-                preview_image.attr('src', png_img);
+                let preview_image = $('#preview_image');
+                preview_image.attr('src', image_path);
 
-                var download_diagram_img = $('#download_diagram_img');
-                download_diagram_img.attr('href', png_img);
-
+                let download_diagram_img = $('#download_diagram_img');
+                download_diagram_img.attr('href', image_path);
             });
         });
-
     }, 300);
 }
 
 function open_screenshot_window() {
-
     save_diagram_img();
 
-    var get_diagram_img = $("#get_diagram_img");
+    let get_diagram_img = $("#get_diagram_img");
     get_diagram_img.modal('toggle');
-
 }
-
 
 //LOAD
 
 function load_diagram(diagram_id) {
-
-    var Out_JSON = {};
+    let Out_JSON = {};
 
     if (typeof diagram_id === "number") {
 
@@ -771,9 +766,7 @@ function load_diagram(diagram_id) {
         }).responseText;
 
         return JSON.parse(result);
-
     } else {
-
         Out_JSON['diagram_id'] = get_diagram_id();
 
         $.ajax({
@@ -781,41 +774,40 @@ function load_diagram(diagram_id) {
             url: "editor/load.php",
             data: Out_JSON
         }).done(function (msg) {
-            var JSON_answer = JSON.parse(msg);
+            let JSON_answer = JSON.parse(msg);
 
             $('#diagram_name').text(JSON_answer['diagram_name']);
 
-            result = JSON.parse(msg);
+            let result = JSON.parse(msg);
 
-            var mains = result['mains'];
-            var attributes = result['attributes'];
-            var relationships = result['relationships'];
-            var links = result['links'];
-
+            let mains = result['mains'];
+            let attributes = result['attributes'];
+            let relationships = result['relationships'];
+            let links = result['links'];
 
             jQuery.each(mains, function (i, elem) {
-                var position = JSON.parse(elem['position']);
+                let position = JSON.parse(elem['position']);
 
                 $(".work_zone_container").append(add_main_block(elem['main_id'], elem['name']));
                 $(".main#" + elem['main_id']).offset(position);
             });
 
             jQuery.each(attributes, function (i, elem) {
-                var position = JSON.parse(elem['position']);
+                let position = JSON.parse(elem['position']);
 
                 $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
                 $(".attribute#" + elem['attribute_id']).offset(position);
             });
 
             jQuery.each(relationships, function (i, elem) {
-                var position = JSON.parse(elem['position']);
+                let position = JSON.parse(elem['position']);
 
                 $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_description'], elem['first_main'], elem['second_main']));
                 $(".relationship#" + elem['relationship_id']).offset(position);
             });
 
             jQuery.each(links, function (i, elem) {
-                var canvas = $(".canvas");
+                let canvas = $(".canvas");
                 canvas.append(add_link(elem['parent_id'], elem['link_id']));
                 canvas.html(canvas.html());
             });
@@ -823,21 +815,20 @@ function load_diagram(diagram_id) {
 
             save_diagram_img();
 
-            console.log(result);
+            // console.log(result);
         });
     }
-
 }
 
 
 // MSSQL FUNCTIONS
 
 function mssql_connect_check() {
-    var REQUEST_DATA = {};
+    let REQUEST_DATA = {};
 
     REQUEST_DATA['type'] = 'check';
 
-    var result = $.ajax({
+    let result = $.ajax({
         type: "POST",
         url: "editor/MSSQL_Connect.php",
         async: false,
@@ -848,7 +839,7 @@ function mssql_connect_check() {
 }
 
 function mssql_connect(server_name, database, login, password) {
-    var REQUEST_DATA = {};
+    let REQUEST_DATA = {};
 
     REQUEST_DATA['type'] = 'connect';
     REQUEST_DATA['server_name'] = server_name;
@@ -856,12 +847,13 @@ function mssql_connect(server_name, database, login, password) {
     REQUEST_DATA['login'] = login;
     REQUEST_DATA['password'] = password;
 
-    var result = $.ajax({
+    let result = $.ajax({
         type: "POST",
         url: "editor/MSSQL_Connect.php",
         async: false,
         data: REQUEST_DATA
     }).responseText;
+
     return JSON.parse(result)
 }
 
@@ -869,11 +861,11 @@ function mssql_connect(server_name, database, login, password) {
 
 
 function mssql_disconnect() {
-    var REQUEST_DATA = {};
+    let REQUEST_DATA = {};
 
     REQUEST_DATA['type'] = 'disconnect';
 
-    var result = $.ajax({
+    let result = $.ajax({
         type: "POST",
         url: "editor/MSSQL_Connect.php",
         async: false,
@@ -884,12 +876,12 @@ function mssql_disconnect() {
 }
 
 function mssql_query(sql_query) {
-    var REQUEST_DATA = {};
+    let REQUEST_DATA = {};
 
     REQUEST_DATA['type'] = 'query';
     REQUEST_DATA['query'] = sql_query;
 
-    var result = $.ajax({
+    let result = $.ajax({
         type: "POST",
         url: "editor/MSSQL_Connect.php",
         async: false,
@@ -904,42 +896,42 @@ function mssql_query(sql_query) {
 
 function open_server_connect_window() {
 
-    function swich_connect_status() {
+    function switch_connect_status() {
 
-        var check = mssql_connect_check();
-        var btn_disconnect = $('#btn_disconnect');
+        let check = mssql_connect_check();
+        let btn_disconnect = $('#btn_disconnect');
 
         if (check['connect'] === false) {
             mssql_connect_description.text("Подключение не установлено, пожалуйста пройдите авторизацию, чтобы продолжить создание физической модели.");
             btn_disconnect.css({"display": "none"});
         } else {
-            mssql_connect_description.text('Установлено соединение! База данных:\" ' + check['database'] + ' \" на сервере:\"' + check['server'] + '\"');
+            mssql_connect_description.text('Установлено соединение! База данных: \"' + check['database'] + '\" на сервере: \"' + check['server'] + '\"');
             btn_disconnect.css({"display": "block"});
         }
         return check['connect'];
     }
 
-    function disconnect() {
 
+    function disconnect() {
         $('#btn_disconnect').off('click').on('click', function () {
             mssql_disconnect();
-            swich_connect_status();
+            switch_connect_status();
         });
 
     }
 
-    var data_diagram = save_diagram();
+    let data_diagram = save_diagram();
 
-    var get_sql_code_window = $("#get_sql_code");
-    var mssql_connect_window = $('#new_mssql_connect');
+    let get_sql_code_window = $("#get_sql_code");
+    let mssql_connect_window = $('#new_mssql_connect');
     get_sql_code_window.modal("toggle");
 
-    var sql_code_viewer = $('#sql_code_viewer');
+    let sql_code_viewer = $('#sql_code_viewer');
     sql_code_viewer.html('');
 
-    var mssql_connect_description = $('#mssql_connect_description');
+    let mssql_connect_description = $('#mssql_connect_description');
 
-    swich_connect_status();
+    switch_connect_status();
 
     disconnect();
 
@@ -947,24 +939,22 @@ function open_server_connect_window() {
     function format_server_result(server_result) {
 
         function get_attributes_list(server_result) {
-            var columns = [];
-            $.each(server_result[0], function (key, value) {
+            let columns = [];
+            $.each(server_result[0], function (key) {
                 columns.push({title: key});
             });
             return columns;
         }
 
-        var columns = get_attributes_list(server_result);
-        var dataset = [];
+        let columns = get_attributes_list(server_result);
+        let dataset = [];
 
         $.each(server_result, function (index, dataline_obj) {
-
-            var dataline = [];
+            let dataline = [];
 
             $.each(dataline_obj, function (key, value) {
                 if (typeof value === "object") {
-
-                    var blkstr = "";
+                    let blkstr = "";
 
                     $.each(value, function (idx2, val2) {
                         blkstr += idx2 + ":" + val2 + "\n";
@@ -977,17 +967,13 @@ function open_server_connect_window() {
             });
             dataset.push(dataline);
         });
-
         return {columns: columns, dataset: dataset};
     }
 
     function connect_and_insert_to_server(editor, result_viewer) {
-
-        $('#insert_sql_to_server').off('click').on('click', function (event) {
-
+        $('#insert_sql_to_server').off('click').on('click', function () {
 
             if (mssql_connect_check()['connect'] === false) {
-
                 get_sql_code_window.modal("toggle");
                 mssql_connect_window.modal("toggle");
 
@@ -995,92 +981,78 @@ function open_server_connect_window() {
 
                     event.preventDefault();
 
-                    var server_name = $('#mssql_server');
-                    var login = $('#mssql_login');
-                    var password = $('#mssql_password');
-                    var database = $('#database_name');
+                    let server_name = $('#mssql_server');
+                    let login = $('#mssql_login');
+                    let password = $('#mssql_password');
+                    let database = $('#database_name');
 
-                    var server_name_value = server_name.val();
-                    var login_value = login.val();
-                    var password_value = password.val();
-                    var database_value = database.val();
+                    let server_name_value = server_name.val();
+                    let login_value = login.val();
+                    let password_value = password.val();
+                    let database_value = database.val();
 
                     if (server_name_value !== "" && login_value !== "" && password_value !== "" && database_value !== "") {
-
                         try {
-                            var connect = mssql_connect(server_name_value, database_value, login_value, password_value);
+                            let connect = mssql_connect(server_name_value, database_value, login_value, password_value);
                             console.log(connect);
+
+                            if (connect['code'] === 18456) {
+                                login.addClass('is-invalid');
+                                password.addClass('is-invalid');
+                                database.addClass('is-invalid');
+                                $('#form_new_mssql_connect').addClass('was-validated');
+
+                            } else {
+                                switch_connect_status();
+
+                                get_sql_code_window.modal("toggle");
+                                mssql_connect_window.modal("toggle");
+                            }
+
                         } catch (e) {
                             console.log(e);
-                        }
-
-
-                        if (connect['code'] === 18456) {
-
-                            login.addClass('is-invalid');
-                            password.addClass('is-invalid');
-                            database.addClass('is-invalid');
-                            $('#form_new_mssql_connect').addClass('was-validated');
-
-                        } else {
-
-                            swich_connect_status();
-
-                            get_sql_code_window.modal("toggle");
-                            mssql_connect_window.modal("toggle");
                         }
                     } else {
                         server_name.addClass('is-invalid');
                         $('#form_new_mssql_connect').addClass('was-validated');
                     }
-
                     return false;
                 });
 
             } else {
-
                 SQL_str = editor.getValue();
 
-                swich_connect_status();
+                switch_connect_status();
 
                 try {
-                    var result = mssql_query(SQL_str);
+                    let result = mssql_query(SQL_str);
                     console.log(result);
+
+                    if (result && result.length !== 0) {
+                        result_viewer.insert(result['message'] + "\n");
+
+                        if (typeof result['result'] !== "undefined" && result['result'].length !== 0) {
+                            let formatted_server_result = format_server_result(result['result']);
+
+                            $('#result_table_wrapper').remove();
+                            $("#output_block").append("<table id=\"result_table\" class=\"table table-striped table-bordered\" style=\"width:80%\"></table>");
+
+                            $('#result_table').dataTable({
+                                'data': formatted_server_result['dataset'],
+                                'columns': formatted_server_result['columns'],
+                                "scrollX": true,
+                                'language': {
+                                    'url': "../lib/datatables/russian.json"
+                                }
+                            });
+                        }
+                    } else {
+                        result_viewer.insert("Сервер вернул пустой ответ!\n");
+                    }
                 } catch (err) {
                     console.log(err)
                 }
-
-                if (result && result.length !== 0) {
-
-                    result_viewer.insert(result['message'] + "\n");
-
-
-                    if (typeof result['result'] !== "undefined" && result['result'].length !== 0) {
-
-                        var formatted_server_result = format_server_result(result['result']);
-
-
-                        $('#result_table_wrapper').remove();
-                        $("#output_block").append("<table id=\"result_table\" class=\"table table-striped table-bordered\" style=\"width:80%\"></table>");
-
-
-                        $('#result_table').dataTable({
-                            'data': formatted_server_result['dataset'],
-                            'columns': formatted_server_result['columns'],
-                            "scrollX": true,
-                            'language': {
-                                'url': "../lib/datatables/russian.json"
-                            }
-                        });
-                    }
-
-                } else {
-                    result_viewer.insert("Сервер вернул пустой ответ!\n");
-                }
-
             }
-
-
         });
     }
 
@@ -1088,10 +1060,9 @@ function open_server_connect_window() {
     function get_sql_code(data_diagram) {
 
         function get_main_PK(data_diagram, main_id) {
-            var result;
+            let result;
 
             jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
-
                 if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)) {
                     result = attribute;
                     return false;
@@ -1100,43 +1071,46 @@ function open_server_connect_window() {
             return result;
         }
 
-        var RESULT_SQL_CODE = [];
+        let RESULT_SQL_CODE = [];
 
         jQuery.each(data_diagram['mains'], function (main_index, main) {
-
-            var SQL_str = "";
-            var all_attributes = [];
+            let SQL_str = "";
+            let all_attributes = [];
 
             SQL_str += "CREATE TABLE " + main['name'] + " (\n";
 
             jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
-
-                var PK_str = "";
-                var attr_str = "";
+                let PK_str = "";
+                let attr_str = "";
 
                 if (attribute['parent'] === main_index) {
+                    let data_len;
+                    if (attribute['data_type'] === "int") {
+                        data_len = "";
+                    } else {
+                        data_len = "(" + attribute['len_data'] + ")";
+                    }
+
                     if (attribute['primary_key'] === "true") {
-                        PK_str += "  " + attribute['name'] + " " + attribute['data_type'] + "(" + attribute['len_data'] + ")" + " " + "NOT NULL CONSTRAINT PK_" + attribute['name'] + " PRIMARY KEY(" + attribute['name'] + ")";
+                        PK_str += "  " + attribute['name'] + " " + attribute['data_type'] + data_len + " " + "NOT NULL CONSTRAINT PK_" + attribute['name'] + " PRIMARY KEY(" + attribute['name'] + ")";
                         all_attributes.push(PK_str);
                     } else {
-                        attr_str += "  " + attribute['name'] + " " + attribute['data_type'] + "(" + attribute['len_data'] + ")";
+                        attr_str += "  " + attribute['name'] + " " + attribute['data_type'] + data_len;
                         all_attributes.push(attr_str);
                     }
                 }
-
             });
 
             jQuery.each(data_diagram['relationships'], function (rel_index, relationship) {
-
-                var attr_str = "";
+                let attr_str = "";
 
                 if (relationship['second'] === main_index) {
-                    var first_main_PK = get_main_PK(data_diagram, relationship['first']),
+                    let first_main_PK = get_main_PK(data_diagram, relationship['first']),
                         first_main_PK_name = first_main_PK['name'],
                         first_main_PK_type = first_main_PK['data_type'],
                         first_main_PK_len = first_main_PK['len_data'];
 
-                    var first_main_name = data_diagram['mains'][relationship['first']]['name'],
+                    let first_main_name = data_diagram['mains'][relationship['first']]['name'],
                         second_main_name = data_diagram['mains'][relationship['second']]['name'];
 
                     attr_str += "  " + first_main_PK_name + "_FK " + first_main_PK_type + "(" + first_main_PK_len + "), \n  " +
@@ -1145,44 +1119,44 @@ function open_server_connect_window() {
 
                     all_attributes.push(attr_str);
                 }
-
             });
 
             SQL_str += all_attributes.join(',\n') + "\n);\n\n";
 
             RESULT_SQL_CODE.push(SQL_str);
         });
-
         return RESULT_SQL_CODE;
     }
 
 
-    var SQL_str = get_sql_code(data_diagram).join('\n');
+    let SQL_str = get_sql_code(data_diagram).join('\n');
 
-    var editor = ace.edit("sql_code_editor", {
-        theme: "ace/theme/sqlserver",
-        mode: "ace/mode/sqlserver",
-        maxLines: 20,
-        wrap: true,
-        autoScrollEditorIntoView: true
-    });
+    let editor = ace.edit("sql_code_editor",
+        {
+            theme: "ace/theme/sqlserver",
+            mode: "ace/mode/sqlserver",
+            maxLines: 20,
+            wrap: true,
+            autoScrollEditorIntoView: true
+        }
+    );
     editor.session.setValue("");
     editor.insert(SQL_str);
 
 
-    var result_viewer = ace.edit("result_viewer", {
-        theme: "ace/theme/sqlserver",
-        mode: "ace/mode/sqlserver",
-        maxLines: 10,
-        wrap: true,
-        readOnly: true,
-        autoScrollEditorIntoView: true
-    });
+    let result_viewer = ace.edit("result_viewer",
+        {
+            theme: "ace/theme/sqlserver",
+            mode: "ace/mode/sqlserver",
+            maxLines: 10,
+            wrap: true,
+            readOnly: true,
+            autoScrollEditorIntoView: true
+        }
+    );
     result_viewer.session.setValue("");
 
-
     connect_and_insert_to_server(editor, result_viewer);
-
 }
 
 $(document).ready(function () {
