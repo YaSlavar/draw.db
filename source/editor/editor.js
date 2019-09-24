@@ -712,12 +712,11 @@ function save_diagram() {
 function save_diagram_img() {
 
     setTimeout(function () {
-
-        let img = html2canvas(document.getElementById('screenshot_zone')).then(function (canvas) {
+        let img = html2canvas(document.getElementById('screenshots_zone')).then(function (canvas) {
             let REQUEST_DATA = {};
             img = canvas.toDataURL("image/png", 1);
 
-            REQUEST_DATA['image'] = img.replace(/^data:image\/(png|jpg);base64,/, "");
+            REQUEST_DATA['image'] = img;
             REQUEST_DATA['diagram_id'] = get_diagram_id();
 
             $.ajax({
@@ -729,7 +728,7 @@ function save_diagram_img() {
                     console.log("Снимок диаграммы сохранен!");
                 }
             }).done(function (img) {
-
+                // console.log(img);
                 let image_path = "user_data/" + img;
 
                 let preview_image = $('#preview_image');

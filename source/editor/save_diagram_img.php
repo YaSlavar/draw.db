@@ -12,12 +12,23 @@ $name = $_POST['diagram_id'];
 $location = "../user_data";
 
 $image = str_replace('data:image/png;base64,', '', $image);
-$decoded = base64_decode($image);
+$bin = base64_decode($image);
 
-$image_name = $name . ".png";
+$size = getimagesizefromstring($bin);
+
+if (empty($size['mime']) || strpos($size['mime'], 'image/') !== 0){
+    echo ("Изображение имеет неполную структуру");
+}
+
+$ext = substr($size['mime'], 6);
+
+if (!in_array($ext, ['png', 'gif', 'jpg'])){
+    echo ("Неподдерживаемый тип изоюражения");
+}
+
+$image_name = $name . ".{$ext}";
 $image_path = $location . "/" . $image_name;
 
-file_put_contents($image_path, $decoded, LOCK_EX);
-
+file_put_contents($image_path, $bin);
 
 echo $image_name;

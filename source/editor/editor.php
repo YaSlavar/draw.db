@@ -18,7 +18,7 @@
     </header>
 
     <div class="container-fluid work_zone">
-        <div class="work_zone_container" id="screenshot_zone">
+        <div class="work_zone_container" id="screenshots_zone">
             <svg class="canvas">
                 <pattern id="grid" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="scale(1)">
                     <line x1="5" y1="0" x2="5" y2="10" style="stroke: #cccccc3d;"></line>
@@ -82,7 +82,7 @@
 <script src="editor/editor.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function (elementId) {
+    $(document).ready(function () {
         $(".work_zone_container").draggable();
 
         load_diagram();
