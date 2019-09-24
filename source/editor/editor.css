@@ -185,6 +185,20 @@ div#logo{
     z-index: 1030;
 }
 
+.big_checkbox{
+    width: 20px;
+    height: 20px;
+    margin-left: -2rem;
+}
+
+.big_checkbox_form{
+    padding-left: 2.1rem;
+}
+
+.big_checkbox_lable{
+    padding-top: 2px;
+}
+
 /*MAIN OPTION BOTTOM*/
 .options{
     position: absolute;

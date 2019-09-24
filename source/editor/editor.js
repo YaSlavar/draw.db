@@ -356,24 +356,155 @@ function add_main(edit_main_id = NaN) {
 
 // TODO: Добавить проверку на единственный PRIMARY KEY
 function add_attribute(main_id, edit_attr_id = NaN) {
+
+    function change_data_len(input_attr_data_type) {
+        let input_len_data_type_group = $('.attribute_data_len');
+
+        function change() {
+            let data_type = input_attr_data_type.val();
+            if (data_type === "int") {
+                input_len_data_type_group.css("display", "none");
+            } else {
+                input_len_data_type_group.css("display", "flex");
+            }
+        }
+
+        change();
+        input_attr_data_type.off('change').on('change', change);
+    }
+
+    function validate_attribute_name(edit_type) {
+        let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
+
+        let attribute_name = input_name_attribute.val();
+        let check_list = validate_value(edit_type, 'attribute', attribute_name);
+
+        input_name_attribute.off('change').on('change', function () {
+            let attribute_name = input_name_attribute.val();
+
+            check_list = validate_value(edit_type, 'attribute', attribute_name);
+
+            if (check_list['total_false'] > 0) {
+                let error_list = Array();
+
+                if (!check_list['check_not_free_value']) {
+                    error_list.push("Название не может быть пустой строкой!");
+                }
+
+                if (!check_list['check_space']) {
+                    error_list.push("В названии сущности присутствуют пробельные символы!");
+                }
+
+                if (!check_list['check_num_in_start_of_string']) {
+                    error_list.push("Название не может начинаться с цифры!");
+                }
+
+                if (!check_list['check_uniq'] && edit_type === 'add') {
+                    error_list.push("Название не уникально!");
+                }
+
+                let error_str = error_list.join("<br>");
+
+                attribute_invalid_feedback.removeClass('valid-feedback');
+                attribute_invalid_feedback.addClass('invalid-feedback');
+                attribute_invalid_feedback.html(error_str);
+                input_name_attribute.removeClass('is-valid');
+                input_name_attribute.addClass('is-invalid');
+
+                button_new_attribute.off('click');
+
+            } else {
+                attribute_invalid_feedback.removeClass('invalid-feedback');
+                attribute_invalid_feedback.addClass('valid-feedback');
+                attribute_invalid_feedback.html("Название допустимо!");
+                input_name_attribute.removeClass('is-invalid');
+                input_name_attribute.addClass('is-valid');
+
+                button_new_attribute.on('click', send_form);
+            }
+        });
+    }
+
+    function check_uniq_PK() {
+        let PK_invalid_feedback = $('#PK_invalid_feedback');
+        let diagram_data = get_diagram_info();
+
+        function check() {
+            let _PK = null;
+            jQuery.each(diagram_data['attributes'], function (index, elem) {
+                if (elem['primary_key'] === 'true' && index !== edit_attr_id) {
+                    _PK = Number(index);
+                    return false;
+                }
+            });
+
+            if (_PK !== null && _PK !== edit_attr_id) {
+                primary_key_checkbox.prop('disabled', true);
+                PK_invalid_feedback.html("Для данной сущности уже существует артибут с превичным ключём!");
+            } else {
+                primary_key_checkbox.prop('disabled', false);
+                PK_invalid_feedback.html("");
+            }
+        }
+
+        check();
+        primary_key_checkbox.off('change').on('change', check);
+    }
+
+    function send_form() {
+
+        let attribute_name = input_name_attribute.val();
+        let data_type = input_attr_data_type.val();
+        let primary_key = primary_key_checkbox.prop("checked");
+
+        let len_data;
+        if (data_type === "int") {
+            len_data = null;
+        } else {
+            len_data = input_len_data_type.val();
+        }
+
+        new_attribute_window.modal("toggle");
+
+        if ($('div').is(edited_attribute)) {
+            let edited_attribute_text = edited_attribute.children(".attribute_text");
+            edited_attribute_text.text(attribute_name);
+            edited_attribute.attr("data_type", data_type);
+            edited_attribute.attr("len_data", len_data);
+            edited_attribute.attr("primary_key", primary_key);
+            if (primary_key === true) {
+                edited_attribute_text.addClass("is_primary_key");
+            } else {
+                edited_attribute_text.removeClass("is_primary_key");
+            }
+        } else {
+            $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
+            let canvas = $(".canvas");
+            canvas.append(add_link(main_id, attribute_id));
+            // перерисовка svg
+            canvas.html(canvas.html());
+            draggable_box();
+        }
+    }
+
     let attribute_id = randInt();
+    let edited_attribute = $('.attribute[id="' + edit_attr_id + '"]');
 
     let new_attribute_window = $("#new_attribute");
-    new_attribute_window.modal("toggle");
+    let new_attribute_title = $('#new_attribute_title');
 
-    let input_name_new_attribute = $('input[name="attribute_name"]');
-    let input_attr_datatype = $('select[name="attr_datatype"]');
-    let input_len_datatype = $('input[name="attr_data_len"]');
+    let input_name_attribute = $('input[name="attribute_name"]');
+    let input_attr_data_type = $('select[name="attr_datatype"]');
+    let input_len_data_type = $('input[name="attr_data_len"]');
     let primary_key_checkbox = $('input[name="primary_key"]');
+    let button_new_attribute = $('#btn_new_attribute');
 
-    let input_len_datatype_group = $('.attribute_data_len');
-
-    input_name_new_attribute.val("");
-    input_attr_datatype.empty();
-    input_len_datatype.val(0);
+    new_attribute_window.modal("toggle");
+    input_name_attribute.val("");
+    input_attr_data_type.empty();
+    input_len_data_type.val(0);
     primary_key_checkbox.prop('checked', false);
-
-    input_attr_datatype.append(
+    input_attr_data_type.append(
         '<option value="int">int</option>' +
         '<option value="char">char</option>' +
         '<option value="float">float</option>' +
@@ -382,111 +513,32 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         '<option value="date">date</option>'
     );
 
-    let edited_attribute = $('.attribute[id="' + edit_attr_id + '"]');
-
+    let edit_type;
     if ($('div').is(edited_attribute)) {
-        $('#new_attribute_title').text("Изменение атрибута");
-        $('#btn_new_attribute').text("Измененить!");
-        input_name_new_attribute.val(edited_attribute.children(".attribute_text").text());
-        input_attr_datatype.val(edited_attribute.attr("data_type"));
-        input_len_datatype.val(edited_attribute.attr("len_data"));
-        primary_key_checkbox.prop('checked', edited_attribute.attr("primary_key"));
+
+        edit_type = "change";
+
+        new_attribute_title.text("Изменение атрибута");
+        button_new_attribute.text("Измененить!");
+        input_name_attribute.val(edited_attribute.children(".attribute_text").text());
+        input_attr_data_type.val(edited_attribute.attr("data_type"));
+        input_len_data_type.val(edited_attribute.attr("len_data"));
+
+        let is_PK = (edited_attribute.attr("primary_key") === 'true');
+        primary_key_checkbox.prop('checked', is_PK);
+
     } else {
-        $('#new_attribute_title').text("Добавление нового атрибута");
-        $('#btn_new_attribute').text("Добавить!");
+        edit_type = "add";
+
+        new_attribute_title.text("Добавление нового атрибута");
+        button_new_attribute.text("Добавить!");
     }
 
-    input_attr_datatype.off('change').on('change', function () {
-        if (input_attr_datatype.val() === "int") {
-            input_len_datatype_group.css("display", "none");
-        } else {
-            input_len_datatype_group.css("display", "flex");
-        }
-    });
+    validate_attribute_name(edit_type);
+    change_data_len(input_attr_data_type);
+    check_uniq_PK();
 
-    input_name_new_attribute.off('change').on('change', function () {
-        let name_new_attribute = input_name_new_attribute.val();
-        let data_type = input_attr_datatype.val();
-        let len_data;
-
-        if (data_type === "int") {
-            len_data = null;
-        } else {
-            len_data = input_len_datatype.val();
-        }
-
-        let primary_key = primary_key_checkbox.prop("checked");
-
-        let change_type = "add";
-        if ($('div').is(edited_attribute)) {
-            change_type = "change";
-        }
-
-        let check_list = validate_value(change_type, 'attribute', name_new_attribute);
-        let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
-
-        if (check_list['total_false'] > 0) {
-            let error_list = Array();
-
-            if (!check_list['check_not_free_value']) {
-                error_list.push("Название не может быть пустой строкой!");
-            }
-
-            if (!check_list['check_space']) {
-                error_list.push("В названии сущности присутствуют пробельные символы!");
-            }
-
-            if (!check_list['check_num_in_start_of_string']) {
-                error_list.push("Название не может начинаться с цифры!");
-            }
-
-            if (!check_list['check_uniq'] && change_type === 'add') {
-                error_list.push("Название не уникально!");
-            }
-
-            let error_str = error_list.join("<br>");
-
-            attribute_invalid_feedback.removeClass('valid-feedback');
-            attribute_invalid_feedback.addClass('invalid-feedback');
-            attribute_invalid_feedback.html(error_str);
-            input_name_new_attribute.removeClass('is-valid');
-            input_name_new_attribute.addClass('is-invalid');
-
-            $("#btn_new_attribute").off('click');
-
-        } else {
-            attribute_invalid_feedback.removeClass('invalid-feedback');
-            attribute_invalid_feedback.addClass('valid-feedback');
-            attribute_invalid_feedback.html("Название допустимо!");
-            input_name_new_attribute.removeClass('is-invalid');
-            input_name_new_attribute.addClass('is-valid');
-
-            $("#btn_new_attribute").off('click').on('click', function () {
-
-                new_attribute_window.modal("toggle");
-
-                if ($('div').is('.attribute[id="' + edit_attr_id + '"]')) {
-                    let edited_attribute_text = edited_attribute.children(".attribute_text");
-                    edited_attribute_text.text(name_new_attribute);
-                    edited_attribute.attr("data_type", data_type);
-                    edited_attribute.attr("len_data", len_data);
-                    edited_attribute.attr("primary_key", primary_key);
-                    if (primary_key === true) {
-                        edited_attribute_text.addClass("is_primary_key");
-                    } else {
-                        edited_attribute_text.removeClass("is_primary_key");
-                    }
-                } else {
-                    $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, name_new_attribute, data_type, len_data, primary_key));
-                    let canvas = $(".canvas");
-                    canvas.append(add_link(main_id, attribute_id));
-                    // перерисовка svg
-                    canvas.html(canvas.html());
-                    draggable_box();
-                }
-            });
-        }
-    });
+    button_new_attribute.off('click').on('click', send_form);
 }
 
 
@@ -622,15 +674,17 @@ function remove_attr(attr_id) {
     draggable_box();
 }
 
+
 function remove_relationship(rel_id) {
     $('.relationship[id="' + rel_id + '"]').remove();
     $('.link[parent="' + rel_id + '"]').remove();
     draggable_box();
 }
 
-// SAVE
 
-function save_diagram() {
+// SAVE
+function get_diagram_info() {
+
     let Out_JSON = {};
     let mains = {};
     let attributes = {};
@@ -695,17 +749,22 @@ function save_diagram() {
     Out_JSON['diagram_id'] = get_diagram_id();
     Out_JSON['diagram_name'] = $('div#diagram_name').text();
 
-    // console.log(JSON.stringify(Out_JSON));
+    return Out_JSON;
+}
+
+
+function save_diagram() {
+    let diagram_data = get_diagram_info();
 
     $.ajax({
         type: "POST",
         url: "editor/save.php",
-        data: Out_JSON
+        data: diagram_data
     }).done(function (msg) {
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
-    return Out_JSON;
+    return diagram_data;
 }
 
 
@@ -740,6 +799,7 @@ function save_diagram_img() {
         });
     }, 300);
 }
+
 
 function open_screenshot_window() {
     save_diagram_img();
@@ -821,7 +881,6 @@ function load_diagram(diagram_id) {
 
 
 // MSSQL FUNCTIONS
-
 function mssql_connect_check() {
     let REQUEST_DATA = {};
 
@@ -836,6 +895,7 @@ function mssql_connect_check() {
 
     return JSON.parse(result)
 }
+
 
 function mssql_connect(server_name, database, login, password) {
     let REQUEST_DATA = {};
@@ -858,7 +918,6 @@ function mssql_connect(server_name, database, login, password) {
 
 // mssql_connect('msuniversity.ru,1450', "Polenok", "Polenok", 'koneloP');
 
-
 function mssql_disconnect() {
     let REQUEST_DATA = {};
 
@@ -873,6 +932,7 @@ function mssql_disconnect() {
 
     return JSON.parse(result)
 }
+
 
 function mssql_query(sql_query) {
     let REQUEST_DATA = {};
@@ -891,7 +951,6 @@ function mssql_query(sql_query) {
 }
 
 // console.log(mssql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES"));
-
 
 function open_server_connect_window() {
 
@@ -918,21 +977,6 @@ function open_server_connect_window() {
         });
 
     }
-
-    let data_diagram = save_diagram();
-
-    let get_sql_code_window = $("#get_sql_code");
-    let mssql_connect_window = $('#new_mssql_connect');
-    get_sql_code_window.modal("toggle");
-
-    let sql_code_viewer = $('#sql_code_viewer');
-    sql_code_viewer.html('');
-
-    let mssql_connect_description = $('#mssql_connect_description');
-
-    switch_connect_status();
-
-    disconnect();
 
 
     function format_server_result(server_result) {
@@ -968,6 +1012,7 @@ function open_server_connect_window() {
         });
         return {columns: columns, dataset: dataset};
     }
+
 
     function connect_and_insert_to_server(editor, result_viewer) {
         $('#insert_sql_to_server').off('click').on('click', function () {
@@ -1127,6 +1172,21 @@ function open_server_connect_window() {
         return RESULT_SQL_CODE;
     }
 
+
+    let data_diagram = save_diagram();
+
+    let get_sql_code_window = $("#get_sql_code");
+    let mssql_connect_window = $('#new_mssql_connect');
+    get_sql_code_window.modal("toggle");
+
+    let sql_code_viewer = $('#sql_code_viewer');
+    sql_code_viewer.html('');
+
+    let mssql_connect_description = $('#mssql_connect_description');
+
+    switch_connect_status();
+
+    disconnect();
 
     let SQL_str = get_sql_code(data_diagram).join('\n');
 

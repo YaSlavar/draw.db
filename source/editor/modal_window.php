@@ -68,9 +68,10 @@
                                        max="9999">
                             </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" name="primary_key" title="">
-                            <label class="form-check-label" for="primary_key">Первичный ключ</label>
+                        <div class="big_checkbox_form form-check">
+                            <input class="big_checkbox form-check-input" type="checkbox" value="" name="primary_key" title="">
+                            <label class="big_checkbox_lable form-check-label" for="primary_key">Первичный ключ</label>
+                            <div id="PK_invalid_feedback"></div>
                         </div>
                         <div class="error"></div>
                     </div>
