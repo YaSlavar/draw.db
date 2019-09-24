@@ -354,7 +354,7 @@ function add_main(edit_main_id = NaN) {
     });
 }
 
-// TODO: Добавить проверку на единственный PRIMARY KEY
+// TODO: Сделать проверку заполненности длины значения
 function add_attribute(main_id, edit_attr_id = NaN) {
 
     function change_data_len(input_attr_data_type) {
@@ -374,16 +374,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     }
 
     function validate_attribute_name(edit_type) {
-        let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
 
-        let attribute_name = input_name_attribute.val();
-        let check_list = validate_value(edit_type, 'attribute', attribute_name);
-
-        input_name_attribute.off('change').on('change', function () {
-            let attribute_name = input_name_attribute.val();
-
-            check_list = validate_value(edit_type, 'attribute', attribute_name);
-
+        function check() {
             if (check_list['total_false'] > 0) {
                 let error_list = Array();
 
@@ -410,8 +402,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                 attribute_invalid_feedback.html(error_str);
                 input_name_attribute.removeClass('is-valid');
                 input_name_attribute.addClass('is-invalid');
-
-                button_new_attribute.off('click');
+                is_OK = false;
 
             } else {
                 attribute_invalid_feedback.removeClass('invalid-feedback');
@@ -419,9 +410,20 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                 attribute_invalid_feedback.html("Название допустимо!");
                 input_name_attribute.removeClass('is-invalid');
                 input_name_attribute.addClass('is-valid');
-
-                button_new_attribute.on('click', send_form);
+                is_OK = true;
             }
+        }
+
+        let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
+
+        let attribute_name = input_name_attribute.val();
+        let check_list = validate_value(edit_type, 'attribute', attribute_name);
+        check();
+
+        input_name_attribute.off('change').on('change', function () {
+            let attribute_name = input_name_attribute.val();
+            check_list = validate_value(edit_type, 'attribute', attribute_name);
+            check();
         });
     }
 
@@ -464,26 +466,34 @@ function add_attribute(main_id, edit_attr_id = NaN) {
             len_data = input_len_data_type.val();
         }
 
-        new_attribute_window.modal("toggle");
+        if (is_OK) {
+            new_attribute_window.modal("toggle");
 
-        if ($('div').is(edited_attribute)) {
-            let edited_attribute_text = edited_attribute.children(".attribute_text");
-            edited_attribute_text.text(attribute_name);
-            edited_attribute.attr("data_type", data_type);
-            edited_attribute.attr("len_data", len_data);
-            edited_attribute.attr("primary_key", primary_key);
-            if (primary_key === true) {
-                edited_attribute_text.addClass("is_primary_key");
+            if ($('div').is(edited_attribute)) {
+
+                let edited_attribute_text = edited_attribute.children(".attribute_text");
+                edited_attribute_text.text(attribute_name);
+                edited_attribute.attr("data_type", data_type);
+                edited_attribute.attr("len_data", len_data);
+                edited_attribute.attr("primary_key", primary_key);
+
+                if (primary_key === true) {
+
+                    edited_attribute_text.addClass("is_primary_key");
+
+                } else {
+
+                    edited_attribute_text.removeClass("is_primary_key");
+                }
             } else {
-                edited_attribute_text.removeClass("is_primary_key");
+
+                $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
+                let canvas = $(".canvas");
+                canvas.append(add_link(main_id, attribute_id));
+                // перерисовка svg
+                canvas.html(canvas.html());
+                draggable_box();
             }
-        } else {
-            $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
-            let canvas = $(".canvas");
-            canvas.append(add_link(main_id, attribute_id));
-            // перерисовка svg
-            canvas.html(canvas.html());
-            draggable_box();
         }
     }
 
@@ -534,6 +544,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         button_new_attribute.text("Добавить!");
     }
 
+    let is_OK;
     validate_attribute_name(edit_type);
     change_data_len(input_attr_data_type);
     check_uniq_PK();
