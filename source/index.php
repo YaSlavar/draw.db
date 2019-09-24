@@ -38,7 +38,6 @@ require_once 'config.php';
         <script src="lib/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
         <link rel="stylesheet" type="text/css" href="lib/datatables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css"/>
         <script type="text/javascript" src="lib/datatables/datatables.min.js"></script>
-        <script type="text/javascript" src="lib/datatables/datatables.bootstrap4.js"></script>
         <link rel="stylesheet" href="editor/editor.css">
 
     <? }elseif (!isset($_GET['edit'])){ ?>
