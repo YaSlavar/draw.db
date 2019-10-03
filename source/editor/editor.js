@@ -123,7 +123,7 @@ function draggable_box() {
     });
 }
 
-
+// Оппа, посхалочка)))0)
 //ADD
 function add_main_block(main_id, name_new_main) {
     return '<div class=\"box main\" id=\"' + main_id + '\">' +
@@ -664,9 +664,24 @@ function remove_main(main_id) {
     let work_zone_container = $(".work_zone_container");
     let attributes = work_zone_container.children('[parent="' + main_id + '"]');
 
+    let relationships = work_zone_container.children('.relationship');
+
+    console.log(relationships);
+
+    relationships.each(function (i, elem) {
+
+        if (Number($(elem).attr('first')) === main_id || Number($(elem).attr('second')) === main_id){
+            remove_relationship($(elem).attr('id'));
+        }
+    });
+
+
+
     attributes.each(function (i, elem) {
         $('.attribute[parent="' + $(elem).attr("parent") + '"]').remove();
     });
+
+
 
     let canvas = $(".canvas");
     let links = canvas.children('[parent="' + main_id + '"]');
@@ -927,7 +942,6 @@ function mssql_connect(server_name, database, login, password) {
     return JSON.parse(result)
 }
 
-// mssql_connect('msuniversity.ru,1450', "Polenok", "Polenok", 'koneloP');
 
 function mssql_disconnect() {
     let REQUEST_DATA = {};
@@ -961,7 +975,6 @@ function mssql_query(sql_query) {
     return JSON.parse(result)
 }
 
-// console.log(mssql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES"));
 
 function open_server_connect_window() {
 
@@ -1230,5 +1243,6 @@ function open_server_connect_window() {
 }
 
 $(document).ready(function () {
-
+    // console.log(mssql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES"));
+    // mssql_connect('msuniversity.ru,1450', "Polenok", "Polenok", 'koneloP');
 });
