@@ -27,7 +27,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button id="btn_new_main" type="button" class="btn btn-primary btn_bg_color">Создать!</button>
+                    <button id="btn_new_main" type="button" class="btn btn-primary btn_bg_color">Создать</button>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button id="btn_new_attribute" type="button" class="btn btn-primary btn_bg_color">Добавить!
+                    <button id="btn_new_attribute" type="button" class="btn btn-primary btn_bg_color">Добавить
                     </button>
                 </div>
 
@@ -116,7 +116,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button id="btn_new_relationship" type="submit" class="btn btn-primary btn_bg_color">Создать!
+                        <button id="btn_new_relationship" type="submit" class="btn btn-primary btn_bg_color">Создать
                         </button>
                     </div>
                 </form>
@@ -142,7 +142,7 @@
                     <div id="input_block" class="mb-3">
                         <div class="input-group mb-2">
                             <h6 class="modal-title" id="mssql_connect_description"></h6>
-                            <button id="btn_disconnect" type="button" class="btn btn-danger">Разъединить!</button>
+                            <button id="btn_disconnect" type="button" class="btn btn-danger">Разъединить</button>
                         </div>
                         <h6 class="modal-title" id="mssql_result_description">Запрос для выполнения на сервере: </h6>
                         <div id="sql_code_editor"></div>
@@ -158,7 +158,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="insert_sql_to_server" type="button" class="btn btn-primary btn_bg_color">Выполнить
-                        запрос!
+                        запрос
                     </button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                 </div>
@@ -223,7 +223,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button id="btn_new_connect" type="submit" class="btn btn-primary btn_bg_color">Соеднить!
+                        <button id="btn_new_connect" type="submit" class="btn btn-primary btn_bg_color">Соеднить
                         </button>
                     </div>
                 </form>
@@ -251,7 +251,7 @@
                 </div>
                 <div class="modal-footer">
                     <a href="" download="export.png" id="download_diagram_img" class="btn btn-primary btn_bg_color">Сохранить
-                        изображение на диск!</a>
+                        изображение на диск</a>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                 </div>
             </div>

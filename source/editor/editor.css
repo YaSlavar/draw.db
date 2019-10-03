@@ -171,18 +171,25 @@ div#logo{
 .btn_bg_color{
     background-color: #3f51b5;
 }
-.option_bottoms{
+.padding-20{
     padding: 20px;
 }
 .toggle_options_bottom_case{
     display: none;
 }
 
-.fix-bottom{
+.fix-bottom-left{
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 1030;
+}
+
+.fix-bottom-right{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 1040;
 }
 
 .big_checkbox{

@@ -278,11 +278,11 @@ function add_main(edit_main_id = NaN) {
 
     if ($('div').is(edited_main)) {
         $('#new_diagramm_title').text("Изменение сущности");
-        $('#btn_new_main').text("Измененить!");
+        $('#btn_new_main').text("Изменить");
         name_new_main_input.val(edited_main.children(".main_text").text());
     } else {
         $('#new_diagramm_title').text("Создание новой сущности");
-        $('#btn_new_main').text("Создать!");
+        $('#btn_new_main').text("Создать");
     }
 
     var main_edit_window = $("#new_main");
@@ -306,19 +306,19 @@ function add_main(edit_main_id = NaN) {
             let error_list = Array();
 
             if (!check_list['check_not_free_value']) {
-                error_list.push("Название не может быть пустой строкой!");
+                error_list.push("Название не может быть пустой строкой");
             }
 
             if (!check_list['check_space']) {
-                error_list.push("В названии сущности присутствуют пробельные символы!");
+                error_list.push("В названии сущности присутствуют пробельные символы");
             }
 
             if (!check_list['check_num_in_start_of_string']) {
-                error_list.push("Название не может начинаться с цифры!");
+                error_list.push("Название не может начинаться с цифры");
             }
 
             if (!check_list['check_uniq'] && change_type === 'add') {
-                error_list.push("Название не уникально!");
+                error_list.push("Название не уникально");
             }
 
             let error_str = error_list.join("<br>");
@@ -529,7 +529,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         edit_type = "change";
 
         new_attribute_title.text("Изменение атрибута");
-        button_new_attribute.text("Измененить!");
+        button_new_attribute.text("Изменить");
         input_name_attribute.val(edited_attribute.children(".attribute_text").text());
         input_attr_data_type.val(edited_attribute.attr("data_type"));
         input_len_data_type.val(edited_attribute.attr("len_data"));
@@ -590,7 +590,7 @@ function add_relationship(edit_rel_id) {
 
     if ($('div').is(edited_relationship)) {
         $('#new_relationship_title').text("Изменение связи");
-        $('#btn_new_relationship').text("Измененить!");
+        $('#btn_new_relationship').text("Изменить!");
         rel_description.val(edited_relationship.children(".desc_diamond").text());
         rel_first_main.val(edited_relationship.attr("first"));
         rel_second_main.val(edited_relationship.attr("second"));
@@ -670,17 +670,15 @@ function remove_main(main_id) {
 
     relationships.each(function (i, elem) {
 
-        if (Number($(elem).attr('first')) === main_id || Number($(elem).attr('second')) === main_id){
+        if (Number($(elem).attr('first')) === main_id || Number($(elem).attr('second')) === main_id) {
             remove_relationship($(elem).attr('id'));
         }
     });
 
 
-
     attributes.each(function (i, elem) {
         $('.attribute[parent="' + $(elem).attr("parent") + '"]').remove();
     });
-
 
 
     let canvas = $(".canvas");
@@ -787,6 +785,11 @@ function save_diagram() {
         url: "editor/save.php",
         data: diagram_data
     }).done(function (msg) {
+        let notification_window = $('.toast');
+        let notification_window_text = $('.toast-body');
+
+        notification_window_text.html("Диаграмма успешно сохранена!");
+        notification_window.toast("show");
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
