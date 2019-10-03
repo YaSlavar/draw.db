@@ -340,7 +340,7 @@ function add_main(edit_main_id = NaN) {
         } else {
             main_invalid_feedback.removeClass('invalid-feedback');
             main_invalid_feedback.addClass('valid-feedback');
-            main_invalid_feedback.html("Название допустимо!");
+            main_invalid_feedback.html("Название допустимо");
             name_new_main_input.removeClass('is-invalid');
             name_new_main_input.addClass('is-valid');
 
@@ -413,7 +413,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
             } else {
                 attribute_invalid_feedback.removeClass('invalid-feedback');
                 attribute_invalid_feedback.addClass('valid-feedback');
-                attribute_invalid_feedback.html("Название допустимо!");
+                attribute_invalid_feedback.html("Название допустимо");
                 input_name_attribute.removeClass('is-invalid');
                 input_name_attribute.addClass('is-valid');
                 is_OK = true;
@@ -600,7 +600,7 @@ function add_relationship(edit_rel_id) {
 
     if ($('div').is(edited_relationship)) {
         $('#new_relationship_title').text("Изменение связи");
-        $('#btn_new_relationship').text("Изменить!");
+        $('#btn_new_relationship').text("Изменить");
         rel_description.val(edited_relationship.children(".desc_diamond").text());
         rel_first_main.val(edited_relationship.attr("first"));
         rel_second_main.val(edited_relationship.attr("second"));
@@ -608,7 +608,7 @@ function add_relationship(edit_rel_id) {
         console.log(edited_relationship.children('.diamond').children(".diamond_text"));
     } else {
         $('#new_relationship_title').text("Добавление новой связи");
-        $('#btn_new_relationship').text("Добавить!");
+        $('#btn_new_relationship').text("Добавить");
     }
 
     new_relationship_window.modal("toggle");
@@ -658,7 +658,7 @@ function add_relationship(edit_rel_id) {
             draggable_box();
             new_relationship_window.modal("toggle");
         } else {
-            set_error("Не выбрана одна из сущностей, или выбраны одинаковые сущности!");
+            set_error("Не выбрана одна из сущностей, или выбраны одинаковые сущности");
         }
         return false;
     });
@@ -798,7 +798,7 @@ function save_diagram() {
         let notification_window = $('.toast');
         let notification_window_text = $('.toast-body');
 
-        notification_window_text.html("Диаграмма успешно сохранена!");
+        notification_window_text.html("Диаграмма успешно сохранена");
         notification_window.toast("show");
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
@@ -823,7 +823,7 @@ function save_diagram_img() {
                 async: false,
                 data: REQUEST_DATA,
                 success: function () {
-                    console.log("Снимок диаграммы сохранен!");
+                    console.log("Снимок диаграммы сохранен");
                 }
             }).done(function (img) {
                 // console.log(img);
@@ -1128,7 +1128,7 @@ function open_server_connect_window() {
                             });
                         }
                     } else {
-                        result_viewer.insert("Сервер вернул пустой ответ!\n");
+                        result_viewer.insert("Сервер вернул пустой ответ\n");
                     }
                 } catch (err) {
                     console.log(err)
