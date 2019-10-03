@@ -380,19 +380,19 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                 let error_list = Array();
 
                 if (!check_list['check_not_free_value']) {
-                    error_list.push("Название не может быть пустой строкой!");
+                    error_list.push("Название не может быть пустой строкой");
                 }
 
                 if (!check_list['check_space']) {
-                    error_list.push("В названии сущности присутствуют пробельные символы!");
+                    error_list.push("В названии сущности присутствуют пробельные символы");
                 }
 
                 if (!check_list['check_num_in_start_of_string']) {
-                    error_list.push("Название не может начинаться с цифры!");
+                    error_list.push("Название не может начинаться с цифры");
                 }
 
                 if (!check_list['check_uniq'] && edit_type === 'add') {
-                    error_list.push("Название не уникально!");
+                    error_list.push("Название не уникально");
                 }
 
                 let error_str = error_list.join("<br>");
@@ -418,8 +418,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
         let attribute_name = input_name_attribute.val();
         let check_list = validate_value(edit_type, 'attribute', attribute_name);
-        check();
 
+        check();
         input_name_attribute.off('change').on('change', function () {
             let attribute_name = input_name_attribute.val();
             check_list = validate_value(edit_type, 'attribute', attribute_name);
@@ -434,15 +434,14 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         function check() {
             let _PK = null;
             jQuery.each(diagram_data['attributes'], function (index, elem) {
-                if (elem['primary_key'] === 'true' && index !== edit_attr_id) {
+                if (elem['primary_key'] === 'true' && Number(index) !== edit_attr_id && Number(elem['parent']) === main_id) {
                     _PK = Number(index);
                     return false;
                 }
             });
-
             if (_PK !== null && _PK !== edit_attr_id) {
                 primary_key_checkbox.prop('disabled', true);
-                PK_invalid_feedback.html("Для данной сущности уже существует артибут с превичным ключём!");
+                PK_invalid_feedback.html("Для данной сущности уже существует атрибут с превичным ключом");
             } else {
                 primary_key_checkbox.prop('disabled', false);
                 PK_invalid_feedback.html("");
@@ -511,6 +510,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
     new_attribute_window.modal("toggle");
     input_name_attribute.val("");
+    input_name_attribute.removeClass('is-valid');
+    input_name_attribute.removeClass('is-invalid');
     input_attr_data_type.empty();
     input_len_data_type.val(0);
     primary_key_checkbox.prop('checked', false);
