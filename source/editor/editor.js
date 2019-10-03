@@ -271,18 +271,24 @@ function validate_value(change_type = "add", value_type, value) {
 function add_main(edit_main_id = NaN) {
     let main_id = randInt();
 
+    let main_name_label = $('.main_name_label');
     let name_new_main_input = $('input[name="main_name"]');
+    let new_diagramm_title = $('#new_diagramm_title');
+    let btn_new_main = $('#btn_new_main');
+
     name_new_main_input.val("");
 
     let edited_main = $('.main[id="' + edit_main_id + '"]');
 
     if ($('div').is(edited_main)) {
-        $('#new_diagramm_title').text("Изменение сущности");
-        $('#btn_new_main').text("Изменить");
+        new_diagramm_title.text("Изменение сущности");
+        main_name_label.text("Название сущности:");
+        btn_new_main.text("Изменить");
         name_new_main_input.val(edited_main.children(".main_text").text());
     } else {
-        $('#new_diagramm_title').text("Создание новой сущности");
-        $('#btn_new_main').text("Создать");
+        new_diagramm_title.text("Создание новой сущности");
+        main_name_label.text("Название новой сущности:");
+        btn_new_main.text("Создать");
     }
 
     var main_edit_window = $("#new_main");
@@ -501,6 +507,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
     let new_attribute_window = $("#new_attribute");
     let new_attribute_title = $('#new_attribute_title');
+    let attribute_name_label = $('.attribute_name_label');
 
     let input_name_attribute = $('input[name="attribute_name"]');
     let input_attr_data_type = $('select[name="attr_datatype"]');
@@ -530,6 +537,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         edit_type = "change";
 
         new_attribute_title.text("Изменение атрибута");
+        attribute_name_label.text("Название атрибута:");
         button_new_attribute.text("Изменить");
         input_name_attribute.val(edited_attribute.children(".attribute_text").text());
         input_attr_data_type.val(edited_attribute.attr("data_type"));
@@ -542,7 +550,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         edit_type = "add";
 
         new_attribute_title.text("Добавление нового атрибута");
-        button_new_attribute.text("Добавить!");
+        attribute_name_label.text("Название нового атрибута:");
+        button_new_attribute.text("Добавить");
     }
 
     let is_OK;
