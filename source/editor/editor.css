@@ -209,8 +209,9 @@ div#logo{
 /*MAIN OPTION BOTTOM*/
 .options{
     position: absolute;
+    width: 360px;
     top: -1px;
-    left: 160px;
+    left: 0;
     z-index: 9999;
 }
 .box .box_option_bottom {
@@ -222,12 +223,13 @@ div#logo{
     font-size: 12px;
     display: inline-block;
     margin-left: 15px;
+    float: right;
 }
 
 
 /*relationship*/
 .relationship .options{
-
+    width: 310px;
 }
 .relationship .box_option_bottom {
     display: none;
@@ -238,6 +240,7 @@ div#logo{
     font-size: 12px;
     display: inline-block;
     margin-left: 15px;
+    float: right;
 }
 
 
@@ -283,4 +286,9 @@ button#btn_disconnect{
 /* edit-attribute-modal-window */
 .attribute_data_len{
     display: none;
+}
+
+/* notifications */
+.toast{
+    border-radius: 1.1rem;
 }

@@ -363,20 +363,23 @@ function add_main(edit_main_id = NaN) {
 // TODO: Сделать проверку заполненности длины значения
 function add_attribute(main_id, edit_attr_id = NaN) {
 
-    function change_data_len(input_attr_data_type) {
+    function show_data_len_input(input_attr_data_type) {
+
         let input_len_data_type_group = $('.attribute_data_len');
+        let except_data_type = [
+            "int",
+            "money",
+            "date"
+        ];
+        let data_type = input_attr_data_type.val();
 
-        function change() {
-            let data_type = input_attr_data_type.val();
-            if (data_type === "int") {
-                input_len_data_type_group.css("display", "none");
-            } else {
-                input_len_data_type_group.css("display", "flex");
-            }
+        if (except_data_type.indexOf(data_type) !== -1) {
+            input_len_data_type_group.css("display", "none");
+            return false
+        } else {
+            input_len_data_type_group.css("display", "flex");
+            return true
         }
-
-        change();
-        input_attr_data_type.off('change').on('change', change);
     }
 
     function validate_attribute_name(edit_type, check_list) {
@@ -457,10 +460,11 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         let primary_key = primary_key_checkbox.prop("checked");
 
         let len_data;
-        if (data_type === "int") {
-            len_data = null;
-        } else {
+        console.log(show_data_len_input(input_attr_data_type));
+        if (show_data_len_input(input_attr_data_type)) {
             len_data = input_len_data_type.val();
+        } else {
+            len_data = null;
         }
 
         let check_list = validate_value(edit_type, 'attribute', attribute_name);
@@ -555,8 +559,11 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         validate_attribute_name(edit_type, check_list);
     });
 
+    show_data_len_input(input_attr_data_type);
+    input_attr_data_type.off('change').on('change', function () {
+        show_data_len_input(input_attr_data_type)
+    });
 
-    change_data_len(input_attr_data_type);
     check_uniq_PK();
 
     button_new_attribute.off('click').on('click', send_form);
