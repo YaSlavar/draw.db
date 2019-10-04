@@ -797,6 +797,8 @@ function get_diagram_info() {
 function save_diagram() {
     let diagram_data = get_diagram_info();
 
+    diagram_data['command'] = "save";
+    
     $.ajax({
         type: "POST",
         url: "editor/save.php",

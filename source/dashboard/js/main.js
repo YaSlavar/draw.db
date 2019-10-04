@@ -5,10 +5,21 @@ function randInt() {
 }
 
 
-function create_new_diagram() {
+function create_and_rename_diagram(diagramm_id = NaN) {
 
     let diagram_name_input = $('input[name="diagram_name"]');
     diagram_name_input.val("");
+    let btn_new_diagram = $('#btn_new_diagram');
+
+    let create_and_rename_diagramm_title = $('#create_and_rename_diagramm_title');
+    if (!isNaN(diagramm_id)) {
+        create_and_rename_diagramm_title.text("Переименование диаграммы");
+        btn_new_diagram.text('Переименовать');
+    } else {
+        create_and_rename_diagramm_title.text("Создание новой диаграммы");
+        btn_new_diagram.text('Создать');
+    }
+
 
     let create_new_diagram_window = $("#craete_new_diagram");
     create_new_diagram_window.modal("toggle");
@@ -16,21 +27,38 @@ function create_new_diagram() {
     $("#form_new_diagram").submit(function (event) {
         event.preventDefault();
         let Out_JSON = {};
-        let name_new_diagram = diagram_name_input.val();
+        let new_diagramm_name = diagram_name_input.val();
 
-        if (name_new_diagram !== "") {
+        if (new_diagramm_name !== "") {
 
-            Out_JSON['diagram_id'] = randInt();
-            Out_JSON['diagram_name'] = name_new_diagram;
+            Out_JSON['diagram_name'] = new_diagramm_name;
+
+            if (!isNaN(diagramm_id)) {
+                Out_JSON['command'] = "rename";
+                Out_JSON['diagram_id'] = diagramm_id;
+            } else {
+                Out_JSON['command'] = "create";
+                Out_JSON['diagram_id'] = randInt();
+            }
 
             $.ajax({
                 type: "POST",
                 url: "editor/save.php",
                 data: Out_JSON
             }).done(function () {
-                window.location.href = "?edit=" + Out_JSON['diagram_id'];
+                if (!isNaN(diagramm_id)){
+                    let diagramm_block = $('.diagram_block[diagram_id="' + diagramm_id + '"]');
+                    let diagramm_block_title = diagramm_block.find('.diagram_title');
+                    console.log(diagramm_block_title);
+                    diagramm_block_title.text(new_diagramm_name);
+                    create_new_diagram_window.modal("toggle");
+                } else {
+                    window.location.href = "?edit=" + Out_JSON['diagram_id'];
+                    create_new_diagram_window.modal("toggle");
+                }
+
             });
-            create_new_diagram_window.modal("toggle");
+
         }
         diagram_name_input.val("");
         return false;
@@ -39,13 +67,14 @@ function create_new_diagram() {
 }
 
 
-// TODO: дописать удаление
 function delete_diagram(diagram_id) {
 
     let Out_JSON = {
         "diagram_id": diagram_id,
         "command": "delete"
     };
+
+    console.log(diagram_id);
 
     let diagram_info = load_diagram(diagram_id);
 
@@ -67,12 +96,12 @@ function delete_diagram(diagram_id) {
 
             let status = JSON.parse(msg);
 
-            if(status['error'] === 'none') {
+            if (status['error'] === 'none') {
                 let diagram_block = $('.diagram_block[diagram_id=' + diagram_id + ']');
                 diagram_block.remove();
 
                 check_delete_modal_window.modal("toggle");
-            }else{
+            } else {
                 console.log("При удалении диаграммы произошла ошибка: " + status['error']);
             }
 

@@ -141,6 +141,15 @@ function create_diagramm($diagram_id, $diagram_name, $db)
     $relationships->execute();
 }
 
+function rename_diagramm($diagram_id, $diagram_name, $db)
+{
+    $relationships = $db->prepare('UPDATE diagrams SET diagram_name = :diagram_name WHERE diagram_id =  :diagram_id');
+    $relationships->bindValue(':diagram_id', $diagram_id);
+    $relationships->bindValue(':diagram_name', $diagram_name);
+
+    $relationships->execute();
+}
+
 function clean_diagramm($diagram_id, $db)
 {
     $claen_mains = $db->prepare('DELETE FROM mains WHERE diagram_id = :diagram_id');
@@ -188,14 +197,18 @@ if (isset($_POST['diagram_id'])) {
     if (is_array($check_saved_diagram)) {
         if ($check_saved_diagram['author_id'] == $_SESSION['user']['user_id']) {
 
+
             if ($command === "delete") {
                 clean_diagramm($diagram_id, $db);
                 delete_diagramm($diagram_id, $db);
                 echo('{"status": "delete_ok", "error" : "none"}');
 
-            } else {
+            } elseif($command === "save") {
                 clean_diagramm($diagram_id, $db);
                 save_elements($diagram_id, $db);
+
+            } elseif($command === "rename"){
+                rename_diagramm($diagram_id, $diagram_name, $db);
             }
 
         } else {

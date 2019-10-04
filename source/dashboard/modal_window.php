@@ -13,7 +13,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="message_box_title">Создание новой диаграммы</h5>
+                    <h5 class="modal-title" id="create_and_rename_diagramm_title">Создание новой диаграммы</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -22,12 +22,12 @@
                     <div class="modal-body">
                         <div class="modal-body">
                             <input type="hidden" name="edit" value="" id="diagram_id">
-                            <input type="text" name="diagram_name" class="form-control" placeholder="Введите название новой диаграммы">
+                            <input type="text" name="diagram_name" class="form-control" placeholder="Введите название диаграммы">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button id="btn_new_diagram" type="submit" class="btn btn-primary btn_bg_color">Создать!</button>
+                        <button id="btn_new_diagram" type="submit" class="btn btn-primary btn_bg_color">Создать</button>
                     </div>
                 </form>
             </div>

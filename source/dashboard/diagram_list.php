@@ -13,7 +13,7 @@
     <div class="row h-100 justify-content-center">
         <div class="col-xl-9 col-lg-9 col-md-10 col-sm-12 col-12">
 
-            <header class="main_block head_panel">
+            <header class="head_panel main_block">
                 <div class="row align-items-center">
                     <? if ($_SESSION['user']['avatar'] != '') { ?>
                         <div class="col-sm-auto col-3">
@@ -30,7 +30,7 @@
                     <div class="col-sm-auto">
                         <div class="create_diagramm">
                             <button id="new_diagram" class="login_btn btn btn-primary btn-block"
-                                    onclick="create_new_diagram()">Новая диаграмма
+                                    onclick="create_and_rename_diagram()">Новая диаграмма
                             </button>
                         </div>
                     </div>
@@ -69,12 +69,23 @@
                                         echo($res['diagram_id'] . ".png?id=" . date("YmdHis")) ?>" alt="">
                                     </div>
                                     <div class="diagram_title_block row">
-                                        <a class="diagram_title col" href="?edit=<?
+                                        <a class="diagram_title col-8" href="?edit=<?
                                         echo($res['diagram_id']); ?>">
                                             <?
                                             echo($res['diagram_name']);
                                             ?>
                                         </a>
+                                        <div class="rename_diagramm col-2">
+                                            <button id="rename_<? echo($res['diagram_id']); ?>" type="button"
+                                                    class="rename_diagramm_button" aria-label="Rename"
+                                                    data-toggle="tooltip"
+                                                    data-placement="left"
+                                                    onclick="create_and_rename_diagram(<?
+                                                    echo($res['diagram_id']); ?>);"
+                                                    title="Переименовать диаграмму">
+                                                <div class="rename_diagramm_icon"></div>
+                                            </button>
+                                        </div>
                                         <div class="close_buttom_block col-1">
                                             <button id="delete_<? echo($res['diagram_id']); ?>" type="button"
                                                     class="close close-button" aria-label="Close" data-toggle="tooltip"

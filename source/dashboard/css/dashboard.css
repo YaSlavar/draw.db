@@ -11,6 +11,7 @@
     padding: 25px;
 }
 
+
 .main_block{
     background: white;
     border-radius: 15px;
@@ -21,6 +22,11 @@
 .main_block:hover {
     -webkit-transform: scale(1.03, 1.03);
     transform: scale(1.03, 1.03);
+}
+
+.head_panel:hover{
+    -webkit-transform: none;
+    transform: none;
 }
 
 .avatar {
@@ -74,9 +80,33 @@ img.avatar_size{
     font-weight: 700;
     font-family: Montserrat, sans-serif;
     padding: 0 0 2em 2em;
+    word-break: break-all;
+    overflow-wrap:break-word;
 }
 
 .no_diagrams_title{
     height: 400px;
     width: 100%;
+}
+
+.rename_diagramm_button{
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    /*-webkit-appearance: none;*/
+    /*-moz-appearance: none;*/
+    /*appearance: none;*/
+}
+
+.rename_diagramm_icon{
+    height: 32px;
+    width: 17px;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    background: url('/dashboard/css/icons/edit.svg') no-repeat center;
 }
