@@ -379,58 +379,50 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         input_attr_data_type.off('change').on('change', change);
     }
 
-    function validate_attribute_name(edit_type) {
+    function validate_attribute_name(edit_type, check_list) {
+        /**
+         * Валидация названия атрибута
+         *
+         * @param {string} edit_type - тип редактирования элемента
+         * @param {object} check_list - список параметров значения названия атрибута, прошедших валидацию
+         * @returns {boolean}
+         */
+        if (check_list['total_false'] > 0) {
+            let error_list = Array();
 
-        function check() {
-            if (check_list['total_false'] > 0) {
-                let error_list = Array();
-
-                if (!check_list['check_not_free_value']) {
-                    error_list.push("Название не может быть пустой строкой");
-                }
-
-                if (!check_list['check_space']) {
-                    error_list.push("В названии сущности присутствуют пробельные символы");
-                }
-
-                if (!check_list['check_num_in_start_of_string']) {
-                    error_list.push("Название не может начинаться с цифры");
-                }
-
-                if (!check_list['check_uniq'] && edit_type === 'add') {
-                    error_list.push("Название не уникально");
-                }
-
-                let error_str = error_list.join("<br>");
-
-                attribute_invalid_feedback.removeClass('valid-feedback');
-                attribute_invalid_feedback.addClass('invalid-feedback');
-                attribute_invalid_feedback.html(error_str);
-                input_name_attribute.removeClass('is-valid');
-                input_name_attribute.addClass('is-invalid');
-                is_OK = false;
-
-            } else {
-                attribute_invalid_feedback.removeClass('invalid-feedback');
-                attribute_invalid_feedback.addClass('valid-feedback');
-                attribute_invalid_feedback.html("Название допустимо");
-                input_name_attribute.removeClass('is-invalid');
-                input_name_attribute.addClass('is-valid');
-                is_OK = true;
+            if (!check_list['check_not_free_value']) {
+                error_list.push("Название не может быть пустой строкой");
             }
+
+            if (!check_list['check_space']) {
+                error_list.push("В названии сущности присутствуют пробельные символы");
+            }
+
+            if (!check_list['check_num_in_start_of_string']) {
+                error_list.push("Название не может начинаться с цифры");
+            }
+
+            if (!check_list['check_uniq'] && edit_type === 'add') {
+                error_list.push("Название не уникально");
+            }
+
+            let error_str = error_list.join("<br>");
+
+            attribute_invalid_feedback.removeClass('valid-feedback');
+            attribute_invalid_feedback.addClass('invalid-feedback');
+            attribute_invalid_feedback.html(error_str);
+            input_name_attribute.removeClass('is-valid');
+            input_name_attribute.addClass('is-invalid');
+            return false;
+
+        } else {
+            attribute_invalid_feedback.removeClass('invalid-feedback');
+            attribute_invalid_feedback.addClass('valid-feedback');
+            attribute_invalid_feedback.html("Название допустимо");
+            input_name_attribute.removeClass('is-invalid');
+            input_name_attribute.addClass('is-valid');
+            return true;
         }
-
-        let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
-
-        let attribute_name = input_name_attribute.val();
-        let check_list = validate_value(edit_type, 'attribute', attribute_name);
-
-        check();
-        input_name_attribute.off('change').on('change', function () {
-            let attribute_name = input_name_attribute.val();
-            check_list = validate_value(edit_type, 'attribute', attribute_name);
-            check();
-        });
     }
 
     function check_uniq_PK() {
@@ -471,7 +463,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
             len_data = input_len_data_type.val();
         }
 
-        if (is_OK) {
+        let check_list = validate_value(edit_type, 'attribute', attribute_name);
+        if (validate_attribute_name(edit_type, check_list)) {
             new_attribute_window.modal("toggle");
 
             if ($('div').is(edited_attribute)) {
@@ -510,6 +503,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     let attribute_name_label = $('.attribute_name_label');
 
     let input_name_attribute = $('input[name="attribute_name"]');
+    let attribute_invalid_feedback = $('#attribute_name_invalid_feedback');
     let input_attr_data_type = $('select[name="attr_datatype"]');
     let input_len_data_type = $('input[name="attr_data_len"]');
     let primary_key_checkbox = $('input[name="primary_key"]');
@@ -554,8 +548,14 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         button_new_attribute.text("Добавить");
     }
 
-    let is_OK;
-    validate_attribute_name(edit_type);
+    input_name_attribute.off('change').on('change', function () {
+        let attribute_name = input_name_attribute.val();
+        let check_list = validate_value(edit_type, 'attribute', attribute_name);
+
+        validate_attribute_name(edit_type, check_list);
+    });
+
+
     change_data_len(input_attr_data_type);
     check_uniq_PK();
 
