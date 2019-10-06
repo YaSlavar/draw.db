@@ -86,7 +86,7 @@
                                                 <div class="rename_diagramm_icon"></div>
                                             </button>
                                         </div>
-                                        <div class="close_buttom_block col-1">
+                                        <div class="close_buttom_block col-2">
                                             <button id="delete_<? echo($res['diagram_id']); ?>" type="button"
                                                     class="close close-button" aria-label="Close" data-toggle="tooltip"
                                                     onclick="delete_diagram(<?

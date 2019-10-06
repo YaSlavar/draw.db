@@ -104,6 +104,7 @@ function draggable_box() {
 
         attribute.each(function (i, elem) {
             $('.attribute[id="' + $(elem).attr("id") + '"]').draggable({
+                cursor: "move",
                 drag: function () {
                     setting_link();
                 }
@@ -113,6 +114,7 @@ function draggable_box() {
 
         relationship.each(function (i, elem) {
             $('.relationship[id="' + $(elem).attr("id") + '"]').draggable({
+                cursor: "move",
                 drag: function () {
                     setting_link();
                 }

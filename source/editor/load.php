@@ -45,7 +45,7 @@ require_once('../config.php');
 
             $RES_JSON = json_encode($RESULT_DATE);
             print_r($RES_JSON);
-
+            // TODO: Понять почему происходит ошибка если название диаграммы == цифры
         }else{
             // TODO: Вызвать ошибку загрузки по причеине отсутствия прав
         }
