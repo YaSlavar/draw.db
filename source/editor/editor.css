@@ -130,7 +130,7 @@ div#logo{
     font-weight: 600;
     font-size: 15px;
     padding: 5px;
-    cursor: default;
+    cursor: pointer;
 }
 .light_bottom{
     border-radius: 80px;
@@ -142,7 +142,7 @@ div#logo{
     font-weight: 600;
     font-size: 15px;
     padding: 5px;
-    cursor: default;
+    cursor: pointer;
 }
 .red_bottom{
     background-color: red;
