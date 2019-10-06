@@ -49,7 +49,7 @@ function create_and_rename_diagram(diagramm_id = NaN) {
                 if (!isNaN(diagramm_id)){
                     let diagramm_block = $('.diagram_block[diagram_id="' + diagramm_id + '"]');
                     let diagramm_block_title = diagramm_block.find('.diagram_title');
-                    console.log(diagramm_block_title);
+
                     diagramm_block_title.text(new_diagramm_name);
                     create_new_diagram_window.modal("toggle");
                 } else {
@@ -74,7 +74,7 @@ function delete_diagram(diagram_id) {
         "command": "delete"
     };
 
-    console.log(diagram_id);
+
 
     let diagram_info = load_diagram(diagram_id);
 
