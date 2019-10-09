@@ -36,8 +36,11 @@ require_once 'config.php';
 
     <? if (isset($_GET['edit']) and is_array($_SESSION['user'])) { ?>
 
+
         <script type="text/javascript" src="lib/datatables/datatables.min.js"></script>
         <script src="lib/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="lib/mouseWheel/jquery.mousewheel.min.js"></script>
+        <script src="editor/editor.js"></script>
         <link rel="stylesheet" type="text/css" href="lib/datatables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css"/>
         <link rel="stylesheet" href="editor/editor.css">
 

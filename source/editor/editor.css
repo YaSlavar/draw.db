@@ -1,51 +1,57 @@
 html, body {
     height: 100%
 }
-body{
+
+body {
     overflow: hidden;
     background: #f5f5f5;
 }
+
 /* HEADER*/
-.back_to_diagram_list_box{
+.back_to_diagram_list_box {
     height: 49px;
 }
-.back_to_diagram_list{
+
+.back_to_diagram_list {
     width: 24px;
     height: 24px;
     margin-top: 11px;
     background-image: url("../dashboard/css/icons/go_back.svg");
 }
-.header_text{
+
+.header_text {
     margin-top: 10px;
-    color:white;
+    color: white;
 }
 
-div#logo{
+div#logo {
     font-size: 1.5em;
     color: white;
     padding: 5px 0 8px 15px;
 }
 
-.header{
+.header {
     background-color: #3f51b5;
     box-shadow: 0 1px 20px 0px #bdbdbd;
 }
 
-.error{
+.error {
     color: red;
 }
 
 /* SIDEBAR*/
 
-.sidebar{
+.sidebar {
     min-width: 200px;
     background: #3f51b5;
     z-index: 100;
 }
-.work_zone_container{
+
+.work_zone_container {
     position: fixed;
 }
-.work_zone{
+
+.work_zone {
     margin-top: 50px;
     padding: 0;
     overflow: hidden;
@@ -57,9 +63,9 @@ div#logo{
     background: white;
 }
 
-.box{
+.box {
     position: absolute;
-    top:100px;
+    top: 100px;
     left: 100px;
     width: 165px;
     min-height: 50px;
@@ -70,16 +76,18 @@ div#logo{
     border-radius: 10px;
     padding: 10px;
 }
-.relationship{
+
+.relationship {
     width: 160px;
     position: absolute;
-    top:100px;
+    top: 100px;
     left: 100px;
     text-align: center;
 }
+
 .diamond {
     position: relative;
-    top:0;
+    top: 0;
     left: 0;
     width: 56px;
     height: 53px;
@@ -90,7 +98,8 @@ div#logo{
     transform: rotate(-36deg) skew(20deg);
     margin: 0 auto;
 }
-.diamond_text{
+
+.diamond_text {
     height: 30px;
     width: 120px;
     display: table-cell;
@@ -103,25 +112,30 @@ div#logo{
     transform: rotate(45deg) skew(-1deg);
 }
 
-.desc_diamond{
+.desc_diamond {
     word-break: break-all;
 }
 
-.attribute{
+.attribute {
     border-radius: 45px;
 }
-.is_primary_key{
+
+.is_primary_key {
     text-decoration: underline;
 }
 
-.tie_text{
+.tie_text {
     font-size: 16px;
     font-weight: normal;
 
 }
 
 /* BOTTOMS*/
-.dark_bottom{
+button:active, button:focus {
+    outline: none;
+}
+
+.dark_bottom {
     border-radius: 80px;
     background-color: #3f51b5;
     box-shadow: 0 3px 6px 1px #bdbdbd59;
@@ -132,7 +146,8 @@ div#logo{
     padding: 5px;
     cursor: pointer;
 }
-.light_bottom{
+
+.light_bottom {
     border-radius: 80px;
     background-color: #ffffff;
     border: 1px solid #3f51b438;
@@ -144,80 +159,120 @@ div#logo{
     padding: 5px;
     cursor: pointer;
 }
-.red_bottom{
+
+.light_bottom:hover {
+    background-color: #f0f2ff;
+    border-color: #8ea0ff;
+}
+.light_bottom:not(:disabled):not(.disabled):active {
+    background-color: #d3d9ff;
+}
+
+.red_bottom {
     background-color: red;
     color: white;
     border: none;
 }
+
 .round_bottom {
     height: 60px;
     width: 60px;
 }
 
-.btn_text{
+.round_bottom-50 {
+    height: 50px;
+    width: 50px;
+}
+
+.btn_text {
     display: inline-block;
     color: #3F51B4;
     margin-right: 15px;
     font-weight: 600;
 }
-.btn_icon{
+
+.btn_icon {
     margin: 5px 5px 5px 10px;
 }
 
-.btn_icon_blue{
+.btn_icon_blue {
     margin: 5px;
 }
 
-.btn_bg_color{
+.btn_bg_color {
     background-color: #3f51b5;
 }
-.padding-20{
+
+.padding-20 {
     padding: 20px;
 }
-.toggle_options_bottom_case{
+
+.padding-right-20 {
+    padding-right: 20px;
+}
+
+.toggle_options_bottom_case {
     display: none;
 }
 
-.fix-bottom-left{
+.fix-bottom-left {
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 1030;
 }
 
-.fix-bottom-right{
+.fix-bottom-right {
     position: fixed;
     bottom: 0;
     right: 0;
     z-index: 1040;
 }
 
-.big_checkbox{
+.fix-middle-right {
+    position: fixed;
+    bottom: 50%;
+    right: 0;
+    z-index: 1040;
+}
+
+.big_checkbox {
     width: 20px;
     height: 20px;
     margin-left: -2rem;
 }
 
-.big_checkbox_form{
+.big_checkbox_form {
     padding-left: 2.1rem;
 }
 
-.big_checkbox_lable{
+.big_checkbox_lable {
     padding-top: 2px;
 }
 
+.zoom_bottoms{
+    display: flex;
+    height: 180px;
+    flex-direction: column;
+}
+#undo_zoom {
+    display: none;
+}
+
 /*MAIN OPTION BOTTOM*/
-.options{
+.options {
     position: absolute;
     width: 360px;
     top: -1px;
     left: 0;
     z-index: 9999;
 }
+
 .box .box_option_bottom {
     display: none;
 }
-.box:hover .box_option_bottom{
+
+.box:hover .box_option_bottom {
     width: 170px;
     text-align: left;
     font-size: 12px;
@@ -226,15 +281,16 @@ div#logo{
     float: right;
 }
 
-
 /*relationship*/
-.relationship .options{
+.relationship .options {
     width: 310px;
 }
+
 .relationship .box_option_bottom {
     display: none;
 }
-.relationship:hover .box_option_bottom{
+
+.relationship:hover .box_option_bottom {
     width: 160px;
     text-align: left;
     font-size: 12px;
@@ -243,19 +299,18 @@ div#logo{
     float: right;
 }
 
-
-.box_option_bottom .light_bottom{
+.box_option_bottom .light_bottom {
     padding-left: 10px;
 }
 
 /* modal-windows */
 
-h6#mssql_connect_description{
+h6#mssql_connect_description {
     margin-right: 10px;
     align-self: center;
 }
 
-button#btn_disconnect{
+button#btn_disconnect {
     display: none;
 }
 
@@ -265,30 +320,29 @@ button#btn_disconnect{
 
 /* export-img-window */
 
-#preview_image{
+#preview_image {
     vertical-align: middle;
     width: 100%;
     border-style: none;
     object-fit: fill;
 }
 
-#insert_sql_to_server{
+#insert_sql_to_server {
     -webkit-appearance: none;
 }
 
-.MSSQL_error{
+.MSSQL_error {
     height: 150px;
     width: 100%;
     resize: none;
 }
 
-
 /* edit-attribute-modal-window */
-.attribute_data_len{
+.attribute_data_len {
     display: none;
 }
 
 /* notifications */
-.toast{
+.toast {
     border-radius: 1.1rem;
 }

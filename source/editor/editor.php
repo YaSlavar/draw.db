@@ -77,6 +77,28 @@
     </div>
 </div>
 
+<div class="zoom_bottoms fix-middle-right padding-right-20">
+    <button id="zoom_plus" class="btn-light light_bottom round_bottom-50">
+        <svg class="btn_icon_blue" xmlns="http://www.w3.org/2000/svg" fill="white" width="30" height="30"
+             viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="#3f51b5"></path>
+            <path d="M0 0h24v24H0z" fill="none"></path>
+        </svg>
+    </button>
+    <button id="zoom_minus" class="btn-light light_bottom round_bottom-50">
+        <svg class="btn_icon_blue" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 8 24 24">
+            <path d="M6 19h12v2H6z" fill="#3f51b5"></path>
+            <path fill="none" d="M0 0h24v24H0V0z"></path>
+        </svg>
+    </button>
+    <button id="undo_zoom" class="btn-light light_bottom round_bottom-50">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" fill="#3f51b5"></path>
+        </svg>
+    </button>
+</div>
+
 <div class="notification_tail fix-bottom-right padding-20">
     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
         <div class="toast-header">
@@ -90,37 +112,57 @@
         </div>
     </div>
 </div>
-<canvas>
 
-</canvas>
 
 <? include('modal_window.php'); ?>
 
 
-<script src="editor/editor.js"></script>
-
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".work_zone_container").draggable();
+
+        let work_zone_container = $('.work_zone_container');
+
+        work_zone_container.draggable();
 
         load_diagram();
 
+        let toggle_options_bottom_case = $('.toggle_options_bottom_case');
 
         $("#toggle_options").click(function () {
-            $(".toggle_options_bottom_case").slideToggle();
+            toggle_options_bottom_case.slideToggle();
         });
+
         $('.save_diagram').click(function () {
                 save_diagram();
-            }
-        );
+                toggle_options_bottom_case.slideToggle();
+        });
+
         $('.generate_sql').click(function () {
                 open_server_connect_window();
-            }
-        );
+                toggle_options_bottom_case.slideToggle();
+        });
+
         $('.save_diagram_img').click(function () {
                 open_screenshot_window();
-            }
-        );
+                toggle_options_bottom_case.slideToggle();
+        });
+
+        $('#zoom_plus').click(function () {
+            zoom_element(work_zone_container, 1, 0.1, 200);
+        });
+
+        $('#zoom_minus').click(function () {
+            zoom_element(work_zone_container, -1, 0.1, 200);
+        });
+
+        $('#undo_zoom').click(function () {
+            undo_zoom(work_zone_container);
+        });
+
+        $(work_zone_container).mousewheel(function(event) {
+            zoom_element($(this), event.deltaY);
+        });
+
 
     });
 </script>
