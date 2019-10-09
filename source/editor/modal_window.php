@@ -62,7 +62,7 @@
                             атрибута)</label>
                         <div class="col-4">
                             <input type="number" class="form-control" name="attr_data_len" title="" min="1"
-                                   max="9999">
+                                   max="9999" required>
                         </div>
                     </div>
                     <div class="big_checkbox_form form-check">

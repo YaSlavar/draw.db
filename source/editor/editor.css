@@ -346,3 +346,8 @@ button#btn_disconnect {
 .toast {
     border-radius: 1.1rem;
 }
+
+.toast_tail {
+    background-color: #eeedff;
+    box-shadow: 0 0 1rem rgba(45, 66, 185, 0.81);
+}

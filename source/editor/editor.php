@@ -100,7 +100,7 @@
 </div>
 
 <div class="notification_tail fix-bottom-right padding-20">
-    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+    <div class="toast toast_tail" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
         <div class="toast-header">
             <strong class="mr-auto">Уведомление</strong>
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -160,7 +160,7 @@
         });
 
         $(work_zone_container).mousewheel(function(event) {
-            zoom_element($(this), event.deltaY);
+            zoom_element($(this), event);
         });
 
 
