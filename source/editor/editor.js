@@ -148,7 +148,7 @@ function zoom_element(element, delta, zoom_delta=0.05, animate_speed=1) {
     }else {
         undo_zoom_button.css({'display': 'none'});
     }
-    console.log(ZOOM_DELTA);
+
 }
 
 function undo_zoom(element, animate_speed=400) {
@@ -162,6 +162,7 @@ function undo_zoom(element, animate_speed=400) {
 }
 
 // Оппа, посхалочка)))0)
+
 //ADD
 function add_main_block(main_id, name_new_main) {
     return '<div class=\"box main\" id=\"' + main_id + '\">' +
@@ -1303,6 +1304,7 @@ function open_server_connect_window() {
 }
 
 $(document).ready(function () {
+
     // console.log(mssql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES"));
     // mssql_connect('msuniversity.ru,1450', "Polenok", "Polenok", 'koneloP');
 });

@@ -164,6 +164,7 @@ button:active, button:focus {
     background-color: #f0f2ff;
     border-color: #8ea0ff;
 }
+
 .light_bottom:not(:disabled):not(.disabled):active {
     background-color: #d3d9ff;
 }
@@ -172,6 +173,15 @@ button:active, button:focus {
     background-color: red;
     color: white;
     border: none;
+}
+
+.red_bottom:hover {
+    background-color: #ff6464;
+    border-color: #8ea0ff;
+}
+
+.red_bottom:not(:disabled):not(.disabled):active {
+    background-color: #ff3838;
 }
 
 .round_bottom {
@@ -250,11 +260,12 @@ button:active, button:focus {
     padding-top: 2px;
 }
 
-.zoom_bottoms{
+.zoom_bottoms {
     display: flex;
     height: 180px;
     flex-direction: column;
 }
+
 #undo_zoom {
     display: none;
 }

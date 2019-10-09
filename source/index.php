@@ -60,6 +60,7 @@ require_once 'config.php';
         <script src="lib/jquery.ui.touch-punch.min.js"></script>
         <script src="lib/http_cdnjs.cloudflare.com_ajax_libs_tether_1.2.0_js_tether.js"></script>
         <script src="lib/bootstrap/bootstrap.js"></script>
+        <script src="lib/bootstrap_menu/BootstrapMenu.js"></script>
 
     <script src="lib/html2canvas.js"></script>
 
