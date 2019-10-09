@@ -84,9 +84,13 @@ function setting_link() {
 
 
 function draggable_box() {
+
     let work_zone_container = $(".work_zone_container");
     let main = work_zone_container.children('.main');
     let relationship = work_zone_container.children('.relationship');
+
+    let main_start_position = {'left': 0, "top": 0};
+    let attribute_position_list = {};
 
     main.each(function (i, elem) {
         let main_id = $(elem).attr("id");
@@ -94,12 +98,33 @@ function draggable_box() {
 
         $('.main[id="' + main_id + '"]').draggable({
             cursor: "move",
+            start: function (event, ui) {
+                main_start_position.top = ui.offset.top;
+                main_start_position.left = ui.offset.left;
+
+                attribute.each(function (i, elem) {
+                    let attribute_id = $(elem).attr('id');
+                    attribute_position_list[attribute_id] = $(elem).offset();
+
+                });
+            },
             stop: function () {
                 if ($(this).offset().left < 0) {
                     $(this).css("left", 0);
                 }
+
             },
-            drag: function () {
+            drag: function (event, ui) {
+                let delta = {
+                    "top": main_start_position.top - ui.offset.top,
+                    "left": main_start_position.left - ui.offset.left
+                };
+
+                attribute.each(function (attr_i, attr_elem) {
+                    $(attr_elem).offset({'top': attribute_position_list[$(attr_elem).attr('id')].top - delta.top});
+                    $(attr_elem).offset({'left': attribute_position_list[$(attr_elem).attr('id')].left - delta.left});
+                });
+
                 setting_link();
             }
         });
@@ -129,29 +154,29 @@ function draggable_box() {
 
 //ZOOM
 
-function zoom_element(element, delta, zoom_delta=0.05, animate_speed=1) {
+function zoom_element(element, delta, zoom_delta = 0.05, animate_speed = 1) {
     let undo_zoom_button = $('#undo_zoom');
 
-    if (typeof(delta) !== "number"){
+    if (typeof(delta) !== "number") {
         delta = delta.deltaY * delta.deltaFactor;
     }
 
     if (Number(delta) >= 1) {
         ZOOM_DELTA += zoom_delta;
-    }else if (Number(delta) < 0 && ZOOM_DELTA > 0.15) {
+    } else if (Number(delta) < 0 && ZOOM_DELTA > 0.15) {
         ZOOM_DELTA -= zoom_delta;
     }
     element.animate({'zoom': ZOOM_DELTA}, animate_speed);
 
     if (ZOOM_DELTA !== 1) {
         undo_zoom_button.css({'display': 'block'});
-    }else {
+    } else {
         undo_zoom_button.css({'display': 'none'});
     }
 
 }
 
-function undo_zoom(element, animate_speed=400) {
+function undo_zoom(element, animate_speed = 400) {
     ZOOM_DELTA = 1;
     element.animate({'zoom': ZOOM_DELTA}, animate_speed);
 
@@ -499,7 +524,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         let primary_key = primary_key_checkbox.prop("checked");
 
         let len_data;
-        console.log(show_data_len_input(input_attr_data_type));
+
         if (show_data_len_input(input_attr_data_type)) {
             len_data = input_len_data_type.val();
         } else {
@@ -837,7 +862,7 @@ function save_diagram() {
     let diagram_data = get_diagram_info();
 
     diagram_data['command'] = "save";
-    
+
     $.ajax({
         type: "POST",
         url: "editor/save.php",
