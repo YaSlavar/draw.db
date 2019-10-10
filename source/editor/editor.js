@@ -1362,6 +1362,7 @@ function open_server_connect_window() {
     connect_and_insert_to_server(editor, result_viewer);
 }
 
+
 $(document).ready(function () {
 
     // console.log(mssql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES"));
