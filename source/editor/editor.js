@@ -89,10 +89,9 @@ function draggable_box() {
     let main = work_zone_container.children('.main');
     let relationship = work_zone_container.children('.relationship');
 
-    let main_start_position = {'left': 0, "top": 0};
-    let attribute_position_list = {};
-
     main.each(function (i, elem) {
+        let main_start_position = {'left': 0, "top": 0};
+        let attribute_position_list = {};
         let main_id = $(elem).attr("id");
         let attribute = work_zone_container.children('[parent="' + main_id + '"]');
 
@@ -424,7 +423,7 @@ function add_main(edit_main_id = NaN) {
     });
 }
 
-// TODO: Сделать проверку заполненности длины значения
+
 function add_attribute(main_id, edit_attr_id = NaN) {
 
     function show_data_len_input(input_attr_data_type) {
@@ -517,6 +516,29 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         primary_key_checkbox.off('change').on('change', check);
     }
 
+    function check_data_len(data_len_value) {
+        let attribute_data_len_invalid_feedback = $('#attribute_data_len_invalid_feedback');
+
+        if (data_len_value === null || data_len_value > 0) {
+
+            attribute_data_len_invalid_feedback.removeClass('invalid-feedback');
+            attribute_data_len_invalid_feedback.addClass('valid-feedback');
+            attribute_data_len_invalid_feedback.html("");
+            input_len_data_type.removeClass('is-invalid');
+            input_len_data_type.addClass('is-valid');
+            return true;
+
+        } else if (data_len_value <= 0) {
+
+            attribute_data_len_invalid_feedback.removeClass('valid-feedback');
+            attribute_data_len_invalid_feedback.addClass('invalid-feedback');
+            attribute_data_len_invalid_feedback.html("Длина атрибута должна быть > 0!");
+            input_len_data_type.removeClass('is-valid');
+            input_len_data_type.addClass('is-invalid');
+            return false;
+        }
+    }
+
     function send_form() {
 
         let attribute_name = input_name_attribute.val();
@@ -532,7 +554,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         }
 
         let check_list = validate_value(edit_type, 'attribute', attribute_name);
-        if (validate_attribute_name(edit_type, check_list)) {
+        if (validate_attribute_name(edit_type, check_list) && check_data_len(len_data)) {
             new_attribute_window.modal("toggle");
 
             if ($('div').is(edited_attribute)) {
@@ -582,7 +604,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     input_name_attribute.removeClass('is-valid');
     input_name_attribute.removeClass('is-invalid');
     input_attr_data_type.empty();
-    input_len_data_type.val(0);
+    input_len_data_type.val(1);
     primary_key_checkbox.prop('checked', false);
     input_attr_data_type.append(
         '<option value="int">int</option>' +
@@ -876,6 +898,8 @@ function save_diagram() {
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
+    save_diagram_img();
+
     return diagram_data;
 }
 
@@ -1139,6 +1163,7 @@ function open_server_connect_window() {
                     let login = $('#mssql_login');
                     let password = $('#mssql_password');
                     let database = $('#database_name');
+                    let mssql_connect_description = $(".mssql_connect_description");
 
                     let server_name_value = server_name.val();
                     let login_value = login.val();
@@ -1150,7 +1175,9 @@ function open_server_connect_window() {
                             let connect = mssql_connect(server_name_value, database_value, login_value, password_value);
                             console.log(connect);
 
-                            if (connect['code'] === 18456) {
+                            if ([18456, 0].indexOf(connect['code']) !== -1) {
+
+                                mssql_connect_description.text(connect['description']);
                                 login.addClass('is-invalid');
                                 password.addClass('is-invalid');
                                 database.addClass('is-invalid');
@@ -1164,7 +1191,7 @@ function open_server_connect_window() {
                             }
 
                         } catch (e) {
-                            console.log(e);
+                            console.log("err", e);
                         }
                     } else {
                         server_name.addClass('is-invalid');
@@ -1213,7 +1240,14 @@ function open_server_connect_window() {
 
     function get_sql_code(data_diagram) {
 
+        let NOT_DATA_LEN = [
+            'int',
+            'money',
+            'date'
+        ];
+
         function get_main_PK(data_diagram, main_id) {
+
             let result;
 
             jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
@@ -1239,7 +1273,7 @@ function open_server_connect_window() {
 
                 if (attribute['parent'] === main_index) {
                     let data_len;
-                    if (attribute['data_type'] === "int") {
+                    if (NOT_DATA_LEN.indexOf(attribute['data_type']) !== -1) {
                         data_len = "";
                     } else {
                         data_len = "(" + attribute['len_data'] + ")";

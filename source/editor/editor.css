@@ -58,8 +58,8 @@ div#logo {
 }
 
 .canvas {
-    width: 2000px;
-    height: 1500px;
+    width: 3840px;
+    height: 2160px;
     background: white;
 }
 
@@ -67,7 +67,7 @@ div#logo {
     position: absolute;
     top: 100px;
     left: 100px;
-    width: 165px;
+    min-width: 165px;
     min-height: 50px;
     text-align: center;
     background-color: white;

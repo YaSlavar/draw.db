@@ -20,8 +20,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <label class="main_name_label" for="attribute_name">Название новой сущности:</label>
-                    <input type="text" name="main_name"  class="form-control name_diagramm"
+                    <label class="main_name_label" for="main_name">Название новой сущности:</label>
+                    <input type="text" name="main_name" class="form-control name_diagramm"
                            placeholder="Введите название новой сущности">
                     <div id="main_name_invalid_feedback"></div>
                 </div>
@@ -63,6 +63,7 @@
                         <div class="col-4">
                             <input type="number" class="form-control" name="attr_data_len" title="" min="1"
                                    max="9999" required>
+                            <div id="attribute_data_len_invalid_feedback"></div>
                         </div>
                     </div>
                     <div class="big_checkbox_form form-check">
@@ -141,7 +142,7 @@
 
                     <div id="input_block" class="mb-3">
                         <div class="input-group mb-2">
-                            <h6 class="modal-title" id="mssql_connect_description"></h6>
+                            <h6 class="modal-title mssql_connect_description" id="mssql_connect_description"></h6>
                             <button id="btn_disconnect" type="button" class="btn btn-danger">Разъединить</button>
                         </div>
                         <h6 class="modal-title" id="mssql_result_description">Запрос для выполнения на сервере: </h6>
@@ -182,7 +183,7 @@
                 <form id="form_new_mssql_connect" novalidate>
                     <div class="modal-body">
                         <div class="mssql_connection_form">
-                            <h6 class="modal-title" id="mssql_connect_description">Подключение не установлено,
+                            <h6 class="modal-title mssql_connect_description" id="mssql_connect_description">Подключение не установлено,
                                 пожалуйста пройдите авторизацию, чтобы продолжить создание физической модели.</h6>
                             <br>
                             <div class="form-group">
