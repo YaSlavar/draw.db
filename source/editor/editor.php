@@ -128,6 +128,10 @@
 
         let toggle_options_bottom_case = $('.toggle_options_bottom_case');
 
+        $('.work_zone').click(function () {
+            toggle_options_bottom_case.slideUp();
+        });
+
         $("#toggle_options").click(function () {
             toggle_options_bottom_case.slideToggle();
         });

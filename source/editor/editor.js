@@ -332,6 +332,9 @@ function validate_value(change_type = "add", value_type, value) {
 
 
 function add_main(edit_main_id = NaN) {
+    let toggle_options_bottom_case = $('.toggle_options_bottom_case');
+    toggle_options_bottom_case.slideUp();
+
     let main_id = randInt();
 
     let main_name_label = $('.main_name_label');
