@@ -1301,7 +1301,14 @@ function open_server_connect_window() {
                     let first_main_name = data_diagram['mains'][relationship['first']]['name'],
                         second_main_name = data_diagram['mains'][relationship['second']]['name'];
 
-                    attr_str += "  " + first_main_PK_name + "_FK " + first_main_PK_type + "(" + first_main_PK_len + "), \n  " +
+
+                    if (NOT_DATA_LEN.indexOf(first_main_PK['data_type']) !== -1) {
+                        first_main_PK_len = "";
+                    } else {
+                        first_main_PK_len = "(" + first_main_PK['len_data'] + ")";
+                    }
+
+                    attr_str += "  " + first_main_PK_name + "_FK " + first_main_PK_type + first_main_PK_len + ", \n  " +
                         "CONSTRAINT FK_" + first_main_name + "_" + second_main_name + " FOREIGN KEY (" + first_main_PK_name +
                         "_FK) REFERENCES " + first_main_name + "(" + first_main_PK_name + ")";
 
