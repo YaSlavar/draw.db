@@ -2,15 +2,176 @@
 let ZOOM_DELTA = 1;
 
 
-function set_error(text) {
-    $(".error").text(text);
-    return false;
-}
-
 function get_diagram_id() {
     let url_string = window.location.href;
     let url = new URL(url_string);
     return url.searchParams.get("edit");
+}
+
+function get_diagram_info() {
+
+    let Out_JSON = {};
+    let mains = {};
+    let attributes = {};
+    let relationships = {};
+    let links = {};
+
+    let work_zone_container = $(".work_zone_container");
+    let main = work_zone_container.children('.main');
+
+    main.each(function (i, elem) {
+        let id = $(elem).attr('id');
+        mains[id] = {};
+        mains[id]['position'] = $(elem).offset();
+        mains[id]['name'] = $(elem).children('.main_text').text();
+    });
+
+    Out_JSON['mains'] = mains;
+
+    let attribute = work_zone_container.children('.attribute');
+
+    attribute.each(function (i, elem) {
+        let id = $(elem).attr('id');
+        attributes[id] = {};
+        attributes[id]['parent'] = $(elem).attr('parent');
+        attributes[id]['data_type'] = $(elem).attr('data_type');
+        attributes[id]['len_data'] = $(elem).attr('len_data');
+        attributes[id]['primary_key'] = $(elem).attr('primary_key');
+        attributes[id]['name'] = $(elem).children('.attribute_text').text();
+        attributes[id]['position'] = $(elem).offset();
+    });
+
+    Out_JSON['attributes'] = attributes;
+
+    let relationship = work_zone_container.children('.relationship');
+
+    relationship.each(function (i, elem) {
+        let id = $(elem).attr('id');
+        relationships[id] = {};
+        relationships[id]['first'] = $(elem).attr('first');
+        relationships[id]['second'] = $(elem).attr('second');
+        relationships[id]['rel_type'] = $(elem).children('.diamond').children('.diamond_text').text();
+        relationships[id]['rel_description'] = $(elem).children('.desc_diamond').text();
+        relationships[id]['position'] = $(elem).offset();
+    });
+
+    Out_JSON['relationships'] = relationships;
+
+    let link = $('.canvas').children('.link');
+
+    link.each(function (i, elem) {
+        let id = $(elem).attr('id');
+        links[id] = {};
+        links[id]['parent'] = $(elem).attr('parent');
+        links[id]['position'] = {
+            'x1': Number($(elem).attr('x1')),
+            'y1': Number($(elem).attr('y1')),
+            'x2': Number($(elem).attr('x2')),
+            'y2': Number($(elem).attr('y2'))
+        };
+    });
+    Out_JSON['links'] = links;
+    Out_JSON['diagram_id'] = get_diagram_id();
+    Out_JSON['diagram_name'] = $('div#diagram_name').text();
+
+    return Out_JSON;
+}
+
+function validate_value(change_type = "add", value_type, value) {
+    let check_list = {"total_false": 0};
+
+    function check_not_free_value(value) {
+        if (value === "" || value === undefined) {
+            check_list['check_not_free_value'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_not_free_value'] = true;
+        }
+    }
+
+    function check_space(value) {
+        let pattern = new RegExp('\\s', 'ig');
+
+        if (pattern.test(value)) {
+            check_list['check_space'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_space'] = true;
+        }
+    }
+
+    function check_num_in_start_of_string(value) {
+        let pattern = new RegExp('^[0-9]', 'ig');
+
+        if (pattern.test(value)) {
+            check_list['check_num_in_start_of_string'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_num_in_start_of_string'] = true;
+        }
+
+    }
+
+    function check_uniq_attribute(value) {
+        let diagram_info = load_diagram(Number(get_diagram_id()));
+        let attributes_name_list = [];
+
+        $.each(diagram_info['attributes'], function (i, elem) {
+            attributes_name_list.push(elem['name']);
+        });
+
+        if (attributes_name_list.includes(value)) {
+            check_list['check_uniq'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_uniq'] = true;
+        }
+    }
+
+    function check_uniq_main(value) {
+        let diagram_info = load_diagram(Number(get_diagram_id()));
+        let mains_name_list = [];
+
+        $.each(diagram_info['mains'], function (i, elem) {
+            mains_name_list.push(elem['name']);
+        });
+
+        if (mains_name_list.includes(value)) {
+            check_list['check_uniq'] = false;
+            check_list['total_false'] += 1;
+        } else {
+            check_list['check_uniq'] = true;
+        }
+    }
+
+    switch (value_type) {
+        case 'main': {
+            check_not_free_value(value);
+            check_space(value);
+            check_num_in_start_of_string(value);
+            if (change_type === "add") {
+                check_uniq_main(value);
+            }
+            return check_list;
+        }
+        case 'attribute': {
+            check_not_free_value(value);
+            check_space(value);
+            check_num_in_start_of_string(value);
+            if (change_type === "add") {
+                check_uniq_attribute(value);
+            }
+            return check_list;
+        }
+    }
+}
+
+function get_center_window_position() {
+    let body = $('body');
+    let work_zone_container = $('.work_zone_container');
+    let work_zone_container_position = work_zone_container.position();
+    return {'y': body.height() / 2 - work_zone_container_position['top'] - 50,
+            'x': body.width() / 2 - work_zone_container_position['left']};
 }
 
 
@@ -81,7 +242,6 @@ function setting_link() {
         });
     });
 }
-
 
 function draggable_box() {
 
@@ -182,12 +342,16 @@ function undo_zoom(element, animate_speed = 400) {
     let undo_zoom_button = $('#undo_zoom');
     undo_zoom_button.css({'display': 'none'});
 
+    // let position = get_center_window_position();
+    // console.log(position);
+    // element.css({'left': -position['x'], 'top': -position['x']});
     element.css({'left': 0, 'top': 0});
 }
 
+
 // Оппа, посхалочка)))0)
 
-//ADD
+//ADD BLOCK
 function add_main_block(main_id, name_new_main) {
     return '<div class=\"box main\" id=\"' + main_id + '\">' +
         '       <div class=\"main_text\">' + name_new_main + '</div>' +
@@ -201,7 +365,6 @@ function add_main_block(main_id, name_new_main) {
         '      </div>' +
         '</div>';
 }
-
 
 function add_attribute_block(attribute_id, main_id, name_new_main, data_type, len_data, primary_key) {
     let is_pk = "";
@@ -219,7 +382,6 @@ function add_attribute_block(attribute_id, main_id, name_new_main, data_type, le
         '</div>'
 }
 
-
 function add_relationship_block(relationship_id, rel_type, rel_desc, first_main, second_main) {
     return '<div class="relationship" id="' + relationship_id + '" first="' + first_main + '" second="' + second_main + '">' +
         '      <div class="box diamond">' +
@@ -236,100 +398,10 @@ function add_relationship_block(relationship_id, rel_type, rel_desc, first_main,
 }
 
 
+// ADD HANDLERS
 function add_link(parent_id, link_id) {
     return '<line class=\"link\" id=\"' + link_id + '\" parent=\"' + parent_id + '\" x1=\"10\" y1=\"10\" x2=\"226\" y2=\"90\" stroke=\"black\"></line>'
 }
-
-
-function validate_value(change_type = "add", value_type, value) {
-    let check_list = {"total_false": 0};
-
-    function check_not_free_value(value) {
-        if (value === "" || value === undefined) {
-            check_list['check_not_free_value'] = false;
-            check_list['total_false'] += 1;
-        } else {
-            check_list['check_not_free_value'] = true;
-        }
-    }
-
-    function check_space(value) {
-        let pattern = new RegExp('\\s', 'ig');
-
-        if (pattern.test(value)) {
-            check_list['check_space'] = false;
-            check_list['total_false'] += 1;
-        } else {
-            check_list['check_space'] = true;
-        }
-    }
-
-    function check_num_in_start_of_string(value) {
-        let pattern = new RegExp('^[0-9]', 'ig');
-
-        if (pattern.test(value)) {
-            check_list['check_num_in_start_of_string'] = false;
-            check_list['total_false'] += 1;
-        } else {
-            check_list['check_num_in_start_of_string'] = true;
-        }
-
-    }
-
-    function check_uniq_attribute(value) {
-        let diagram_info = load_diagram(Number(get_diagram_id()));
-        let attributes_name_list = [];
-
-        $.each(diagram_info['attributes'], function (i, elem) {
-            attributes_name_list.push(elem['name']);
-        });
-
-        if (attributes_name_list.includes(value)) {
-            check_list['check_uniq'] = false;
-            check_list['total_false'] += 1;
-        } else {
-            check_list['check_uniq'] = true;
-        }
-    }
-
-    function check_uniq_main(value) {
-        let diagram_info = load_diagram(Number(get_diagram_id()));
-        let mains_name_list = [];
-
-        $.each(diagram_info['mains'], function (i, elem) {
-            mains_name_list.push(elem['name']);
-        });
-
-        if (mains_name_list.includes(value)) {
-            check_list['check_uniq'] = false;
-            check_list['total_false'] += 1;
-        } else {
-            check_list['check_uniq'] = true;
-        }
-    }
-
-    switch (value_type) {
-        case 'main': {
-            check_not_free_value(value);
-            check_space(value);
-            check_num_in_start_of_string(value);
-            if (change_type === "add") {
-                check_uniq_main(value);
-            }
-            return check_list;
-        }
-        case 'attribute': {
-            check_not_free_value(value);
-            check_space(value);
-            check_num_in_start_of_string(value);
-            if (change_type === "add") {
-                check_uniq_attribute(value);
-            }
-            return check_list;
-        }
-    }
-}
-
 
 function add_main(edit_main_id = NaN) {
     let toggle_options_bottom_case = $('.toggle_options_bottom_case');
@@ -417,6 +489,8 @@ function add_main(edit_main_id = NaN) {
 
                 if (isNaN(edit_main_id)) {
                     $(".work_zone_container").append(add_main_block(main_id, name_new_main));
+                    let position = get_center_window_position();
+                    $("#"+ main_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
                 } else {
                     $("#" + edit_main_id).children(".main_text").text(name_new_main);
                 }
@@ -425,7 +499,6 @@ function add_main(edit_main_id = NaN) {
         }
     });
 }
-
 
 function add_attribute(main_id, edit_attr_id = NaN) {
 
@@ -579,6 +652,10 @@ function add_attribute(main_id, edit_attr_id = NaN) {
             } else {
 
                 $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
+
+                let position = get_center_window_position();
+                $("#"+ attribute_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
+
                 let canvas = $(".canvas");
                 canvas.append(add_link(main_id, attribute_id));
                 // перерисовка svg
@@ -658,8 +735,12 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     button_new_attribute.off('click').on('click', send_form);
 }
 
-
 function add_relationship(edit_rel_id) {
+    function set_error(text) {
+        $(".error").text(text);
+        return false;
+    }
+
     let new_relationship_window = $("#new_relationship");
 
     // инициализация и очистка форм
@@ -744,6 +825,17 @@ function add_relationship(edit_rel_id) {
                 edited_relationship.children('.desc_diamond').text(rel_desc);
             } else {
                 $(".work_zone_container").append(add_relationship_block(relationship_id, rel_type_val, rel_desc, first_main_id, second_main_id));
+
+                let first_main_position = $("#" + first_main_id).position();
+                let second_main_position = $("#" + second_main_id).position();
+
+                let center_position = {
+                    "top": (first_main_position['top'] + second_main_position['top']) / 2,
+                    "left": (first_main_position['left'] + second_main_position['left']) / 2
+                };
+
+                $("#" + relationship_id).css(center_position);
+
                 let canvas = $(".canvas");
                 canvas.append(add_link(relationship_id, first_link));
                 canvas.append(add_link(relationship_id, second_link));
@@ -761,7 +853,7 @@ function add_relationship(edit_rel_id) {
 }
 
 
-//REMOVE
+//REMOVE HANDLERS
 
 function remove_main(main_id) {
     $('.main[id="' + main_id + '"]').remove();
@@ -772,8 +864,6 @@ function remove_main(main_id) {
 
     let relationships = work_zone_container.children('.relationship');
 
-    console.log(relationships);
-
     relationships.each(function (i, elem) {
 
         if (Number($(elem).attr('first')) === main_id || Number($(elem).attr('second')) === main_id) {
@@ -781,11 +871,9 @@ function remove_main(main_id) {
         }
     });
 
-
     attributes.each(function (i, elem) {
         $('.attribute[parent="' + $(elem).attr("parent") + '"]').remove();
     });
-
 
     let canvas = $(".canvas");
     let links = canvas.children('[parent="' + main_id + '"]');
@@ -797,13 +885,11 @@ function remove_main(main_id) {
     draggable_box();
 }
 
-
 function remove_attr(attr_id) {
     $('.attribute[id="' + attr_id + '"]').remove();
     $('.link[id="' + attr_id + '"]').remove();
     draggable_box();
 }
-
 
 function remove_relationship(rel_id) {
     $('.relationship[id="' + rel_id + '"]').remove();
@@ -813,76 +899,6 @@ function remove_relationship(rel_id) {
 
 
 // SAVE
-function get_diagram_info() {
-
-    let Out_JSON = {};
-    let mains = {};
-    let attributes = {};
-    let relationships = {};
-    let links = {};
-
-    let work_zone_container = $(".work_zone_container");
-    let main = work_zone_container.children('.main');
-
-    main.each(function (i, elem) {
-        let id = $(elem).attr('id');
-        mains[id] = {};
-        mains[id]['position'] = $(elem).offset();
-        mains[id]['name'] = $(elem).children('.main_text').text();
-    });
-
-    Out_JSON['mains'] = mains;
-
-    let attribute = work_zone_container.children('.attribute');
-
-    attribute.each(function (i, elem) {
-        let id = $(elem).attr('id');
-        attributes[id] = {};
-        attributes[id]['parent'] = $(elem).attr('parent');
-        attributes[id]['data_type'] = $(elem).attr('data_type');
-        attributes[id]['len_data'] = $(elem).attr('len_data');
-        attributes[id]['primary_key'] = $(elem).attr('primary_key');
-        attributes[id]['name'] = $(elem).children('.attribute_text').text();
-        attributes[id]['position'] = $(elem).offset();
-    });
-
-    Out_JSON['attributes'] = attributes;
-
-    let relationship = work_zone_container.children('.relationship');
-
-    relationship.each(function (i, elem) {
-        let id = $(elem).attr('id');
-        relationships[id] = {};
-        relationships[id]['first'] = $(elem).attr('first');
-        relationships[id]['second'] = $(elem).attr('second');
-        relationships[id]['rel_type'] = $(elem).children('.diamond').children('.diamond_text').text();
-        relationships[id]['rel_description'] = $(elem).children('.desc_diamond').text();
-        relationships[id]['position'] = $(elem).offset();
-    });
-
-    Out_JSON['relationships'] = relationships;
-
-    let link = $('.canvas').children('.link');
-
-    link.each(function (i, elem) {
-        let id = $(elem).attr('id');
-        links[id] = {};
-        links[id]['parent'] = $(elem).attr('parent');
-        links[id]['position'] = {
-            'x1': Number($(elem).attr('x1')),
-            'y1': Number($(elem).attr('y1')),
-            'x2': Number($(elem).attr('x2')),
-            'y2': Number($(elem).attr('y2'))
-        };
-    });
-    Out_JSON['links'] = links;
-    Out_JSON['diagram_id'] = get_diagram_id();
-    Out_JSON['diagram_name'] = $('div#diagram_name').text();
-
-    return Out_JSON;
-}
-
-
 function save_diagram() {
     let diagram_data = get_diagram_info();
 
@@ -905,7 +921,6 @@ function save_diagram() {
 
     return diagram_data;
 }
-
 
 function save_diagram_img() {
 
@@ -940,6 +955,7 @@ function save_diagram_img() {
 }
 
 
+// SAVE HANDLER
 function open_screenshot_window() {
     save_diagram_img();
 
@@ -1035,7 +1051,6 @@ function mssql_connect_check() {
     return JSON.parse(result)
 }
 
-
 function mssql_connect(server_name, database, login, password) {
     let REQUEST_DATA = {};
 
@@ -1055,7 +1070,6 @@ function mssql_connect(server_name, database, login, password) {
     return JSON.parse(result)
 }
 
-
 function mssql_disconnect() {
     let REQUEST_DATA = {};
 
@@ -1070,7 +1084,6 @@ function mssql_disconnect() {
 
     return JSON.parse(result)
 }
-
 
 function mssql_query(sql_query) {
     let REQUEST_DATA = {};
@@ -1089,6 +1102,7 @@ function mssql_query(sql_query) {
 }
 
 
+// DATABASE HANDLER
 function open_server_connect_window() {
 
     function switch_connect_status() {
