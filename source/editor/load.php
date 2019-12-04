@@ -41,6 +41,7 @@ require_once('../config.php');
 
             $RESULT_DATE['diagram_id'] = $check_saved_diagram['diagram_id'];
             $RESULT_DATE['diagram_name'] = $check_saved_diagram['diagram_name'];
+            $RESULT_DATE['diagram_type'] = $check_saved_diagram['diagram_type'];
 
 
             $RES_JSON = json_encode($RESULT_DATE);

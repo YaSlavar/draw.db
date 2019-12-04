@@ -16,6 +16,7 @@ CREATE TABLE diagrams (
 	diagram_id INTEGER PRIMARY KEY,
 	author_id INTEGER,
 	diagram_name VARCHAR(255),
+	diagram_type VARCHAR(20),
 	create_date DATE,
 	FOREIGN KEY (author_id) REFERENCES users(user_id)
 );

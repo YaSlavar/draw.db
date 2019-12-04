@@ -21,8 +21,18 @@
                 <form id="form_new_diagram" method="post">
                     <div class="modal-body">
                         <div class="modal-body">
-                            <input type="hidden" name="edit" value="" id="diagram_id">
-                            <input type="text" name="diagram_name" class="form-control" placeholder="Введите название диаграммы">
+                            <div class="form-group">
+                                <input type="hidden" name="edit" value="" id="diagram_id">
+                                <label for="diagram_name">Название диаграммы:</label>
+                                <input type="text" name="diagram_name" class="form-control" placeholder="Введите название диаграммы">
+                            </div>
+                            <div class="form-group">
+                                <label for="diagram_type">Нотация:</label>
+                                <select class="form-control" id="diagram_type" name="diagram_type">
+                                    <option value="chen">Нотация Питера Чена</option>
+                                    <option value="idef1x">IDEF1X</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

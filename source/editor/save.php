@@ -130,13 +130,14 @@ function save_elements($diagram_id, $db)
 echo ($diagram_id);
 }
 
-function create_diagramm($diagram_id, $diagram_name, $db)
+function create_diagramm($diagram_id, $diagram_name, $diagram_type, $db)
 {
     $author_id = $_SESSION['user']['user_id'];
-    $relationships = $db->prepare('INSERT INTO diagrams(diagram_id, author_id, diagram_name) VALUES (:diagram_id, :author_id, :diagram_name)');
+    $relationships = $db->prepare('INSERT INTO diagrams(diagram_id, author_id, diagram_name, diagram_type) VALUES (:diagram_id, :author_id, :diagram_name, :diagram_type)');
     $relationships->bindValue(':diagram_id', $diagram_id);
     $relationships->bindValue(':author_id', $author_id);
     $relationships->bindValue(':diagram_name', $diagram_name);
+    $relationships->bindValue(':diagram_type', $diagram_type);
 
     $relationships->execute();
 }
@@ -188,6 +189,7 @@ function delete_diagramm($diagram_id, $db)
 if (isset($_POST['diagram_id'])) {
     $diagram_id = $_POST['diagram_id'];
     $diagram_name = $_POST['diagram_name'];
+    $diagram_type = $_POST['diagram_type'];
     $command = $_POST['command'];
 
     $select = $db->query("SELECT * FROM diagrams WHERE diagram_id = $diagram_id");
@@ -213,12 +215,12 @@ if (isset($_POST['diagram_id'])) {
 
         } else {
             $diagram_id = mt_rand(0, 999) . (string)date('YmdHis');
-            create_diagramm($diagram_id, $diagram_name, $db);
+            create_diagramm($diagram_id, $diagram_name, $diagram_type, $db);
             save_elements($diagram_id, $db);
         }
 
     } else {
-        create_diagramm($diagram_id, $diagram_name, $db);
+        create_diagramm($diagram_id, $diagram_name, $diagram_type, $db);
         save_elements($diagram_id, $db);
     }
 

@@ -121,7 +121,6 @@
     $(document).ready(function () {
 
         let work_zone_container = $('.work_zone_container');
-
         work_zone_container.draggable();
 
         load_diagram();

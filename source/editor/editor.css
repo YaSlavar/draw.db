@@ -363,3 +363,18 @@ button#btn_disconnect {
     background-color: #eeedff;
     box-shadow: 0 0 1rem rgba(45, 66, 185, 0.81);
 }
+
+
+
+
+/*IDEF1X*/
+
+.main_name_idef1x {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    padding: 2px 0 3px;
+    width: 100%;
+    text-align: left;
+    overflow: hidden;
+}

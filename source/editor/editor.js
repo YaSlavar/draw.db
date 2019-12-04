@@ -1,6 +1,6 @@
 //SYSTEM
 let ZOOM_DELTA = 1;
-
+let DIAGRAM_TYPE = 'chen';
 
 function get_diagram_id() {
     let url_string = window.location.href;
@@ -23,7 +23,7 @@ function get_diagram_info() {
         let id = $(elem).attr('id');
         mains[id] = {};
         mains[id]['position'] = $(elem).offset();
-        mains[id]['name'] = $(elem).children('.main_text').text();
+        mains[id]['name'] = $(elem).children('.main_name').text();
     });
 
     Out_JSON['mains'] = mains;
@@ -353,48 +353,163 @@ function undo_zoom(element, animate_speed = 400) {
 
 //ADD BLOCK
 function add_main_block(main_id, name_new_main) {
-    return '<div class=\"box main\" id=\"' + main_id + '\">' +
-        '       <div class=\"main_text\">' + name_new_main + '</div>' +
-        '       <div class=\"options\">' +
-        '           <div class=\"box_option_bottom btn_text\">' +
-        '               <div class=\"edit_main light_bottom\" id=\"' + main_id + '\" onclick="add_main(' + main_id + ');">Изменить сущность</div>' +
-        '               <div class=\"add_atribute light_bottom\" id=\"' + main_id + '\" onclick=\"add_attribute(' + main_id + ');">Добавить атрибут</div>' +
-        '               <div class=\"add_relationships light_bottom\" id=\"' + main_id + '\" onclick=\"add_relationship(' + main_id + ');">Создать связь</div>' +
-        '               <div class=\"remove_main light_bottom red_bottom\" id=\"' + main_id + '\" onclick=\"remove_main(' + main_id + ');">Удалить сущность</div>' +
-        '           </div>' +
-        '      </div>' +
-        '</div>';
+    let result;
+
+    let block = $('<div>', {
+        class: 'box main',
+        id: main_id
+    });
+
+    let main_name = $('<div>', {
+        class: 'main_name',
+        text: name_new_main
+    });
+
+    let main_options = $('<div>', {
+        'class': 'options'
+    }).append(
+        $('<div>', {
+            class: 'box_option_bottom btn_text',
+        }).append([
+            $('<div>', {
+                class: 'edit_main light_bottom',
+                id: main_id,
+                click: function(){add_main(main_id)},
+                text: 'Изменить сущность'
+            }),
+            $('<div>', {
+                class: 'add_attribute light_bottom',
+                id: main_id,
+                click: function(){add_attribute(main_id)},
+                text: 'Добавить атрибут'
+            }),
+            $('<div>', {
+                class: 'add_relationships light_bottom',
+                id: main_id,
+                click: function(){add_relationship(main_id)},
+                text: 'Создать связь'
+            }),
+            $('<div>', {
+                class: 'remove_main light_bottom red_bottom',
+                id: main_id,
+                click: function(){remove_main(main_id)},
+                text: 'Удалить сущность'
+            })
+        ])
+    );
+
+    if (DIAGRAM_TYPE === 'chen') {
+        result = block.append(main_name, main_options);
+    }else if(DIAGRAM_TYPE === 'idef1x'){
+        main_name.addClass('main_name_idef1x');
+        result = block.append(main_name, main_options);
+    }
+    return result;
 }
 
-function add_attribute_block(attribute_id, main_id, name_new_main, data_type, len_data, primary_key) {
+function add_attribute_block(attribute_id, main_id, name_new_attribute, data_type, len_data, primary_key) {
+    let result;
+
     let is_pk = "";
     if (primary_key === true) {
         is_pk = "is_primary_key"
     }
-    return '<div class=\"box attribute\" id=\"' + attribute_id + '\" parent=\"' + main_id + '\" data_type=\"' + data_type + '\" len_data=\"' + len_data + '\" primary_key=\"' + primary_key + '\">' +
-        '       <div class="attribute_text ' + is_pk + '">' + name_new_main + '</div>' +
-        '       <div class=\"options\">' +
-        '           <div class=\"box_option_bottom btn_text\">' +
-        '               <div class=\"edit_atribute light_bottom\" id=\"' + attribute_id + '\" onclick="add_attribute(' + main_id + ", " + attribute_id + ')">Изменить атрибут</div>' +
-        '               <div class=\"remove_attribute light_bottom red_bottom\" id=\"' + attribute_id + '\" onclick=\"remove_attr(' + attribute_id + ');">Удалить атрибут</div>' +
-        '           </div>' +
-        '      </div>' +
-        '</div>'
+
+    let block = $('<div>', {
+        class: 'box attribute',
+        id: attribute_id,
+        data_type: data_type,
+        len_data: len_data,
+        primary_key: primary_key
+    }).attr({
+        'parent': main_id
+    });
+
+    let attribute_text = $('<div>', {
+        class: 'attribute_text',
+        text: name_new_attribute
+    }).addClass(is_pk);
+
+    let attribute_option = $('<div>', {
+        class: 'options'
+    }).append(
+        $('<div>', {
+            class: 'box_option_bottom btn_text'
+        }).append([
+            $('<div>', {
+                class: 'edit_attribute light_bottom',
+                id: attribute_id,
+                click: function(){add_attribute(main_id, attribute_id)},
+                text: 'Изменить атрибут'
+            }),
+            $('<div>', {
+                class: 'remove_attribute light_bottom red_bottom',
+                id: attribute_id,
+                click: function(){remove_attr(attribute_id)},
+                text: 'Удалить атрибут'
+            })
+        ])
+    );
+
+    if (DIAGRAM_TYPE === 'chen') {
+        result = block.append(attribute_text, attribute_option);
+    }else if(DIAGRAM_TYPE === 'idef1x'){
+        result = block.append(attribute_text, attribute_option);
+    }
+
+    return result;
 }
 
 function add_relationship_block(relationship_id, rel_type, rel_desc, first_main, second_main) {
-    return '<div class="relationship" id="' + relationship_id + '" first="' + first_main + '" second="' + second_main + '">' +
-        '      <div class="box diamond">' +
-        '          <div class="diamond_text">' + rel_type + '</div>' +
-        '      </div>' +
-        '          <div class="desc_diamond">' + rel_desc + '</div>' +
-        '          <div class="options">' +
-        '             <div class="box_option_bottom btn_text">' +
-        '                <div class="edit_relationship light_bottom" onclick="add_relationship(' + relationship_id + ');">Изменить связь</div>' +
-        '                <div class="remove_attribute light_bottom red_bottom" onclick="remove_relationship(' + relationship_id + ')">Удалить связь</div>' +
-        '             </div>' +
-        '          </div>' +
-        '      </div>';
+    let result;
+
+    let relationship = $('<div>',{
+        class: 'relationship',
+        id: relationship_id
+    }).attr({
+        'first': first_main,
+        'second': second_main
+    });
+
+    let diamond_block = $('<div>', {
+        class: 'box diamond'
+    }).append(
+        $('<div>',{
+            class: 'diamond_text',
+            text: rel_type
+        })
+    );
+
+    let diamond_description = $('<div>', {
+        class: 'desc_diamond',
+        text: rel_desc
+    });
+
+    let diamond_options = $('<div>', {
+        class: 'options'
+    }).append(
+        $('<div>', {
+        class: 'box_option_bottom btn_text'
+        }).append(
+        $('<div>', {
+            class: 'edit_relationship light_bottom',
+            click: function(){add_relationship(relationship_id)},
+            text: 'Изменить связь'
+        }),
+        $('<div>', {
+            class: 'remove_attribute light_bottom red_bottom',
+            click: function(){remove_relationship(relationship_id)},
+            text: 'Удалить связь'
+        })
+    ));
+
+    if (DIAGRAM_TYPE === 'chen') {
+        result = relationship.append(diamond_block, diamond_description, diamond_options);
+    }else if(DIAGRAM_TYPE === 'idef1x'){
+        result = relationship.append(diamond_block, diamond_description, diamond_options);
+    }
+
+    return result;
 }
 
 
@@ -422,14 +537,14 @@ function add_main(edit_main_id = NaN) {
         new_diagramm_title.text("Изменение сущности");
         main_name_label.text("Название сущности:");
         btn_new_main.text("Изменить");
-        name_new_main_input.val(edited_main.children(".main_text").text());
+        name_new_main_input.val(edited_main.children(".main_name").text());
     } else {
         new_diagramm_title.text("Создание новой сущности");
         main_name_label.text("Название новой сущности:");
         btn_new_main.text("Создать");
     }
 
-    var main_edit_window = $("#new_main");
+    let main_edit_window = $("#new_main");
     main_edit_window.modal("toggle");
 
     name_new_main_input.off('change').on('change', function () {
@@ -492,7 +607,7 @@ function add_main(edit_main_id = NaN) {
                     let position = get_center_window_position();
                     $("#"+ main_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
                 } else {
-                    $("#" + edit_main_id).children(".main_text").text(name_new_main);
+                    $("#" + edit_main_id).children(".main_name").text(name_new_main);
                 }
                 draggable_box();
             });
@@ -761,7 +876,7 @@ function add_relationship(edit_rel_id) {
     let main = work_zone_container.children('.main');
 
     main.each(function (i, elem) {
-        let main_name = $(elem).children(".main_text").text();
+        let main_name = $(elem).children(".main_name").text();
         let main_id = $(elem).attr("id");
         rel_first_main.append('<option value="' + main_id + '">' + main_name + '</option>');
         rel_second_main.append('<option value="' + main_id + '">' + main_name + '</option>');
@@ -965,6 +1080,43 @@ function open_screenshot_window() {
 
 //LOAD
 
+function diagram_constructor(result_json) {
+    let mains = result_json['mains'];
+    let attributes = result_json['attributes'];
+    let relationships = result_json['relationships'];
+    let links = result_json['links'];
+
+    jQuery.each(mains, function (i, elem) {
+        let position = JSON.parse(elem['position']);
+
+        $(".work_zone_container").append(add_main_block(elem['main_id'], elem['name']));
+        $(".main#" + elem['main_id']).offset(position);
+    });
+
+    jQuery.each(attributes, function (i, elem) {
+        let position = JSON.parse(elem['position']);
+
+        $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+        $(".attribute#" + elem['attribute_id']).offset(position);
+    });
+
+    jQuery.each(relationships, function (i, elem) {
+        let position = JSON.parse(elem['position']);
+
+        $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_description'], elem['first_main'], elem['second_main']));
+        $(".relationship#" + elem['relationship_id']).offset(position);
+    });
+
+    jQuery.each(links, function (i, elem) {
+        let canvas = $(".canvas");
+        canvas.append(add_link(elem['parent_id'], elem['link_id']));
+        canvas.html(canvas.html());
+    });
+    draggable_box();
+
+    save_diagram_img();
+}
+
 function load_diagram(diagram_id) {
     let Out_JSON = {};
 
@@ -993,42 +1145,9 @@ function load_diagram(diagram_id) {
             $('#diagram_name').text(JSON_answer['diagram_name']);
 
             let result = JSON.parse(msg);
+            DIAGRAM_TYPE = result['diagram_type'];
 
-            let mains = result['mains'];
-            let attributes = result['attributes'];
-            let relationships = result['relationships'];
-            let links = result['links'];
-
-            jQuery.each(mains, function (i, elem) {
-                let position = JSON.parse(elem['position']);
-
-                $(".work_zone_container").append(add_main_block(elem['main_id'], elem['name']));
-                $(".main#" + elem['main_id']).offset(position);
-            });
-
-            jQuery.each(attributes, function (i, elem) {
-                let position = JSON.parse(elem['position']);
-
-                $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
-                $(".attribute#" + elem['attribute_id']).offset(position);
-            });
-
-            jQuery.each(relationships, function (i, elem) {
-                let position = JSON.parse(elem['position']);
-
-                $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_description'], elem['first_main'], elem['second_main']));
-                $(".relationship#" + elem['relationship_id']).offset(position);
-            });
-
-            jQuery.each(links, function (i, elem) {
-                let canvas = $(".canvas");
-                canvas.append(add_link(elem['parent_id'], elem['link_id']));
-                canvas.html(canvas.html());
-            });
-            draggable_box();
-
-            save_diagram_img();
-
+            diagram_constructor(result);
             // console.log(result);
         });
     }
@@ -1265,7 +1384,7 @@ function open_server_connect_window() {
 
         function get_main_PK(data_diagram, main_id) {
 
-            let result;
+            let result = NaN;
 
             jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
                 if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)) {

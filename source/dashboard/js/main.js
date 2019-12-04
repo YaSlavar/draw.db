@@ -4,11 +4,11 @@ function randInt() {
     return Math.floor(Math.random() * (max - min + 1)) + min + String(Date.now());
 }
 
-
 function create_and_rename_diagram(diagramm_id = NaN) {
 
     let diagram_name_input = $('input[name="diagram_name"]');
     diagram_name_input.val("");
+    let diagram_type_input = $('select[name="diagram_type"]');
     let btn_new_diagram = $('#btn_new_diagram');
 
     let create_and_rename_diagramm_title = $('#create_and_rename_diagramm_title');
@@ -40,7 +40,7 @@ function create_and_rename_diagram(diagramm_id = NaN) {
                 Out_JSON['command'] = "create";
                 Out_JSON['diagram_id'] = randInt();
             }
-
+            Out_JSON['diagram_type'] = diagram_type_input.val();
             $.ajax({
                 type: "POST",
                 url: "editor/save.php",
@@ -65,7 +65,6 @@ function create_and_rename_diagram(diagramm_id = NaN) {
     });
 
 }
-
 
 function delete_diagram(diagram_id) {
 
