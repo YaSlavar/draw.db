@@ -277,7 +277,7 @@ button:active, button:focus {
     width: 360px;
     top: -1px;
     left: 0;
-    z-index: 9999;
+    z-index: 30;
 }
 
 .box .box_option_bottom {
@@ -365,8 +365,6 @@ button#btn_disconnect {
 }
 
 
-
-
 /*IDEF1X*/
 
 .main_name_idef1x {
@@ -377,4 +375,48 @@ button#btn_disconnect {
     width: 100%;
     text-align: left;
     overflow: hidden;
+}
+
+.attribute_idef1x {
+    display: flex;
+    justify-content: space-between;
+}
+
+.attribute_text_idef1x {
+    text-align: left;
+}
+
+.attribute_option {
+    width: auto;
+}
+
+.box_option_bottom_attribute {
+    display: none;
+}
+
+.box:hover .box_option_bottom_attribute {
+    text-align: left;
+    font-size: 12px;
+    display: flex;
+    width: auto;
+    right: 5px;
+    margin: 0;
+}
+
+.option_bottom_attribute {
+    margin-right: 5px;
+}
+
+.edit_attribute_idef1x {
+    width: 24px;
+    height: 24px;
+    background: url("../dashboard/css/icons/edit.svg");
+    z-index: 50;
+}
+
+.remove_attribute_idef1x {
+    width: 24px;
+    height: 24px;
+    background: url("../dashboard/css/icons/close.svg");
+    z-index: 50;
 }

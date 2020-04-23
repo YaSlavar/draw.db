@@ -17,7 +17,7 @@ function get_diagram_info() {
     let links = {};
 
     let work_zone_container = $(".work_zone_container");
-    let main = work_zone_container.children('.main');
+    let main = work_zone_container.find('.main');
 
     main.each(function (i, elem) {
         let id = $(elem).attr('id');
@@ -28,7 +28,7 @@ function get_diagram_info() {
 
     Out_JSON['mains'] = mains;
 
-    let attribute = work_zone_container.children('.attribute');
+    let attribute = work_zone_container.find('.attribute');
 
     attribute.each(function (i, elem) {
         let id = $(elem).attr('id');
@@ -43,7 +43,7 @@ function get_diagram_info() {
 
     Out_JSON['attributes'] = attributes;
 
-    let relationship = work_zone_container.children('.relationship');
+    let relationship = work_zone_container.find('.relationship');
 
     relationship.each(function (i, elem) {
         let id = $(elem).attr('id');
@@ -57,7 +57,7 @@ function get_diagram_info() {
 
     Out_JSON['relationships'] = relationships;
 
-    let link = $('.canvas').children('.link');
+    let link = $('.canvas').find('.link');
 
     link.each(function (i, elem) {
         let id = $(elem).attr('id');
@@ -170,8 +170,19 @@ function get_center_window_position() {
     let body = $('body');
     let work_zone_container = $('.work_zone_container');
     let work_zone_container_position = work_zone_container.position();
-    return {'y': body.height() / 2 - work_zone_container_position['top'] - 50,
-            'x': body.width() / 2 - work_zone_container_position['left']};
+    return {
+        'y': body.height() / 2 - work_zone_container_position['top'] - 50,
+        'x': body.width() / 2 - work_zone_container_position['left']
+    };
+}
+
+function raise_notification(message) {
+
+    let notification_window = $('.toast');
+    let notification_window_text = $('.toast-body');
+
+    notification_window_text.html(message);
+    notification_window.toast("show");
 }
 
 
@@ -222,21 +233,83 @@ function setting_link() {
             let relationship_pos = relationship.position();
 
             link.each(function (i, elem) {
-                if (i === 0) {
+                if (DIAGRAM_TYPE === 'chen') {
+                    if (i === 0) {
+                        $(elem).attr({
+                            "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
+                            "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
+                            "x2": main_pos["left"] + Number(main.innerWidth() / 2),
+                            "y2": main_pos["top"] + Number(main.innerHeight() / 2)
+                        });
+                    } else {
+                        $(elem).attr({
+                            "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
+                            "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
+                            "x2": second_main_pos["left"] + Number(second_main.innerWidth() / 2),
+                            "y2": second_main_pos["top"] + Number(second_main.innerHeight() / 2)
+                        });
+                    }
+                } else if (DIAGRAM_TYPE === 'idef1x') {
+
+                    let main_pos_top_start, main_pos_top_end,
+                        main_pos_left_start, main_pos_left_end,
+                        main_left, main_top;
+
+                    if (i === 0) {
+                        main_pos_top_start = main_pos["top"];
+                        main_pos_top_end = main_pos["top"] + main.innerHeight();
+                        main_pos_left_start = main_pos["left"];
+                        main_pos_left_end = main_pos["left"] + main.innerWidth();
+
+                        main_left = main_pos["left"] + Number(main.innerWidth() / 2);
+                        main_top = main_pos["top"] + Number(main.innerHeight() / 2);
+
+                    } else {
+
+                        main_pos_top_start = second_main_pos["top"];
+                        main_pos_top_end = second_main_pos["top"] + second_main.innerHeight();
+                        main_pos_left_start = second_main_pos["left"];
+                        main_pos_left_end = second_main_pos["left"] + second_main.innerWidth();
+
+                        main_left = second_main_pos["left"] + Number(main.innerWidth() / 2);
+                        main_top = second_main_pos["top"] + Number(main.innerHeight() / 2);
+                    }
+
+                    let relationship_center_left = relationship_pos["left"] + Number(relationship.innerWidth() / 2);
+                    let relationship_center_top = relationship_pos["top"] + Number(relationship.innerHeight() / 2);
+
+                    // СВЯЗЬ ВВЕРХУ
+                    if (relationship_center_top < main_pos_top_start && relationship_center_left > main_pos_left_start && relationship_center_left < main_pos_left_end) {
+                        main_left = relationship_center_left;
+                        main_top = main_pos_top_start;
+                    }
+                    // СВЯЗЬ ВНИЗУ
+                    if (relationship_center_top > main_pos_top_end && relationship_center_left > main_pos_left_start && relationship_center_left < main_pos_left_end) {
+                        main_left = relationship_center_left;
+                        main_top = main_pos_top_end;
+                    }
+                    // СВЯЗЬ СЛЕВА
+                    if (relationship_center_left < main_pos_left_start && relationship_center_top > main_pos_top_start && relationship_center_top < main_pos_top_end) {
+                        main_left = main_pos_left_start;
+                        main_top = relationship_center_top;
+                    }
+                    // СВЯЗЬ СПРАВА
+                    if (relationship_center_left > main_pos_left_end && relationship_center_top > main_pos_top_start && relationship_center_top < main_pos_top_end) {
+                        main_left = main_pos_left_end;
+                        main_top = relationship_center_top;
+                    }
+
                     $(elem).attr({
-                        "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
-                        "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
-                        "x2": main_pos["left"] + Number(main.innerWidth() / 2),
-                        "y2": main_pos["top"] + Number(main.innerHeight() / 2)
+
+                        "x1": relationship_center_left,
+                        "y1": relationship_center_top,
+                        "x2": main_left,
+                        "y2": main_top
+
                     });
-                } else {
-                    $(elem).attr({
-                        "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
-                        "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
-                        "x2": second_main_pos["left"] + Number(second_main.innerWidth() / 2),
-                        "y2": second_main_pos["top"] + Number(second_main.innerHeight() / 2)
-                    });
+
                 }
+
             });
 
         });
@@ -316,7 +389,7 @@ function draggable_box() {
 function zoom_element(element, delta, zoom_delta = 0.05, animate_speed = 1) {
     let undo_zoom_button = $('#undo_zoom');
 
-    if (typeof(delta) !== "number") {
+    if (typeof (delta) !== "number") {
         delta = delta.deltaY * delta.deltaFactor;
     }
 
@@ -374,25 +447,33 @@ function add_main_block(main_id, name_new_main) {
             $('<div>', {
                 class: 'edit_main light_bottom',
                 id: main_id,
-                click: function(){add_main(main_id)},
+                click: function () {
+                    add_main(main_id)
+                },
                 text: 'Изменить сущность'
             }),
             $('<div>', {
                 class: 'add_attribute light_bottom',
                 id: main_id,
-                click: function(){add_attribute(main_id)},
+                click: function () {
+                    add_attribute(main_id)
+                },
                 text: 'Добавить атрибут'
             }),
             $('<div>', {
                 class: 'add_relationships light_bottom',
                 id: main_id,
-                click: function(){add_relationship(main_id)},
+                click: function () {
+                    add_relationship(main_id)
+                },
                 text: 'Создать связь'
             }),
             $('<div>', {
                 class: 'remove_main light_bottom red_bottom',
                 id: main_id,
-                click: function(){remove_main(main_id)},
+                click: function () {
+                    remove_main(main_id)
+                },
                 text: 'Удалить сущность'
             })
         ])
@@ -400,7 +481,7 @@ function add_main_block(main_id, name_new_main) {
 
     if (DIAGRAM_TYPE === 'chen') {
         result = block.append(main_name, main_options);
-    }else if(DIAGRAM_TYPE === 'idef1x'){
+    } else if (DIAGRAM_TYPE === 'idef1x') {
         main_name.addClass('main_name_idef1x');
         result = block.append(main_name, main_options);
     }
@@ -430,31 +511,76 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
         text: name_new_attribute
     }).addClass(is_pk);
 
+
     let attribute_option = $('<div>', {
         class: 'options'
-    }).append(
-        $('<div>', {
-            class: 'box_option_bottom btn_text'
-        }).append([
-            $('<div>', {
-                class: 'edit_attribute light_bottom',
-                id: attribute_id,
-                click: function(){add_attribute(main_id, attribute_id)},
-                text: 'Изменить атрибут'
-            }),
-            $('<div>', {
-                class: 'remove_attribute light_bottom red_bottom',
-                id: attribute_id,
-                click: function(){remove_attr(attribute_id)},
-                text: 'Удалить атрибут'
-            })
-        ])
-    );
+    });
 
     if (DIAGRAM_TYPE === 'chen') {
-        result = block.append(attribute_text, attribute_option);
-    }else if(DIAGRAM_TYPE === 'idef1x'){
-        result = block.append(attribute_text, attribute_option);
+
+        let edit_button = $('<div>', {
+            class: 'edit_attribute light_bottom',
+            id: attribute_id,
+            click: function () {
+                add_attribute(main_id, attribute_id)
+            },
+            text: 'Изменить атрибут'
+        });
+
+        let remove_button = $('<div>', {
+            class: 'remove_attribute light_bottom red_bottom',
+            id: attribute_id,
+            click: function () {
+                remove_attr(attribute_id)
+            },
+            text: 'Удалить атрибут'
+        });
+
+        result = block.append(
+            attribute_text,
+            attribute_option.append(
+                $('<div>', {
+                    class: 'box_option_bottom btn_text'
+                }).append(
+                    edit_button,
+                    remove_button
+                )
+            )
+        );
+
+    } else if (DIAGRAM_TYPE === 'idef1x') {
+
+        let edit_button_idef1x = $('<div>', {
+            class: 'edit_attribute edit_attribute_idef1x',
+            id: attribute_id,
+            click: function () {
+                add_attribute(main_id, attribute_id)
+            }
+        });
+
+        let remove_button_idef1x = $('<div>', {
+            class: 'remove_attribute remove_attribute_idef1x',
+            id: attribute_id,
+            click: function () {
+                remove_attr(attribute_id)
+            }
+        });
+
+        result = block.removeClass("box").addClass("attribute_idef1x")
+            .append(
+                attribute_text.addClass("attribute_text_idef1x"),
+                attribute_option
+                    .removeClass('options')
+                    .addClass("attribute_option")
+                    .append(
+                        $('<div>', {
+                            class: 'box_option_bottom_attribute btn_text'
+                        }).append(
+                            edit_button_idef1x.addClass("option_bottom_attribute"),
+                            remove_button_idef1x.addClass("option_bottom_attribute")
+                        )
+                    )
+            );
     }
 
     return result;
@@ -463,7 +589,7 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
 function add_relationship_block(relationship_id, rel_type, rel_desc, first_main, second_main) {
     let result;
 
-    let relationship = $('<div>',{
+    let relationship = $('<div>', {
         class: 'relationship',
         id: relationship_id
     }).attr({
@@ -474,7 +600,7 @@ function add_relationship_block(relationship_id, rel_type, rel_desc, first_main,
     let diamond_block = $('<div>', {
         class: 'box diamond'
     }).append(
-        $('<div>',{
+        $('<div>', {
             class: 'diamond_text',
             text: rel_type
         })
@@ -489,23 +615,27 @@ function add_relationship_block(relationship_id, rel_type, rel_desc, first_main,
         class: 'options'
     }).append(
         $('<div>', {
-        class: 'box_option_bottom btn_text'
+            class: 'box_option_bottom btn_text'
         }).append(
-        $('<div>', {
-            class: 'edit_relationship light_bottom',
-            click: function(){add_relationship(relationship_id)},
-            text: 'Изменить связь'
-        }),
-        $('<div>', {
-            class: 'remove_attribute light_bottom red_bottom',
-            click: function(){remove_relationship(relationship_id)},
-            text: 'Удалить связь'
-        })
-    ));
+            $('<div>', {
+                class: 'edit_relationship light_bottom',
+                click: function () {
+                    add_relationship(relationship_id)
+                },
+                text: 'Изменить связь'
+            }),
+            $('<div>', {
+                class: 'remove_attribute light_bottom red_bottom',
+                click: function () {
+                    remove_relationship(relationship_id)
+                },
+                text: 'Удалить связь'
+            })
+        ));
 
     if (DIAGRAM_TYPE === 'chen') {
         result = relationship.append(diamond_block, diamond_description, diamond_options);
-    }else if(DIAGRAM_TYPE === 'idef1x'){
+    } else if (DIAGRAM_TYPE === 'idef1x') {
         result = relationship.append(diamond_block, diamond_description, diamond_options);
     }
 
@@ -514,8 +644,20 @@ function add_relationship_block(relationship_id, rel_type, rel_desc, first_main,
 
 
 // ADD HANDLERS
-function add_link(parent_id, link_id) {
-    return '<line class=\"link\" id=\"' + link_id + '\" parent=\"' + parent_id + '\" x1=\"10\" y1=\"10\" x2=\"226\" y2=\"90\" stroke=\"black\"></line>'
+function add_link(parent_id, link_id, dasharray = "0") {
+
+    return $('<line>', {
+        class: 'link',
+        id: link_id
+    }).attr({
+        'parent': parent_id,
+        'x1': "10",
+        'y1': "10",
+        'x2': "200",
+        'y2': "100",
+        'stroke': "black",
+        'stroke-dasharray': dasharray
+    });
 }
 
 function add_main(edit_main_id = NaN) {
@@ -605,7 +747,7 @@ function add_main(edit_main_id = NaN) {
                 if (isNaN(edit_main_id)) {
                     $(".work_zone_container").append(add_main_block(main_id, name_new_main));
                     let position = get_center_window_position();
-                    $("#"+ main_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
+                    $("#" + main_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
                 } else {
                     $("#" + edit_main_id).children(".main_name").text(name_new_main);
                 }
@@ -766,13 +908,24 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                 }
             } else {
 
-                $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
-
-                let position = get_center_window_position();
-                $("#"+ attribute_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
-
                 let canvas = $(".canvas");
-                canvas.append(add_link(main_id, attribute_id));
+
+                if (DIAGRAM_TYPE === 'chen') {
+
+                    $(".work_zone_container").append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
+
+                    let position = get_center_window_position();
+                    $("#" + attribute_id).css({"top": position['y'] + 'px', "left": position['x'] + 'px'});
+
+                    canvas.append(add_link(main_id, attribute_id));
+
+                } else if (DIAGRAM_TYPE === 'idef1x') {
+
+                    let main = $(".main#" + main_id);
+                    main.append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
+
+                }
+
                 // перерисовка svg
                 canvas.html(canvas.html());
                 draggable_box();
@@ -811,7 +964,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     );
 
     let edit_type;
-    if ($('div').is(edited_attribute)) {
+    if ($("div").is(edited_attribute)) {
 
         edit_type = "change";
 
@@ -939,6 +1092,7 @@ function add_relationship(edit_rel_id) {
                 edited_relationship.children('.diamond').children(".diamond_text").text(rel_type_val);
                 edited_relationship.children('.desc_diamond').text(rel_desc);
             } else {
+
                 $(".work_zone_container").append(add_relationship_block(relationship_id, rel_type_val, rel_desc, first_main_id, second_main_id));
 
                 let first_main_position = $("#" + first_main_id).position();
@@ -956,6 +1110,7 @@ function add_relationship(edit_rel_id) {
                 canvas.append(add_link(relationship_id, second_link));
                 // перерисовка svg
                 canvas.html(canvas.html());
+
             }
             $(this).off(event);
             draggable_box();
@@ -1024,11 +1179,7 @@ function save_diagram() {
         url: "editor/save.php",
         data: diagram_data
     }).done(function (msg) {
-        let notification_window = $('.toast');
-        let notification_window_text = $('.toast-body');
-
-        notification_window_text.html("Диаграмма успешно сохранена");
-        notification_window.toast("show");
+        raise_notification("Диаграмма успешно сохранена");
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
@@ -1095,9 +1246,13 @@ function diagram_constructor(result_json) {
 
     jQuery.each(attributes, function (i, elem) {
         let position = JSON.parse(elem['position']);
-
-        $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
-        $(".attribute#" + elem['attribute_id']).offset(position);
+        if (DIAGRAM_TYPE === 'chen') {
+            $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+            $(".attribute#" + elem['attribute_id']).offset(position);
+        } else if (DIAGRAM_TYPE === 'idef1x') {
+            let main = $(".main#" + elem['parent_id']);
+            main.append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+        }
     });
 
     jQuery.each(relationships, function (i, elem) {

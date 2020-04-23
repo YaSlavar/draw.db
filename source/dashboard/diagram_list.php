@@ -92,7 +92,7 @@
                                                     onclick="delete_diagram(<?
                                                     echo($res['diagram_id']); ?>);" data-placement="left"
                                                     title="Удалить диаграмму">
-                                                <span aria-hidden="true">&times;</span>
+                                                <div class="delete_diagramm_icon"></div>
                                             </button>
                                         </div>
                                     </div>
