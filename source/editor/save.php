@@ -103,6 +103,7 @@ function save_elements($diagram_id, $db)
             $first_main = $item['first'];
             $second_main = $item['second'];
             $rel_type = $item['rel_type'];
+            $rel_identity = $item['rel_identity'];
             $rel_description = $item['rel_description'];
             $position = json_encode($item['position']);
 
@@ -110,15 +111,16 @@ function save_elements($diagram_id, $db)
             $res = $select->fetchArray();
 
             if ($res['diagram_id'] == $diagram_id) {
-                $relationships = $db->prepare('UPDATE relationships SET first_main = :first_main, second_main = :second_main, rel_type = :rel_type, rel_description = :rel_description, diagram_id =  :diagram_id, position =  :position WHERE relationship_id = :relationship_id');
+                $relationships = $db->prepare('UPDATE relationships SET first_main = :first_main, second_main = :second_main, rel_type = :rel_type, rel_identity = :rel_identity, rel_description = :rel_description, diagram_id =  :diagram_id, position =  :position WHERE relationship_id = :relationship_id');
             } else {
-                $relationships = $db->prepare('INSERT INTO relationships VALUES (:relationship_id, :first_main, :second_main, :rel_type, :rel_description, :position, :diagram_id)');
+                $relationships = $db->prepare('INSERT INTO relationships(relationship_id, first_main, second_main, rel_type, rel_identity, rel_description, position, diagram_id) VALUES (:relationship_id, :first_main, :second_main, :rel_type, :rel_identity, :rel_description, :position, :diagram_id)');
             }
 
             $relationships->bindValue(':relationship_id', $relationship_id);
             $relationships->bindValue(':first_main', $first_main);
             $relationships->bindValue(':second_main', $second_main);
             $relationships->bindValue(':rel_type', $rel_type);
+            $relationships->bindValue(':rel_identity', $rel_identity);
             $relationships->bindValue(':rel_description', $rel_description);
             $relationships->bindValue(':position', $position);
             $relationships->bindValue(':diagram_id', $diagram_id);

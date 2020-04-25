@@ -37,7 +37,7 @@ function get_diagram_info() {
         attributes[id]['data_type'] = $(elem).attr('data_type');
         attributes[id]['len_data'] = $(elem).attr('len_data');
         attributes[id]['primary_key'] = $(elem).attr('primary_key');
-        attributes[id]['name'] = $(elem).children('.attribute_text').text();
+        attributes[id]['name'] = $(elem).attr('text');
         attributes[id]['position'] = $(elem).offset();
     });
 
@@ -50,7 +50,8 @@ function get_diagram_info() {
         relationships[id] = {};
         relationships[id]['first'] = $(elem).attr('first');
         relationships[id]['second'] = $(elem).attr('second');
-        relationships[id]['rel_type'] = $(elem).children('.diamond').children('.diamond_text').text();
+        relationships[id]['rel_type'] = $(elem).attr("rel_type");
+        relationships[id]['rel_identity'] = $(elem).attr("rel_identity");
         relationships[id]['rel_description'] = $(elem).children('.desc_diamond').text();
         relationships[id]['position'] = $(elem).offset();
     });
@@ -73,6 +74,8 @@ function get_diagram_info() {
     Out_JSON['links'] = links;
     Out_JSON['diagram_id'] = get_diagram_id();
     Out_JSON['diagram_name'] = $('div#diagram_name').text();
+
+    console.log(Out_JSON);
 
     return Out_JSON;
 }
@@ -189,6 +192,61 @@ function raise_notification(message) {
 //DRAGGABLE
 
 function setting_link() {
+
+    function set_relation_sign_position(relation_sign, top, left, relationship_position) {
+        let width = relation_sign.css('width');
+        let height = relation_sign.css('height');
+
+        let sign_description = relation_sign.children(".sign_description");
+
+        let sign_description_position_list = {
+            "center": {
+                "top": "-45px",
+                "left": "15px"
+            },
+            "up": {
+                "top": "-15px",
+                "left": "15px"
+            },
+            "down": {
+                "top": "15px",
+                "left": "15px"
+            },
+            "right": {
+                "top": "15px",
+                "left": "15px"
+            },
+            "right-up": {
+                "top": "15px",
+                "left": "15px"
+            },
+            "right-down": {
+                "top": "15px",
+                "left": "15px"
+            },
+            "left": {
+                "top": "15px",
+                "left": -sign_description.width() - 15 + "px"
+            },
+            "left-up": {
+                "top": "15px",
+                "left": -sign_description.width() - 15 + "px"
+            },
+            "left-down": {
+                "top": "15px",
+                "left": -sign_description.width() - 15 + "px"
+            }
+        };
+
+        let sign_description_position = sign_description_position_list[relationship_position];
+        sign_description.css(sign_description_position);
+
+        relation_sign.css({
+            "left": left - (width.substring(0, width.length - 2) / 2),
+            "top": top - (height.substring(0, height.length - 2) / 2)
+        });
+    }
+
     let work_zone_container = $(".work_zone_container");
     let main = work_zone_container.children('.main');
     main.each(function (i, elem) {
@@ -215,105 +273,166 @@ function setting_link() {
         });
 
         relationship.each(function (i, elem) {
-            let relationship_id = $(elem).attr("id");
-            let relationship = $('.relationship[id="' + relationship_id + '"]');
+                let relationship_id = $(elem).attr("id");
+                let relationship = $('.relationship[id="' + relationship_id + '"]');
 
-            let first_main_id = relationship.attr("first");
-            let second_main_id = relationship.attr("second");
-            let second_main;
-            if (main_id === first_main_id) {
-                second_main = $("#" + second_main_id);
-            } else if (main_id === second_main_id) {
-                second_main = $("#" + first_main_id);
-            }
-
-            let link = $('.link[parent="' + relationship_id + '"]');
-            let main_pos = main.position();
-            let second_main_pos = second_main.position();
-            let relationship_pos = relationship.position();
-
-            link.each(function (i, elem) {
-                if (DIAGRAM_TYPE === 'chen') {
-                    if (i === 0) {
-                        $(elem).attr({
-                            "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
-                            "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
-                            "x2": main_pos["left"] + Number(main.innerWidth() / 2),
-                            "y2": main_pos["top"] + Number(main.innerHeight() / 2)
-                        });
-                    } else {
-                        $(elem).attr({
-                            "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
-                            "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
-                            "x2": second_main_pos["left"] + Number(second_main.innerWidth() / 2),
-                            "y2": second_main_pos["top"] + Number(second_main.innerHeight() / 2)
-                        });
-                    }
-                } else if (DIAGRAM_TYPE === 'idef1x') {
-
-                    let main_pos_top_start, main_pos_top_end,
-                        main_pos_left_start, main_pos_left_end,
-                        main_left, main_top;
-
-                    if (i === 0) {
-                        main_pos_top_start = main_pos["top"];
-                        main_pos_top_end = main_pos["top"] + main.innerHeight();
-                        main_pos_left_start = main_pos["left"];
-                        main_pos_left_end = main_pos["left"] + main.innerWidth();
-
-                        main_left = main_pos["left"] + Number(main.innerWidth() / 2);
-                        main_top = main_pos["top"] + Number(main.innerHeight() / 2);
-
-                    } else {
-
-                        main_pos_top_start = second_main_pos["top"];
-                        main_pos_top_end = second_main_pos["top"] + second_main.innerHeight();
-                        main_pos_left_start = second_main_pos["left"];
-                        main_pos_left_end = second_main_pos["left"] + second_main.innerWidth();
-
-                        main_left = second_main_pos["left"] + Number(main.innerWidth() / 2);
-                        main_top = second_main_pos["top"] + Number(main.innerHeight() / 2);
-                    }
-
-                    let relationship_center_left = relationship_pos["left"] + Number(relationship.innerWidth() / 2);
-                    let relationship_center_top = relationship_pos["top"] + Number(relationship.innerHeight() / 2);
-
-                    // СВЯЗЬ ВВЕРХУ
-                    if (relationship_center_top < main_pos_top_start && relationship_center_left > main_pos_left_start && relationship_center_left < main_pos_left_end) {
-                        main_left = relationship_center_left;
-                        main_top = main_pos_top_start;
-                    }
-                    // СВЯЗЬ ВНИЗУ
-                    if (relationship_center_top > main_pos_top_end && relationship_center_left > main_pos_left_start && relationship_center_left < main_pos_left_end) {
-                        main_left = relationship_center_left;
-                        main_top = main_pos_top_end;
-                    }
-                    // СВЯЗЬ СЛЕВА
-                    if (relationship_center_left < main_pos_left_start && relationship_center_top > main_pos_top_start && relationship_center_top < main_pos_top_end) {
-                        main_left = main_pos_left_start;
-                        main_top = relationship_center_top;
-                    }
-                    // СВЯЗЬ СПРАВА
-                    if (relationship_center_left > main_pos_left_end && relationship_center_top > main_pos_top_start && relationship_center_top < main_pos_top_end) {
-                        main_left = main_pos_left_end;
-                        main_top = relationship_center_top;
-                    }
-
-                    $(elem).attr({
-
-                        "x1": relationship_center_left,
-                        "y1": relationship_center_top,
-                        "x2": main_left,
-                        "y2": main_top
-
-                    });
-
+                let first_main_id = relationship.attr("first");
+                let second_main_id = relationship.attr("second");
+                let second_main;
+                if (main_id === first_main_id) {
+                    second_main = $("#" + second_main_id);
+                } else if (main_id === second_main_id) {
+                    second_main = $("#" + first_main_id);
                 }
 
-            });
+                let link = $('.link[parent="' + relationship_id + '"]');
+                let main_pos = main.position();
+                let second_main_pos = second_main.position();
+                let relationship_pos = relationship.position();
 
-        });
-    });
+                link.each(function (i, elem) {
+                    if (DIAGRAM_TYPE === 'chen') {
+                        if (i === 0) {
+                            $(elem).attr({
+                                "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
+                                "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
+                                "x2": main_pos["left"] + Number(main.innerWidth() / 2),
+                                "y2": main_pos["top"] + Number(main.innerHeight() / 2)
+                            });
+                        } else {
+                            $(elem).attr({
+                                "x1": relationship_pos["left"] + Number(relationship.innerWidth() / 2),
+                                "y1": relationship_pos["top"] + Number(relationship.innerHeight() / 2),
+                                "x2": second_main_pos["left"] + Number(second_main.innerWidth() / 2),
+                                "y2": second_main_pos["top"] + Number(second_main.innerHeight() / 2)
+                            });
+                        }
+                    } else if (DIAGRAM_TYPE === 'idef1x') {
+
+                        let main_pos_top_start, main_pos_top_end,
+                            main_pos_left_start, main_pos_left_end,
+                            main_left, main_top;
+
+                        if (i === 0) {
+                            main_pos_top_start = main_pos["top"];
+                            main_pos_top_end = main_pos["top"] + main.innerHeight();
+                            main_pos_left_start = main_pos["left"];
+                            main_pos_left_end = main_pos["left"] + main.innerWidth();
+
+                            main_left = main_pos["left"] + Number(main.innerWidth() / 2);
+                            main_top = main_pos["top"] + Number(main.innerHeight() / 2);
+
+                        } else {
+                            main_pos_top_start = second_main_pos["top"];
+                            main_pos_top_end = second_main_pos["top"] + second_main.innerHeight();
+                            main_pos_left_start = second_main_pos["left"];
+                            main_pos_left_end = second_main_pos["left"] + second_main.innerWidth();
+
+                            main_left = second_main_pos["left"] + Number(main.innerWidth() / 2);
+                            main_top = second_main_pos["top"] + Number(main.innerHeight() / 2);
+                        }
+
+                        let relationship_center_left = relationship_pos["left"] + Number(relationship.innerWidth() / 2);
+                        let relationship_center_top = relationship_pos["top"] + Number(relationship.innerHeight() / 2);
+
+                        let relationship_position = "center";
+
+                        // СВЯЗЬ ВВЕРХУ
+                        if (relationship_center_top < main_pos_top_start && relationship_center_left > main_pos_left_start && relationship_center_left < main_pos_left_end) {
+                            relationship_position = "up";
+                            main_left = relationship_center_left;
+                            main_top = main_pos_top_start;
+                        }
+                        // СВЯЗЬ ВНИЗУ
+                        if (relationship_center_top > main_pos_top_end && relationship_center_left > main_pos_left_start && relationship_center_left < main_pos_left_end) {
+                            relationship_position = "down";
+                            main_left = relationship_center_left;
+                            main_top = main_pos_top_end;
+                        }
+                        // СВЯЗЬ СЛЕВА
+                        if (relationship_center_left < main_pos_left_start && relationship_center_top > main_pos_top_start && relationship_center_top < main_pos_top_end) {
+                            relationship_position = "left";
+                            main_left = main_pos_left_start;
+                            main_top = relationship_center_top;
+                        }
+                        // СВЯЗЬ СПРАВА
+                        if (relationship_center_left > main_pos_left_end && relationship_center_top > main_pos_top_start && relationship_center_top < main_pos_top_end) {
+                            relationship_position = "right";
+                            main_left = main_pos_left_end;
+                            main_top = relationship_center_top;
+                        }
+
+                        let border_radius = 10;
+
+                        // СЛЕВА ВВЕРХ
+                        if (relationship_center_top < main_pos_top_start && relationship_center_left < main_pos_left_start) {
+                            let cat1 = (main_pos_top_start - relationship_center_top);
+                            let cat2 = (main_pos_left_start - relationship_center_left);
+                            let hip = Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2));
+                            let fi = Math.sin(cat1 / hip);
+
+                            relationship_position = "left-up";
+
+                            main_left = main_pos_left_start + (border_radius * Math.sin(fi));
+                            main_top = main_pos_top_start + (border_radius * Math.cos(fi)) - 6;
+                        }
+                        // СЛЕВА НИЗ
+                        if (relationship_center_top > main_pos_top_end && relationship_center_left < main_pos_left_start) {
+                            let cat1 = (main_pos_top_end - relationship_center_top);
+                            let cat2 = (relationship_center_left - main_pos_left_start);
+                            let hip = Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2));
+                            let fi = Math.sin(cat2 / hip);
+
+                            relationship_position = "left-down";
+
+                            main_left = main_pos_left_start + (border_radius * Math.cos(fi)) - 6;
+                            main_top = main_pos_top_end + (border_radius * Math.sin(fi));
+                        }
+                        // СПРАВА ВЕРХ
+                        if (relationship_center_top < main_pos_top_start && relationship_center_left > main_pos_left_end) {
+                            let cat1 = (relationship_center_top - main_pos_top_start);
+                            let cat2 = (relationship_center_left - main_pos_left_end);
+                            let hip = Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2));
+                            let fi = Math.sin(cat1 / hip);
+
+                            relationship_position = "right-up";
+
+                            main_left = main_pos_left_end + (border_radius * Math.sin(fi));
+                            main_top = main_pos_top_start + (border_radius * Math.cos(fi)) - 6;
+                        }
+                        // СПРАВА НИЗ
+                        if (relationship_center_top > main_pos_top_end && relationship_center_left > main_pos_left_end) {
+                            let cat1 = (relationship_center_top - main_pos_top_end);
+                            let cat2 = (relationship_center_left - main_pos_left_end);
+                            let hip = Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2));
+                            let fi = Math.sin(cat2 / hip);
+
+                            relationship_position = "right-down";
+
+                            main_left = main_pos_left_end + (border_radius * Math.sin(fi)) - 9; // смещение по тени
+                            main_top = main_pos_top_end + (border_radius * Math.cos(fi)) - 9;
+                        }
+
+                        $(elem).attr({
+                            "x1": relationship_center_left,
+                            "y1": relationship_center_top,
+                            "x2": main_left,
+                            "y2": main_top
+                        });
+
+                        let relation_sign = $('.sign_block[parent="' + elem.id + '"]');
+                        if (relation_sign.length > 0) {
+                            set_relation_sign_position(relation_sign, main_top, main_left, relationship_position);
+                        }
+                    }
+
+                });
+
+            }
+        )
+        ;
+    })
+    ;
 }
 
 function draggable_box() {
@@ -429,7 +548,7 @@ function add_main_block(main_id, name_new_main) {
     let result;
 
     let block = $('<div>', {
-        class: 'box main',
+        class: 'box main box_shadow',
         id: main_id
     });
 
@@ -483,7 +602,10 @@ function add_main_block(main_id, name_new_main) {
         result = block.append(main_name, main_options);
     } else if (DIAGRAM_TYPE === 'idef1x') {
         main_name.addClass('main_name_idef1x');
-        result = block.append(main_name, main_options);
+
+        let PK_block = $('<div>', {class: "main_PK_block"});
+
+        result = block.append(main_name, main_options, PK_block);
     }
     return result;
 }
@@ -497,13 +619,14 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
     }
 
     let block = $('<div>', {
-        class: 'box attribute',
+        class: 'box attribute box_shadow',
         id: attribute_id,
         data_type: data_type,
         len_data: len_data,
         primary_key: primary_key
     }).attr({
-        'parent': main_id
+        'parent': main_id,
+        'text': name_new_attribute
     });
 
     let attribute_text = $('<div>', {
@@ -566,7 +689,21 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
             }
         });
 
-        result = block.removeClass("box").addClass("attribute_idef1x")
+        if (len_data !== null) {
+            len_data = "(" + len_data + ")";
+        } else {
+            len_data = "";
+        }
+
+        if ((Boolean(primary_key) === true)) {
+            primary_key = "(PK)";
+        } else {
+            primary_key = "";
+        }
+
+        attribute_text.html(name_new_attribute + ": " + data_type + " " + len_data + " " + primary_key);
+
+        result = block.removeClass("box box_shadow").addClass("attribute_idef1x")
             .append(
                 attribute_text.addClass("attribute_text_idef1x"),
                 attribute_option
@@ -581,12 +718,13 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
                         )
                     )
             );
+
     }
 
     return result;
 }
 
-function add_relationship_block(relationship_id, rel_type, rel_desc, first_main, second_main) {
+function add_relationship_block(relationship_id, rel_type, rel_identity = "true", rel_desc, first_main, second_main) {
     let result;
 
     let relationship = $('<div>', {
@@ -594,11 +732,14 @@ function add_relationship_block(relationship_id, rel_type, rel_desc, first_main,
         id: relationship_id
     }).attr({
         'first': first_main,
-        'second': second_main
+        'second': second_main,
+        'rel_type': rel_type,
+        'rel_identity': rel_identity,
+        "rel_desc": rel_desc
     });
 
     let diamond_block = $('<div>', {
-        class: 'box diamond'
+        class: 'box diamond box_shadow'
     }).append(
         $('<div>', {
             class: 'diamond_text',
@@ -636,14 +777,15 @@ function add_relationship_block(relationship_id, rel_type, rel_desc, first_main,
     if (DIAGRAM_TYPE === 'chen') {
         result = relationship.append(diamond_block, diamond_description, diamond_options);
     } else if (DIAGRAM_TYPE === 'idef1x') {
-        result = relationship.append(diamond_block, diamond_description, diamond_options);
+        result = relationship.append(
+            diamond_block.addClass("diagram_idef1x").removeClass("box_shadow").text(""),
+            diamond_description, diamond_options
+        );
     }
 
     return result;
 }
 
-
-// ADD HANDLERS
 function add_link(parent_id, link_id, dasharray = "0") {
 
     return $('<line>', {
@@ -660,6 +802,60 @@ function add_link(parent_id, link_id, dasharray = "0") {
     });
 }
 
+function add_relation_sign_block(parent_id, type = "point", w = 10, h = 10, fill = "black", stroke = "black", description = "") {
+
+    let svg_block_svg = $('<svg>', {class: 'sign_block_svg'}).css({
+        "width": w,
+        "height": h
+    });
+    let sign_description = $('<div>', {class: 'sign_description'}).attr({
+        'parent': parent_id
+    }).text(description);
+
+    let sign_block = $('<div>', {class: 'sign_block'}).attr({
+        'parent': parent_id
+    }).css({
+        "width": w,
+        "height": h
+    }).append(svg_block_svg, sign_description);
+
+    let sign;
+    if (type === "point") {
+        let radius = Math.max(w, h) / 2;
+
+        sign = $('<circle>', {
+            class: 'relation_sign point',
+        }).attr({
+            'type': type,
+            'parent': parent_id,
+            'r': radius,
+            'cx': radius,
+            'cy': radius,
+            'fill': fill,
+            'stroke': stroke
+        });
+
+        sign_block.children('svg').html(sign);
+    } else if (type === "diamond") {
+        let points = "0," + h / 2 + " " + w / 2 + ",0 " + w + "," + h / 2 + " " + w / 2 + "," + h;
+
+        sign = $('<polygon>', {
+            class: 'relation_sign point',
+        }).attr({
+            'type': type,
+            'parent': parent_id,
+            'points': points,
+            'fill': fill,
+            'stroke': stroke
+        });
+
+        sign_block.children('svg').html(sign);
+    }
+
+    return sign_block;
+}
+
+// ADD HANDLERS
 function add_main(edit_main_id = NaN) {
     let toggle_options_bottom_case = $('.toggle_options_bottom_case');
     toggle_options_bottom_case.slideUp();
@@ -892,6 +1088,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
             if ($('div').is(edited_attribute)) {
 
+
                 let edited_attribute_text = edited_attribute.children(".attribute_text");
                 edited_attribute_text.text(attribute_name);
                 edited_attribute.attr("data_type", data_type);
@@ -899,13 +1096,28 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                 edited_attribute.attr("primary_key", primary_key);
 
                 if (primary_key === true) {
-
                     edited_attribute_text.addClass("is_primary_key");
-
                 } else {
-
                     edited_attribute_text.removeClass("is_primary_key");
                 }
+
+                if (DIAGRAM_TYPE === 'idef1x') {
+                    if (len_data !== null) {
+                        len_data = "(" + len_data + ")";
+                    } else {
+                        len_data = "";
+                    }
+
+                    if ((Boolean(primary_key) === true)) {
+                        primary_key = "(PK)";
+                    } else {
+                        primary_key = "";
+                    }
+
+                    edited_attribute_text.text(attribute_name + ": " + data_type +
+                        " " + len_data + " " + primary_key);
+                }
+
             } else {
 
                 let canvas = $(".canvas");
@@ -921,9 +1133,14 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
                 } else if (DIAGRAM_TYPE === 'idef1x') {
 
+                    let attribute_block_result = add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key);
                     let main = $(".main#" + main_id);
-                    main.append(add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, primary_key));
-
+                    let PK_block = main.children(".main_PK_block");
+                    if (primary_key === true) {
+                        PK_block.append(attribute_block_result);
+                    } else {
+                        main.append(attribute_block_result);
+                    }
                 }
 
                 // перерисовка svg
@@ -971,7 +1188,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         new_attribute_title.text("Изменение атрибута");
         attribute_name_label.text("Название атрибута:");
         button_new_attribute.text("Изменить");
-        input_name_attribute.val(edited_attribute.children(".attribute_text").text());
+        input_name_attribute.val(edited_attribute.attr("text")); ///////////////////////////////////////////////////////
         input_attr_data_type.val(edited_attribute.attr("data_type"));
         input_len_data_type.val(edited_attribute.attr("len_data"));
 
@@ -1016,10 +1233,12 @@ function add_relationship(edit_rel_id) {
     let rel_second_main = $('select[name="rel_second_main"]');
     let rel_type = $('select[name="rel_type"]');
     let rel_description = $('input[name="rel_description"]');
+    let rel_identity = $('select[name="rel_identity"]');
 
     rel_first_main.empty();
     rel_second_main.empty();
     rel_type.empty();
+    rel_identity.empty();
     rel_description.val("");
 
     set_error("");
@@ -1035,11 +1254,27 @@ function add_relationship(edit_rel_id) {
         rel_second_main.append('<option value="' + main_id + '">' + main_name + '</option>');
     });
 
-    rel_type.append(
-        '<option value="1:1">1:1</option>' +
-        '<option value="1:N">1:N</option>' +
-        '<option value="N:N">N:N</option>'
-    );
+    if (DIAGRAM_TYPE === "chen") {
+        rel_type.append(
+            '<option value="1:1">1:1</option>' +
+            '<option value="1:N">1:N</option>' +
+            '<option value="N:N">N:N</option>'
+        );
+    } else if (DIAGRAM_TYPE === "idef1x") {
+        rel_type.append(
+            '<option value="1:1">1:1</option>' + // empty
+            '<option value="1:[0..1..N]">1:[0..N]</option>' + // .
+            '<option value="1:[0 or 1]">1:[0 or 1]</option>' + // Z
+            '<option value="1:[1..N]">1:[1..N]</option>' // P
+        );
+
+        rel_identity.css({"display": "block"});
+        rel_identity.append(
+            '<option value="true">Идентифицирующая связь</option>' +
+            '<option value="false">Неидентифицирующая связь</option>'
+        );
+    }
+
 
     let edited_relationship = $('.relationship[id="' + edit_rel_id + '"]');
 
@@ -1049,8 +1284,9 @@ function add_relationship(edit_rel_id) {
         rel_description.val(edited_relationship.children(".desc_diamond").text());
         rel_first_main.val(edited_relationship.attr("first"));
         rel_second_main.val(edited_relationship.attr("second"));
-        rel_type.val(edited_relationship.children('.diamond').children(".diamond_text").text());
-        console.log(edited_relationship.children('.diamond').children(".diamond_text"));
+        rel_type.val(edited_relationship.attr("rel_type"));
+        rel_identity.val(edited_relationship.attr("rel_identity"));
+        console.log(edited_relationship.attr("rel_desc"));
     } else {
         $('#new_relationship_title').text("Добавление новой связи");
         $('#btn_new_relationship').text("Добавить");
@@ -1061,19 +1297,21 @@ function add_relationship(edit_rel_id) {
     rel_first_main.change(function () {
         rel_first_main.children().css("display", "block");
         rel_second_main.children().css("display", "block");
-        var first_main_val = rel_first_main.val();
+        let first_main_val = rel_first_main.val();
         rel_second_main.children('[value=' + first_main_val + ']').css("display", "none");
     });
     rel_second_main.change(function () {
         rel_first_main.children().css("display", "block");
         rel_second_main.children().css("display", "block");
-        var second_main_val = rel_second_main.val();
+        let second_main_val = rel_second_main.val();
         rel_first_main.children('[value=' + second_main_val + ']').css("display", "none");
     });
 
     // --- Действия над формами модального окна ---
 
     $("#form_new_relationship").submit(function (event) {
+        let work_zone = $(".work_zone_container");
+
         let relationship_id = randInt();
         let first_link = randInt();
         let second_link = randInt();
@@ -1081,6 +1319,7 @@ function add_relationship(edit_rel_id) {
         let first_main_id = rel_first_main.val();
         let second_main_id = rel_second_main.val();
         let rel_type_val = rel_type.val();
+        let rel_identity_val = rel_identity.val();
         let rel_desc = rel_description.val();
 
         if (first_main_id !== "" && second_main_id !== "" && first_main_id[0] !== second_main_id[0]) {
@@ -1089,11 +1328,19 @@ function add_relationship(edit_rel_id) {
             if ($('div').is(edited_relationship)) {
                 edited_relationship.attr('first', first_main_id);
                 edited_relationship.attr('second', second_main_id);
-                edited_relationship.children('.diamond').children(".diamond_text").text(rel_type_val);
+                edited_relationship.attr('rel_type', rel_type_val);
+                edited_relationship.attr('rel_identity', rel_identity_val);
+                edited_relationship.attr('rel_desc', rel_desc);
                 edited_relationship.children('.desc_diamond').text(rel_desc);
-            } else {
 
-                $(".work_zone_container").append(add_relationship_block(relationship_id, rel_type_val, rel_desc, first_main_id, second_main_id));
+                if (DIAGRAM_TYPE === "chen") {
+                    edited_relationship.children('.diamond').children(".diamond_text").text(rel_type_val);
+                } else if (DIAGRAM_TYPE === "idef1x") {
+                    // TODO : реализовать обновление rel_siign
+                }
+
+            } else {
+                work_zone.append(add_relationship_block(relationship_id, rel_type_val, rel_identity_val, rel_desc, first_main_id, second_main_id));
 
                 let first_main_position = $("#" + first_main_id).position();
                 let second_main_position = $("#" + second_main_id).position();
@@ -1108,6 +1355,14 @@ function add_relationship(edit_rel_id) {
                 let canvas = $(".canvas");
                 canvas.append(add_link(relationship_id, first_link));
                 canvas.append(add_link(relationship_id, second_link));
+
+
+                let sign_block = add_relation_sign_block(first_link, "diamond", 15, 15, "white", "black", "ТЕСТ_ТЕКСТ");
+                work_zone.append(sign_block);
+                sign_block.html(sign_block.html());
+
+                add_relation_sign(first_link);
+
                 // перерисовка svg
                 canvas.html(canvas.html());
 
@@ -1122,6 +1377,14 @@ function add_relationship(edit_rel_id) {
     });
 }
 
+function add_relation_sign(parent_link_id, first_main_id, second_main_id, rel_type, rel_identity) {
+    let relation_sign = $('.sign_block[parent="' + parent_link_id + '"]');
+
+    if (relation_sign.length > 0) {
+        // TODO: реализовать обновление rel_siign
+    }
+
+}
 
 //REMOVE HANDLERS
 
@@ -1191,6 +1454,9 @@ function save_diagram() {
 function save_diagram_img() {
 
     setTimeout(function () {
+
+        $(".box_shadow").css({"box-shadow": "none"});
+
         let img = html2canvas(document.getElementById('screenshots_zone')).then(function (canvas) {
             let REQUEST_DATA = {};
             img = canvas.toDataURL("image/png", 1);
@@ -1204,6 +1470,7 @@ function save_diagram_img() {
                 async: false,
                 data: REQUEST_DATA,
                 success: function () {
+                    $(".box_shadow").css({"box-shadow": "0 3px 6px 1px #bdbdbd59"});
                     console.log("Снимок диаграммы сохранен");
                 }
             }).done(function (img) {
@@ -1246,19 +1513,29 @@ function diagram_constructor(result_json) {
 
     jQuery.each(attributes, function (i, elem) {
         let position = JSON.parse(elem['position']);
+
         if (DIAGRAM_TYPE === 'chen') {
             $(".work_zone_container").append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
             $(".attribute#" + elem['attribute_id']).offset(position);
         } else if (DIAGRAM_TYPE === 'idef1x') {
+
             let main = $(".main#" + elem['parent_id']);
-            main.append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+
+            if (Boolean(elem['is_PK']) === true) {
+                let PK_block = main.children(".main_PK_block");
+                PK_block.append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+
+            } else {
+
+                main.append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], Boolean(elem['is_PK'])));
+            }
         }
     });
 
     jQuery.each(relationships, function (i, elem) {
         let position = JSON.parse(elem['position']);
 
-        $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_description'], elem['first_main'], elem['second_main']));
+        $(".work_zone_container").append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_identity'], elem['rel_description'], elem['first_main'], elem['second_main']));
         $(".relationship#" + elem['relationship_id']).offset(position);
     });
 
@@ -1303,7 +1580,6 @@ function load_diagram(diagram_id) {
             DIAGRAM_TYPE = result['diagram_type'];
 
             diagram_constructor(result);
-            // console.log(result);
         });
     }
 }

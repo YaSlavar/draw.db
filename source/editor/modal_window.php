@@ -113,6 +113,12 @@
                                        placeholder="Введите описание связи">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                Тип соединения
+                                <select class="form-control" name="rel_identity" title=""></select>
+                            </div>
+                        </div>
                         <div class="error"></div>
                     </div>
                     <div class="modal-footer">

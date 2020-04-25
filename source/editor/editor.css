@@ -63,6 +63,10 @@ div#logo {
     background: white;
 }
 
+.box_shadow {
+    box-shadow: 0 3px 6px 1px #bdbdbd59;
+}
+
 .box {
     position: absolute;
     /*top: 100px;*/
@@ -71,7 +75,6 @@ div#logo {
     min-height: 50px;
     text-align: center;
     background-color: white;
-    box-shadow: 0 3px 6px 1px #bdbdbd59;
     border: 1px solid #bdbdbd;
     border-radius: 10px;
     padding: 10px;
@@ -273,10 +276,14 @@ button:active, button:focus {
 
 /*MAIN OPTION BOTTOM*/
 .options {
+    /*position: absolute;*/
+    /*width: 360px;*/
+    /*top: -1px;*/
+    /*left: 0;*/
+    /*z-index: 30;*/
     position: absolute;
-    width: 360px;
     top: -1px;
-    left: 0;
+    right: -200px;
     z-index: 30;
 }
 
@@ -377,6 +384,16 @@ button#btn_disconnect {
     overflow: hidden;
 }
 
+.main_PK_block {
+    border-bottom: 1px solid #bdbdbd;
+    margin: 0 -10px 5px;
+    padding: 0 10px 10px;
+}
+
+.main_PK_block:empty {
+    display: none;
+}
+
 .attribute_idef1x {
     display: flex;
     justify-content: space-between;
@@ -388,6 +405,7 @@ button#btn_disconnect {
 
 .attribute_option {
     width: auto;
+    margin-left: 10px;
 }
 
 .box_option_bottom_attribute {
@@ -403,20 +421,43 @@ button#btn_disconnect {
     margin: 0;
 }
 
+.diagram_idef1x {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
 .option_bottom_attribute {
     margin-right: 5px;
 }
 
 .edit_attribute_idef1x {
     width: 24px;
-    height: 24px;
+    height: 23px;
     background: url("../dashboard/css/icons/edit.svg");
     z-index: 50;
+    cursor: pointer;
 }
 
 .remove_attribute_idef1x {
     width: 24px;
-    height: 24px;
+    height: 23px;
     background: url("../dashboard/css/icons/close.svg");
     z-index: 50;
+    cursor: pointer;
+}
+
+.sign_block {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.sign_description {
+    position: absolute;
+}
+
+.rel_identity{
+    display: none;
 }
