@@ -124,7 +124,7 @@ div#logo {
     border-radius: 45px;
 }
 
-.is_primary_key {
+.is_primary_key, .is_foreign_key {
     text-decoration: underline;
 }
 
@@ -458,6 +458,6 @@ button#btn_disconnect {
     position: absolute;
 }
 
-.rel_identity{
+.rel_identity {
     display: none;
 }

@@ -113,7 +113,7 @@
                                        placeholder="Введите описание связи">
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row rel_identity">
                             <div class="col-sm">
                                 Тип соединения
                                 <select class="form-control" name="rel_identity" title=""></select>

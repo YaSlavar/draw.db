@@ -9,7 +9,8 @@
 
 
 <div class="modal_window">
-    <div class="modal fade" id="craete_new_diagram" tabindex="-1" role="dialog" aria-labelledby="message_box" aria-hidden="false">
+    <div class="modal fade" id="craete_new_diagram" tabindex="-1" role="dialog" aria-labelledby="message_box"
+         aria-hidden="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -20,19 +21,18 @@
                 </div>
                 <form id="form_new_diagram" method="post">
                     <div class="modal-body">
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <input type="hidden" name="edit" value="" id="diagram_id">
-                                <label for="diagram_name">Название диаграммы:</label>
-                                <input type="text" name="diagram_name" class="form-control" placeholder="Введите название диаграммы">
-                            </div>
-                            <div class="form-group">
-                                <label for="diagram_type">Нотация:</label>
-                                <select class="form-control" id="diagram_type" name="diagram_type">
-                                    <option value="chen">Нотация Питера Чена</option>
-                                    <option value="idef1x">IDEF1X</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <input type="hidden" name="edit" value="" id="diagram_id">
+                            <label for="diagram_name">Название диаграммы:</label>
+                            <input type="text" name="diagram_name" class="form-control"
+                                   placeholder="Введите название диаграммы">
+                        </div>
+                        <div class="form-group">
+                            <label for="diagram_type">Нотация:</label>
+                            <select class="form-control" id="diagram_type" name="diagram_type">
+                                <option value="chen">Нотация Питера Чена</option>
+                                <option value="idef1x">IDEF1X</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -47,7 +47,8 @@
 
 
 <div class="modal_window">
-    <div class="modal fade" id="check_for_deletion" tabindex="-1" role="dialog" aria-labelledby="message_box" aria-hidden="false">
+    <div class="modal fade" id="check_for_deletion" tabindex="-1" role="dialog" aria-labelledby="message_box"
+         aria-hidden="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">

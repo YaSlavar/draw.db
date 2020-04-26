@@ -36,7 +36,7 @@ CREATE TABLE attributes (
 	position VARCHAR(255),
 	data_type VARCHAR(10),
 	data_len INTEGER,
-	is_PK BOOLEAN,
+	key VARCHAR(2),
 	diagram_id INTEGER,
 	FOREIGN KEY (diagram_id) REFERENCES diagrams(diagram_id)
 );
@@ -45,7 +45,7 @@ CREATE TABLE relationships (
 	relationship_id INTEGER PRIMARY KEY,
 	first_main INTEGER NOT NULL,
 	second_main INTEGER NOT NULL,
-	rel_type VARCHAR(15),
+	rel_type VARCHAR(20),
     rel_identity BOOLEAN,
 	rel_description VARCHAR(255),
 	position VARCHAR(255),
@@ -58,6 +58,7 @@ CREATE TABLE links (
 	link_id INTEGER PRIMARY KEY,
 	parent_id INTEGER NOT NULL,
 	position VARCHAR(255),
+	position_num INTEGER,
 	diagram_id INTEGER,
 	FOREIGN KEY (diagram_id) REFERENCES diagrams(diagram_id)
 )

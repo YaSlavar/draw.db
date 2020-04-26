@@ -46,16 +46,16 @@ function save_elements($diagram_id, $db)
             $parent_id = $item['parent'];
             $data_type = $item['data_type'];
             $data_len = $item['len_data'];
-            $is_PK = $item['primary_key'] === 'true' ? true : false;
+            $key = $item['key'];
             $position = json_encode($item['position']);
 
             $select = $db->query("SELECT * FROM attributes WHERE attribute_id = $attribute_id");
             $res = $select->fetchArray();
 
             if ($res['diagram_id'] == $diagram_id) {
-                $attributes = $db->prepare('UPDATE attributes SET parent_id = :parent_id, name = :attribute_name, position =  :position, data_type = :data_type, data_len = :data_len, is_PK = :is_PK, diagram_id =  :diagram_id WHERE attribute_id = :attribute_id');
+                $attributes = $db->prepare('UPDATE attributes SET parent_id = :parent_id, name = :attribute_name, position =  :position, data_type = :data_type, data_len = :data_len, "key" = :key, diagram_id =  :diagram_id WHERE attribute_id = :attribute_id');
             } else {
-                $attributes = $db->prepare('INSERT INTO attributes VALUES (:attribute_id, :parent_id, :attribute_name, :position, :data_type, :data_len, :is_PK, :diagram_id)');
+                $attributes = $db->prepare('INSERT INTO attributes VALUES (:attribute_id, :parent_id, :attribute_name, :position, :data_type, :data_len, :key, :diagram_id)');
             }
 
             $attributes->bindValue(':attribute_id', $attribute_id);
@@ -63,7 +63,7 @@ function save_elements($diagram_id, $db)
             $attributes->bindValue(':parent_id', $parent_id);
             $attributes->bindValue(':data_type', $data_type);
             $attributes->bindValue(':data_len', $data_len);
-            $attributes->bindValue(':is_PK', $is_PK);
+            $attributes->bindValue(':key', $key);
             $attributes->bindValue(':position', $position);
             $attributes->bindValue(':diagram_id', $diagram_id);
 
@@ -77,19 +77,22 @@ function save_elements($diagram_id, $db)
             $link_id = $key;
             $parent_id = $item['parent'];
             $position = json_encode($item['position']);
+            $position_num = $item['position_num'];
 
             $select = $db->query("SELECT * FROM links WHERE link_id = $link_id");
             $res = $select->fetchArray();
 
             if ($res['diagram_id'] == $diagram_id) {
-                $links = $db->prepare('UPDATE links SET parent_id = :parent_id, position =  :position, diagram_id = :diagram_id WHERE link_id = :link_id');
+                $links = $db->prepare('UPDATE links SET parent_id = :parent_id, position =  :position, diagram_id = :diagram_id, position_num = :position_num WHERE link_id = :link_id');
             } else {
-                $links = $db->prepare('INSERT INTO links VALUES (:link_id, :parent_id, :position, :diagram_id)');
+                $links = $db->prepare('INSERT INTO links(link_id, parent_id, position, diagram_id, position_num) VALUES (:link_id, :parent_id, :position, :diagram_id, :position_num)');
             }
+
 
             $links->bindValue(':link_id', $link_id);
             $links->bindValue(':parent_id', $parent_id);
             $links->bindValue(':position', $position);
+            $links->bindValue(':position_num', $position_num);
             $links->bindValue(':diagram_id', $diagram_id);
 
             $links->execute();
