@@ -262,19 +262,21 @@ function setting_link() {
         let second_relationship = work_zone_container.children('.relationship[second=' + main_id + ']');
         let relationship = $.extend(first_relationship, second_relationship);
 
-        attribute.each(function (i, elem) {
-            let attribute_id = $(elem).attr("id");
-            let attribute = $('.attribute[id="' + attribute_id + '"]');
-            let link = $('.link[id="' + attribute_id + '"]');
-            let main_pos = main.position();
-            let attribute_pos = attribute.position();
-            link.attr({
-                "x1": attribute_pos["left"] + Number(attribute.innerWidth() / 2),
-                "y1": attribute_pos["top"] + Number(attribute.innerHeight() / 2),
-                "x2": main_pos["left"] + Number(main.innerWidth() / 2),
-                "y2": main_pos["top"] + Number(main.innerHeight() / 2)
+        if (DIAGRAM_TYPE === "chen") {
+            attribute.each(function (i, elem) {
+                let attribute_id = $(elem).attr("id");
+                let attribute = $('.attribute[id="' + attribute_id + '"]');
+                let link = $('.link[id="' + attribute_id + '"]');
+                let main_pos = main.position();
+                let attribute_pos = attribute.position();
+                link.attr({
+                    "x1": attribute_pos["left"] + Number(attribute.innerWidth() / 2),
+                    "y1": attribute_pos["top"] + Number(attribute.innerHeight() / 2),
+                    "x2": main_pos["left"] + Number(main.innerWidth() / 2),
+                    "y2": main_pos["top"] + Number(main.innerHeight() / 2)
+                });
             });
-        });
+        }
 
         relationship.each(function (i, elem) {
                 let relationship_id = $(elem).attr("id");
@@ -456,6 +458,7 @@ function draggable_box() {
         $('.main[id="' + main_id + '"]').draggable({
             cursor: "move",
             start: function (event, ui) {
+                console.log(ui);
                 main_start_position.top = ui.offset.top;
                 main_start_position.left = ui.offset.left;
 
@@ -493,7 +496,7 @@ function draggable_box() {
                     setting_link();
                 }
             });
-            setting_link();
+            // setting_link();
         });
 
         relationship.each(function (i, elem) {
@@ -503,7 +506,7 @@ function draggable_box() {
                     setting_link();
                 }
             });
-            setting_link();
+            // setting_link();
         });
 
     });
@@ -516,6 +519,8 @@ function draggable_box() {
         function () {
             setting_link();
         });
+
+    setting_link();
 }
 
 //ZOOM
@@ -550,9 +555,10 @@ function undo_zoom(element, animate_speed = 400) {
     undo_zoom_button.css({'display': 'none'});
 
     // let position = get_center_window_position();
-    // console.log(position);
+    // // console.log(position);
     // element.css({'left': -position['x'], 'top': -position['x']});
     element.css({'left': 0, 'top': 0});
+    // TODO: Доделать возврат масштаба, работает странно
 }
 
 
@@ -800,9 +806,9 @@ function add_relationship_block(relationship_id, rel_type, rel_identity = "true"
         result = relationship.append(diamond_block, diamond_description, diamond_options);
     } else if (DIAGRAM_TYPE === 'idef1x') {
         result = relationship.append(
-            diamond_block.addClass("diagram_idef1x").removeClass("box_shadow").text(""),
+            diamond_block.addClass("diamond_idef1x").removeClass("box_shadow").text(""),
             diamond_description, diamond_options
-        );
+        ).addClass("relationship_idef1x");
     }
 
     return result;
@@ -993,7 +999,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         let except_data_type = [
             "int",
             "money",
-            "date"
+            "date",
+            "time"
         ];
         let data_type = input_attr_data_type.val();
 
@@ -1209,7 +1216,8 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         '<option value="float">float</option>' +
         '<option value="money">money</option>' +
         '<option value="varchar">varchar</option>' +
-        '<option value="date">date</option>'
+        '<option value="date">date</option>' +
+        '<option value="time">time</option>'
     );
 
     set_error("");
@@ -1412,7 +1420,7 @@ function add_relationship(edit_rel_id) {
                             let PK_block = second_main.children(".main_PK_block");
 
                             let FK_attribute_id = randInt();
-                            let name_new_FK_attribute = "FK_" + first_main_name + "_" + first_main_PK_name;
+                            let name_new_FK_attribute = first_main_name + "_" + first_main_PK_name;
 
                             PK_block.append(add_attribute_block(FK_attribute_id, second_main_id, name_new_FK_attribute, first_main_PK_data_type, first_main_PK_len_data, false, true));
 
@@ -1565,6 +1573,9 @@ function remove_relationship(rel_id) {
 
 // SAVE
 function save_diagram() {
+    let work_zone_container = $('.work_zone_container');
+    undo_zoom(work_zone_container);
+
     let diagram_data = get_diagram_info();
 
     diagram_data['command'] = "save";
@@ -1591,7 +1602,7 @@ function save_diagram_img() {
 
         let img = html2canvas(document.getElementById('screenshots_zone')).then(function (canvas) {
             let REQUEST_DATA = {};
-            img = canvas.toDataURL("image/png", 1);
+            img = canvas.toDataURL("image/png", 0);
 
             REQUEST_DATA['image'] = img;
             REQUEST_DATA['diagram_id'] = get_diagram_id();
@@ -1639,8 +1650,11 @@ function diagram_constructor(result_json) {
     let relationships = result_json['relationships'];
     let links = result_json['links'];
 
+    let top_delta = $('.header').height();
+
     jQuery.each(mains, function (i, elem) {
         let position = JSON.parse(elem['position']);
+        position.top = Number(position.top) + top_delta;
 
         work_zone.append(add_main_block(elem['main_id'], elem['name']));
         $(".main#" + elem['main_id']).offset(position);
@@ -1648,6 +1662,7 @@ function diagram_constructor(result_json) {
 
     jQuery.each(attributes, function (i, elem) {
         let position = JSON.parse(elem['position']);
+        position.top = Number(position.top) + top_delta;
 
         let PK, FK = false;
         if (elem['key'] === 'PK') {
@@ -1684,6 +1699,7 @@ function diagram_constructor(result_json) {
 
     jQuery.each(relationships, function (i, elem) {
         let position = JSON.parse(elem['position']);
+        position.top = Number(position.top) + top_delta;
 
         work_zone.append(add_relationship_block(elem['relationship_id'], elem['rel_type'], elem['rel_identity'], elem['rel_description'], elem['first_main'], elem['second_main']));
         $(".relationship#" + elem['relationship_id']).offset(position);

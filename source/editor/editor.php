@@ -123,6 +123,9 @@
         let work_zone_container = $('.work_zone_container');
         work_zone_container.draggable();
 
+        let modal_window = $('.modal-dialog');
+        modal_window.draggable();
+
         load_diagram();
 
         let toggle_options_bottom_case = $('.toggle_options_bottom_case');

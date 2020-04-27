@@ -394,6 +394,10 @@ button#btn_disconnect {
     display: none;
 }
 
+.relationship_idef1x{
+    width: auto;
+}
+
 .attribute_idef1x {
     display: flex;
     justify-content: space-between;
@@ -421,10 +425,17 @@ button#btn_disconnect {
     margin: 0;
 }
 
-.diagram_idef1x {
+.diamond_idef1x {
     background-color: transparent;
     border: none;
     box-shadow: none;
+    width: 0;
+    height: 0;
+    min-height: 40px;
+    min-width: 0;
+    -webkit-transform: none;
+    transition: none;
+    margin: 0;
 }
 
 .option_bottom_attribute {
