@@ -2,6 +2,13 @@
 let ZOOM_DELTA = 1;
 let DIAGRAM_TYPE = 'chen';
 
+let EXCEPT_DATA_TYPE_LENGTH = [
+    "int",
+    "money",
+    "date",
+    "time"
+];
+
 function get_diagram_id() {
     let url_string = window.location.href;
     let url = new URL(url_string);
@@ -17,12 +24,21 @@ function get_diagram_info() {
     let links = {};
 
     let work_zone_container = $(".work_zone_container");
+    let work_zone_position = work_zone_container.offset();
+
+    let top_delta = $('.header').height();
+
+
     let main = work_zone_container.find('.main');
 
     main.each(function (i, elem) {
         let id = $(elem).attr('id');
         mains[id] = {};
-        mains[id]['position'] = $(elem).offset();
+        mains[id]['position'] = {
+            "top" : $(elem).offset().top - work_zone_position.top + top_delta,
+            "left" : $(elem).offset().left - work_zone_position.left,
+        };
+        // $(elem).offset();
         mains[id]['name'] = $(elem).children('.main_name').text();
     });
 
@@ -38,7 +54,10 @@ function get_diagram_info() {
         attributes[id]['len_data'] = $(elem).attr('len_data');
         attributes[id]['key'] = $(elem).attr('key');
         attributes[id]['name'] = $(elem).attr('text');
-        attributes[id]['position'] = $(elem).offset();
+        attributes[id]['position'] = {
+            "top" : $(elem).offset().top - work_zone_position.top + top_delta,
+            "left" : $(elem).offset().left - work_zone_position.left,
+        };
     });
 
     Out_JSON['attributes'] = attributes;
@@ -53,7 +72,10 @@ function get_diagram_info() {
         relationships[id]['rel_type'] = $(elem).attr("rel_type");
         relationships[id]['rel_identity'] = $(elem).attr("rel_identity");
         relationships[id]['rel_description'] = $(elem).children('.desc_diamond').text();
-        relationships[id]['position'] = $(elem).offset();
+        relationships[id]['position'] = {
+            "top" : $(elem).offset().top - work_zone_position.top + top_delta,
+            "left" : $(elem).offset().left - work_zone_position.left,
+        };
     });
 
     Out_JSON['relationships'] = relationships;
@@ -996,15 +1018,10 @@ function add_attribute(main_id, edit_attr_id = NaN) {
     function show_data_len_input(input_attr_data_type) {
 
         let input_len_data_type_group = $('.attribute_data_len');
-        let except_data_type = [
-            "int",
-            "money",
-            "date",
-            "time"
-        ];
+
         let data_type = input_attr_data_type.val();
 
-        if (except_data_type.indexOf(data_type) !== -1) {
+        if (EXCEPT_DATA_TYPE_LENGTH.indexOf(data_type) !== -1) {
             input_len_data_type_group.css("display", "none");
             return false
         } else {
@@ -1488,36 +1505,37 @@ function add_relation_sign(relationship_id) {
     let diamond_width = 15;
     let diamond_height = 15;
 
+    let first_sign_block, second_sign_block;
 
     if (rel_type === "1:1") {
-        // empty
+        first_sign_block = add_relation_sign_block(first_link_id, "empty", diamond_width, diamond_height, "black", "black", "1");
+        second_sign_block = add_relation_sign_block(second_link_id, "empty", point_width, point_height, "black", "black", "1");
+
     } else if (rel_type === "1:[0..1..N]") {
-        let sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "");
-        work_zone.append(sign_block);
-        sign_block.html(sign_block.html());
+        first_sign_block = add_relation_sign_block(first_link_id, "empty", point_width, point_height, "black", "black", "1");
+        second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "");
+
     } else if (rel_type === "1:[0 or 1]") {
-        let sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "Z");
-        work_zone.append(sign_block);
-        sign_block.html(sign_block.html());
+        first_sign_block = add_relation_sign_block(first_link_id, "empty", point_width, point_height, "black", "black", "1");
+        second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "Z");
+
     } else if (rel_type === "1:[1..N]") {
-        let sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "P");
-        work_zone.append(sign_block);
-        sign_block.html(sign_block.html());
+        first_sign_block = add_relation_sign_block(first_link_id, "empty", point_width, point_height, "black", "black", "1");
+        second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "P");
+
     } else if (rel_type === "[0..1]:[0..1..N]") {
-        let first_sign_block = add_relation_sign_block(first_link_id, "diamond", diamond_width, diamond_height, "white", "black", "");
-        work_zone.append(first_sign_block);
-        first_sign_block.html(first_sign_block.html());
-        let second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "");
-        work_zone.append(second_sign_block);
-        second_sign_block.html(second_sign_block.html());
+        first_sign_block = add_relation_sign_block(first_link_id, "diamond", diamond_width, diamond_height, "white", "black", "");
+        second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "");
+
     } else if (rel_type === "[0..1]:[0 or 1]") {
-        let first_sign_block = add_relation_sign_block(first_link_id, "diamond", diamond_width, diamond_height, "white", "black", "");
-        work_zone.append(first_sign_block);
-        first_sign_block.html(first_sign_block.html());
-        let second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "Z");
-        work_zone.append(second_sign_block);
-        second_sign_block.html(second_sign_block.html());
+        first_sign_block = add_relation_sign_block(first_link_id, "diamond", diamond_width, diamond_height, "white", "black", "");
+        second_sign_block = add_relation_sign_block(second_link_id, "point", point_width, point_height, "black", "black", "Z");
     }
+
+    work_zone.append(first_sign_block);
+    first_sign_block.html(first_sign_block.html());
+    work_zone.append(second_sign_block);
+    second_sign_block.html(second_sign_block.html());
 
 }
 
@@ -1573,12 +1591,11 @@ function remove_relationship(rel_id) {
 
 // SAVE
 function save_diagram() {
-    let work_zone_container = $('.work_zone_container');
-    undo_zoom(work_zone_container);
-
     let diagram_data = get_diagram_info();
 
     diagram_data['command'] = "save";
+
+    console.log(diagram_data);
 
     $.ajax({
         type: "POST",
@@ -1589,7 +1606,7 @@ function save_diagram() {
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
-    save_diagram_img();
+    // save_diagram_img();
 
     return diagram_data;
 }
@@ -1680,7 +1697,7 @@ function diagram_constructor(result_json) {
 
             let main = $(".main#" + elem['parent_id']);
 
-            if (['PK', 'FK'].indexOf(elem['key']) >= 0) {
+            if (['PK', 'FK'].indexOf(elem['key']) !== -1) {
 
                 let PK_block = main.children(".main_PK_block");
                 PK_block.append(add_attribute_block(elem['attribute_id'], elem['parent_id'], elem['name'], elem['data_type'], elem['data_len'], PK, FK));
@@ -1973,18 +1990,12 @@ function open_server_connect_window() {
 
     function get_sql_code(data_diagram) {
 
-        let NOT_DATA_LEN = [
-            'int',
-            'money',
-            'date'
-        ];
-
         function get_main_PK(data_diagram, main_id) {
 
             let result = NaN;
 
             jQuery.each(data_diagram['attributes'], function (attr_index, attribute) {
-                if (attribute['primary_key'] === 'true' && attribute['parent'] === String(main_id)) {
+                if (attribute['key'] === 'PK' && attribute['parent'] === String(main_id)) {
                     result = attribute;
                     return false;
                 }
@@ -2006,13 +2017,13 @@ function open_server_connect_window() {
 
                 if (attribute['parent'] === main_index) {
                     let data_len;
-                    if (NOT_DATA_LEN.indexOf(attribute['data_type']) !== -1) {
+                    if (EXCEPT_DATA_TYPE_LENGTH.indexOf(attribute['data_type']) !== -1) {
                         data_len = "";
                     } else {
                         data_len = "(" + attribute['len_data'] + ")";
                     }
 
-                    if (attribute['primary_key'] === "true") {
+                    if (attribute['key'] === "PK") {
                         PK_str += "  " + attribute['name'] + " " + attribute['data_type'] + data_len + " " + "NOT NULL CONSTRAINT PK_" + attribute['name'] + " PRIMARY KEY(" + attribute['name'] + ")";
                         all_attributes.push(PK_str);
                     } else {
@@ -2035,7 +2046,7 @@ function open_server_connect_window() {
                         second_main_name = data_diagram['mains'][relationship['second']]['name'];
 
 
-                    if (NOT_DATA_LEN.indexOf(first_main_PK['data_type']) !== -1) {
+                    if (EXCEPT_DATA_TYPE_LENGTH.indexOf(first_main_PK['data_type']) !== -1) {
                         first_main_PK_len = "";
                     } else {
                         first_main_PK_len = "(" + first_main_PK['len_data'] + ")";
