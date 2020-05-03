@@ -1,4 +1,5 @@
 //SYSTEM
+
 let ZOOM_DELTA = 1;
 let DIAGRAM_TYPE = 'chen';
 
@@ -470,10 +471,8 @@ function setting_link(main_id_import = NaN) {
                 });
 
             }
-        )
-        ;
-    })
-    ;
+        );
+    });
 }
 
 function draggable_box() {

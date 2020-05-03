@@ -28,43 +28,43 @@ require_once 'config.php';
     <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
-    <script type="text/javascript" src="lib/jquery_3.5.0/jquery_3.5.0.js"></script>
-    <script type="text/javascript" src="lib/popper_js_1.16.0.js"></script>
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap.css?version=<?echo ($version)?>">
+    <script type="text/javascript" src="lib/jquery_3.5.0/jquery_3.5.0.js?version=<?echo ($version)?>"></script>
+    <script type="text/javascript" src="lib/popper_js_1.16.0.js?version=<?echo ($version)?>"></script>
 
 
 
     <? if (isset($_GET['edit']) and is_array($_SESSION['user'])) { ?>
 
 
-        <script type="text/javascript" src="lib/datatables/datatables.min.js"></script>
-        <script type="text/javascript" src="lib/ace-builds/src-min-noconflict/ace.js" charset="utf-8"></script>
-        <script type="text/javascript" src="lib/mouseWheel/jquery.mousewheel.min.js"></script>
-        <script type="text/javascript" src="editor/js/editor.js"></script>
-        <link rel="stylesheet" type="text/css" href="lib/datatables/DataTables-1.10.20/css/dataTables.bootstrap.min.css"/>
-        <link rel="stylesheet" href="editor/css/editor.css">
+        <script type="text/javascript" src="lib/datatables/datatables.min.js?version=<?echo ($version)?>"></script>
+        <script type="text/javascript" src="lib/ace-builds/src-min-noconflict/ace.js?version=<?echo ($version)?>" charset="utf-8"></script>
+        <script type="text/javascript" src="lib/mouseWheel/jquery.mousewheel.min.js?version=<?echo ($version)?>"></script>
+        <script type="text/javascript" src="editor/js/editor.js?version=<?echo ($version)?>"></script>
+        <link rel="stylesheet" type="text/css" href="lib/datatables/DataTables-1.10.20/css/dataTables.bootstrap.min.css?version=<?echo ($version)?>"/>
+        <link rel="stylesheet" href="editor/css/editor.css?version=<?echo ($version)?>">
 
     <? }elseif (!isset($_GET['edit'])){ ?>
 
-        <link rel="stylesheet" href="dashboard/css/main.css">
+        <link rel="stylesheet" href="dashboard/css/main.css?version=<?echo ($version)?>">
 
     <? } ?>
 
     <? if (is_array($_SESSION['user'])) { ?>
 
-        <script type="text/javascript" src="editor/js/editor.js"></script>
-        <script src="dashboard/js/main.js"></script>
-        <link rel="stylesheet" href="dashboard/css/dashboard.css">
+        <script type="text/javascript" src="editor/js/editor.js?version=<?echo ($version)?>"></script>
+        <script src="dashboard/js/main.js?version=<?echo ($version)?>"></script>
+        <link rel="stylesheet" href="dashboard/css/dashboard.css?version=<?echo ($version)?>">
 
     <? } ?>
 
-        <script src="lib/http_code.jquery.com_ui_1.12.1_jquery-ui.js"></script>
-        <script src="lib/jquery.ui.touch-punch.min.js"></script>
-        <script src="lib/http_cdnjs.cloudflare.com_ajax_libs_tether_1.2.0_js_tether.js"></script>
-        <script src="lib/bootstrap/bootstrap.js"></script>
-        <script src="lib/bootstrap_menu/BootstrapMenu.js"></script>
+        <script src="lib/http_code.jquery.com_ui_1.12.1_jquery-ui.js?version=<?echo ($version)?>"></script>
+        <script src="lib/jquery.ui.touch-punch.min.js?version=<?echo ($version)?>"></script>
+        <script src="lib/http_cdnjs.cloudflare.com_ajax_libs_tether_1.2.0_js_tether.js?version=<?echo ($version)?>"></script>
+        <script src="lib/bootstrap/bootstrap.js?version=<?echo ($version)?>"></script>
+        <script src="lib/bootstrap_menu/BootstrapMenu.js?version=<?echo ($version)?>"></script>
 
-        <script src="lib/html2canvas.min.js"></script>
+        <script src="lib/html2canvas.min.js?version=<?echo ($version)?>"></script>
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript" >

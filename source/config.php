@@ -29,8 +29,9 @@ $adapterConfigs = array(
 );
 
 
-$path_to_database = "/usr/share/nginx/html/database.db";
+$version = 2;
 
+$path_to_database = "/usr/share/nginx/html/database.db";
 
 // SQLite 3
 $db=new SQLite3($path_to_database, SQLITE3_OPEN_READWRITE);
