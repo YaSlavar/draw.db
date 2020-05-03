@@ -20,13 +20,7 @@
 
 <div class="container-fluid work_zone">
     <div class="work_zone_container" id="screenshots_zone">
-        <svg class="canvas">
-            <pattern id="grid" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="scale(1)">
-                <line x1="5" y1="0" x2="5" y2="10" style="stroke: #cccccc3d;"></line>
-                <line x1="0" y1="5" x2="10" y2="5" style="stroke: #cccccc3d;"></line>
-            </pattern>
-            <rect fill="url(#grid)" width="100%" height="100%" style="stroke-width:1;stroke:#e7e7e7"></rect>
-        </svg>
+        <svg class="canvas" id="canvas"></svg>
     </div>
 </div>
 
@@ -124,7 +118,9 @@
         work_zone_container.draggable();
 
         let modal_window = $('.modal-dialog');
-        modal_window.draggable();
+        modal_window.draggable({
+            cancel: ".no_draggable"
+        });
 
         load_diagram();
 
@@ -139,18 +135,18 @@
         });
 
         $('.save_diagram').click(function () {
-                save_diagram();
-                toggle_options_bottom_case.slideToggle();
+            save_diagram();
+            toggle_options_bottom_case.slideToggle();
         });
 
         $('.generate_sql').click(function () {
-                open_server_connect_window();
-                toggle_options_bottom_case.slideToggle();
+            open_server_connect_window();
+            toggle_options_bottom_case.slideToggle();
         });
 
         $('.save_diagram_img').click(function () {
-                open_screenshot_window();
-                toggle_options_bottom_case.slideToggle();
+            open_screenshot_window();
+            toggle_options_bottom_case.slideToggle();
         });
 
         $('#zoom_plus').click(function () {

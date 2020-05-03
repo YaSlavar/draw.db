@@ -97,7 +97,7 @@ if (isset($_POST['registration'])) {
             <div class="main_block">
                 <a href="index.php">
                     <div class="logo">
-                        <img src="dashboard/css/icons/logo.svg" alt="MSUniversity">
+                        <img src="dashboard/icons/logo.svg" alt="MSUniversity">
                     </div>
                 </a>
                 <form id="registration" action="registration.php" method="post" class="login_form needs-validation"

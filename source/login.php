@@ -43,11 +43,11 @@ if (isset($_POST['log'])) {
 
 <div class="background container-fluid h-100">
     <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-11">
+        <div class="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-8">
             <div class="main_block">
                 <a href="index.php">
                     <div class="logo">
-                        <img src="dashboard/css/icons/logo.svg" alt="MSUniversity">
+                        <img src="dashboard/icons/logo.svg" alt="MSUniversity">
                     </div>
                 </a>
                 <form id="login_form" class="login_form" novalidate>

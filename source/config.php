@@ -35,5 +35,9 @@ $path_to_database = "/usr/share/nginx/html/database.db";
 // SQLite 3
 $db=new SQLite3($path_to_database, SQLITE3_OPEN_READWRITE);
 
+$db->busyTimeout(5000);
+$db->exec('PRAGMA journal_mode=WAL;');
+
+
 
 session_start();

@@ -29,8 +29,8 @@ require_once 'config.php';
     <meta name="theme-color" content="#ffffff">
 
     <link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
-    <script src="lib/jQuery-3.3.1/jquery-3.3.1.min.js"></script>
-    <script src="lib/http_cdnjs.cloudflare.com_ajax_libs_popper.js_1.12.9_umd_popper.js"></script>
+    <script type="text/javascript" src="lib/jquery_3.5.0/jquery_3.5.0.js"></script>
+    <script type="text/javascript" src="lib/popper_js_1.16.0.js"></script>
 
 
 
@@ -38,11 +38,11 @@ require_once 'config.php';
 
 
         <script type="text/javascript" src="lib/datatables/datatables.min.js"></script>
-        <script src="lib/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="lib/ace-builds/src-min-noconflict/ace.js" charset="utf-8"></script>
         <script type="text/javascript" src="lib/mouseWheel/jquery.mousewheel.min.js"></script>
-        <script src="editor/editor.js"></script>
-        <link rel="stylesheet" type="text/css" href="lib/datatables/DataTables-1.10.18/css/dataTables.bootstrap4.min.css"/>
-        <link rel="stylesheet" href="editor/editor.css">
+        <script type="text/javascript" src="editor/js/editor.js"></script>
+        <link rel="stylesheet" type="text/css" href="lib/datatables/DataTables-1.10.20/css/dataTables.bootstrap.min.css"/>
+        <link rel="stylesheet" href="editor/css/editor.css">
 
     <? }elseif (!isset($_GET['edit'])){ ?>
 
@@ -52,6 +52,8 @@ require_once 'config.php';
 
     <? if (is_array($_SESSION['user'])) { ?>
 
+        <script type="text/javascript" src="editor/js/editor.js"></script>
+        <script src="dashboard/js/main.js"></script>
         <link rel="stylesheet" href="dashboard/css/dashboard.css">
 
     <? } ?>
@@ -62,7 +64,7 @@ require_once 'config.php';
         <script src="lib/bootstrap/bootstrap.js"></script>
         <script src="lib/bootstrap_menu/BootstrapMenu.js"></script>
 
-    <script src="lib/html2canvas.js"></script>
+        <script src="lib/html2canvas.min.js"></script>
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript" >
@@ -110,8 +112,6 @@ if (isset($_GET['registration'])) {
 }
 ?>
 
-
-<script src="dashboard/js/main.js"></script>
 
 </body>
 </html>

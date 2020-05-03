@@ -69,13 +69,18 @@
                                         echo($res['diagram_id'] . ".png?id=" . date("YmdHis")) ?>" alt="">
                                     </div>
                                     <div class="diagram_title_block row">
-                                        <a class="diagram_title col-8" href="?edit=<?
-                                        echo($res['diagram_id']); ?>">
-                                            <?
-                                            echo($res['diagram_name']);
-                                            ?>
-                                        </a>
-                                        <div class="rename_diagramm col-2">
+                                        <div class="diagram_title col-8">
+                                            <a class="diagram_name_label" href="?edit=<?
+                                            echo($res['diagram_id']); ?>">
+                                                <?
+                                                echo($res['diagram_name']);
+                                                ?>
+                                            </a>
+                                            <span class="badge badge-pill badge-primary diagram_type_label">
+                                                <? echo(ucwords($res['diagram_type'])) ?>
+                                             </span>
+                                        </div>
+                                        <div class="edit_diagram_button col-4">
                                             <button id="rename_<? echo($res['diagram_id']); ?>" type="button"
                                                     class="rename_diagramm_button" aria-label="Rename"
                                                     data-toggle="tooltip"
@@ -85,8 +90,6 @@
                                                     title="Переименовать диаграмму">
                                                 <div class="rename_diagramm_icon"></div>
                                             </button>
-                                        </div>
-                                        <div class="close_buttom_block col-2">
                                             <button id="delete_<? echo($res['diagram_id']); ?>" type="button"
                                                     class="close close-button" aria-label="Close" data-toggle="tooltip"
                                                     onclick="delete_diagram(<?
@@ -117,9 +120,6 @@
         </div>
     </div>
 </div>
-
-
-<script src="editor/editor.js"></script>
 
 <script>
     $(document).ready(function () {

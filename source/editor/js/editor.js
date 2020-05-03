@@ -26,17 +26,14 @@ function get_diagram_info() {
     let work_zone_container = $(".work_zone_container");
     let work_zone_position = work_zone_container.offset();
 
-    let top_delta = $('.header').height();
-
-
     let main = work_zone_container.find('.main');
 
     main.each(function (i, elem) {
         let id = $(elem).attr('id');
         mains[id] = {};
         mains[id]['position'] = {
-            "top" : $(elem).offset().top - work_zone_position.top + top_delta,
-            "left" : $(elem).offset().left - work_zone_position.left,
+            "top": $(elem).offset().top - work_zone_position.top,
+            "left": $(elem).offset().left - work_zone_position.left,
         };
         // $(elem).offset();
         mains[id]['name'] = $(elem).children('.main_name').text();
@@ -55,8 +52,8 @@ function get_diagram_info() {
         attributes[id]['key'] = $(elem).attr('key');
         attributes[id]['name'] = $(elem).attr('text');
         attributes[id]['position'] = {
-            "top" : $(elem).offset().top - work_zone_position.top + top_delta,
-            "left" : $(elem).offset().left - work_zone_position.left,
+            "top": $(elem).offset().top - work_zone_position.top,
+            "left": $(elem).offset().left - work_zone_position.left,
         };
     });
 
@@ -73,8 +70,8 @@ function get_diagram_info() {
         relationships[id]['rel_identity'] = $(elem).attr("rel_identity");
         relationships[id]['rel_description'] = $(elem).children('.desc_diamond').text();
         relationships[id]['position'] = {
-            "top" : $(elem).offset().top - work_zone_position.top + top_delta,
-            "left" : $(elem).offset().left - work_zone_position.left,
+            "top": $(elem).offset().top - work_zone_position.top,
+            "left": $(elem).offset().left - work_zone_position.left,
         };
     });
 
@@ -203,11 +200,18 @@ function get_center_window_position() {
 
 function raise_notification(message) {
 
+    let toast_block = $('.toast_tail');
+    toast_block.css({"display": "block"});
+
     let notification_window = $('.toast');
     let notification_window_text = $('.toast-body');
 
     notification_window_text.html(message);
     notification_window.toast("show");
+
+    notification_window.on('hidden.bs.toast', function () {
+        toast_block.css({"display": "none"});
+    })
 }
 
 function set_error(text) {
@@ -217,7 +221,7 @@ function set_error(text) {
 
 //DRAGGABLE
 
-function setting_link() {
+function setting_link(main_id_import = NaN) {
 
     function set_relation_sign_position(relation_sign, top, left, relationship_position) {
         let width = relation_sign.css('width');
@@ -274,7 +278,14 @@ function setting_link() {
     }
 
     let work_zone_container = $(".work_zone_container");
-    let main = work_zone_container.children('.main');
+    let main;
+
+    if (!isNaN(main_id_import)) {
+        main = work_zone_container.children('#' + main_id_import);
+    } else {
+        main = work_zone_container.children('.main');
+    }
+
     main.each(function (i, elem) {
         let main_id = $(elem).attr("id");
         let main = $("#" + main_id);
@@ -480,7 +491,6 @@ function draggable_box() {
         $('.main[id="' + main_id + '"]').draggable({
             cursor: "move",
             start: function (event, ui) {
-                console.log(ui);
                 main_start_position.top = ui.offset.top;
                 main_start_position.left = ui.offset.left;
 
@@ -518,7 +528,6 @@ function draggable_box() {
                     setting_link();
                 }
             });
-            // setting_link();
         });
 
         relationship.each(function (i, elem) {
@@ -528,7 +537,6 @@ function draggable_box() {
                     setting_link();
                 }
             });
-            // setting_link();
         });
 
     });
@@ -1606,12 +1614,16 @@ function save_diagram() {
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
-    // save_diagram_img();
+    save_diagram_img();
 
     return diagram_data;
 }
 
 function save_diagram_img() {
+
+    let preview_image = $('#preview_image');
+
+    preview_image.removeAttr('src');
 
     setTimeout(function () {
 
@@ -1637,8 +1649,8 @@ function save_diagram_img() {
                 // console.log(img);
                 let image_path = "user_data/" + img;
 
-                let preview_image = $('#preview_image');
                 preview_image.attr('src', image_path);
+                preview_image.html(preview_image.html());
 
                 let download_diagram_img = $('#download_diagram_img');
                 download_diagram_img.attr('href', image_path);
@@ -1650,10 +1662,12 @@ function save_diagram_img() {
 
 // SAVE HANDLER
 function open_screenshot_window() {
-    save_diagram_img();
 
     let get_diagram_img = $("#get_diagram_img");
     get_diagram_img.modal('toggle');
+
+    save_diagram_img();
+
 }
 
 //LOAD
@@ -1728,7 +1742,6 @@ function diagram_constructor(result_json) {
     });
 
     draggable_box();
-
     save_diagram_img();
 }
 
@@ -1971,7 +1984,7 @@ function open_server_connect_window() {
                             $('#result_table').dataTable({
                                 'data': formatted_server_result['dataset'],
                                 'columns': formatted_server_result['columns'],
-                                "scrollX": true,
+                                "autoWidth": true,
                                 'language': {
                                     'url': "../lib/datatables/russian.json"
                                 }

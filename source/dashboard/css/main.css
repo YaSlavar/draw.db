@@ -60,16 +60,16 @@ html, body {
 
 .vk{
     background-color: #4a76a8;
-    background: url("icons/vk.svg");
+    background: url("../icons/vk.svg");
 }
 .google{
-    background: url("icons/google.svg");
+    background: url("../icons/google.svg");
 }
 .yandex{
-   background: url("icons/yandex.svg");
+   background: url("../icons/yandex.svg");
 }
 .mailru{
-    background: url("icons/mailru.svg");
+    background: url("../icons/mailru.svg");
 }
 
 .registration{

@@ -13,11 +13,15 @@ require_once('../config.php');
 function save_elements($diagram_id, $db)
 {
 
+    $db->exec('BEGIN;');
+
     if (is_array($_POST['mains'])) {
         foreach ($_POST['mains'] as $key => $item) {
             $main_id = $key;
             $main_name = $item['name'];
             $position = json_encode($item['position']);
+
+
 
             $select = $db->query("SELECT * FROM mains WHERE main_id = $main_id");
             $res = $select->fetchArray();
@@ -132,6 +136,8 @@ function save_elements($diagram_id, $db)
         }
     }
 
+    $db->exec('COMMIT;');
+
 echo ($diagram_id);
 }
 
@@ -158,6 +164,8 @@ function rename_diagramm($diagram_id, $diagram_name, $db)
 
 function clean_diagramm($diagram_id, $db)
 {
+    $db->exec('BEGIN;');
+
     $claen_mains = $db->prepare('DELETE FROM mains WHERE diagram_id = :diagram_id');
     $claen_mains->bindValue(':diagram_id', $diagram_id);
     $claen_mains->execute();
@@ -173,6 +181,8 @@ function clean_diagramm($diagram_id, $db)
     $claen_links = $db->prepare('DELETE FROM links WHERE diagram_id = :diagram_id');
     $claen_links->bindValue(':diagram_id', $diagram_id);
     $claen_links->execute();
+
+    $db->exec('COMMIT;');
 }
 
 function delete_diagramm($diagram_id, $db)
@@ -190,7 +200,6 @@ function delete_diagramm($diagram_id, $db)
 }
 
 
-// TODO: Написать функцию удаления диаграммы!
 if (isset($_POST['diagram_id'])) {
     $diagram_id = $_POST['diagram_id'];
     $diagram_name = $_POST['diagram_name'];

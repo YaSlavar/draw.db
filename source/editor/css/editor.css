@@ -16,7 +16,7 @@ body {
     width: 24px;
     height: 24px;
     margin-top: 11px;
-    background-image: url("../dashboard/css/icons/go_back.svg");
+    background-image: url("../../dashboard/icons/go_back.svg");
 }
 
 .header_text {
@@ -32,24 +32,17 @@ div#logo {
 
 .header {
     background-color: #3f51b5;
-    box-shadow: 0 1px 20px 0px #bdbdbd;
+    box-shadow: 0 1px 20px 0 #bdbdbd;
 }
 
 .error {
     color: red;
 }
 
-/* SIDEBAR*/
-
-.sidebar {
-    min-width: 200px;
-    background: #3f51b5;
-    z-index: 100;
-}
-
 .work_zone_container {
     position: fixed;
 }
+
 
 .work_zone {
     margin-top: 50px;
@@ -60,7 +53,7 @@ div#logo {
 .canvas {
     width: 3840px;
     height: 2160px;
-    background: white;
+    background: white url(../img/canvas_background.svg);
 }
 
 .box_shadow {
@@ -276,11 +269,7 @@ button:active, button:focus {
 
 /*MAIN OPTION BOTTOM*/
 .options {
-    /*position: absolute;*/
-    /*width: 360px;*/
-    /*top: -1px;*/
-    /*left: 0;*/
-    /*z-index: 30;*/
+    display: none;
     position: absolute;
     top: -1px;
     right: -200px;
@@ -298,6 +287,10 @@ button:active, button:focus {
     display: inline-block;
     margin-left: 15px;
     float: right;
+}
+
+.box:hover .options {
+    display: block;
 }
 
 /*relationship*/
@@ -338,10 +331,18 @@ button#btn_disconnect {
 }
 
 /* export-img-window */
+.preview_image{
+    height: 450px;
+    width: 100%;
+    background-image: url("../img/load.svg");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
 
 #preview_image {
-    vertical-align: middle;
+    height: 450px;
     width: 100%;
+    vertical-align: middle;
     border-style: none;
     object-fit: fill;
 }
@@ -367,6 +368,7 @@ button#btn_disconnect {
 }
 
 .toast_tail {
+    display: none;
     background-color: #eeedff;
     box-shadow: 0 0 1rem rgba(45, 66, 185, 0.81);
 }
@@ -394,7 +396,7 @@ button#btn_disconnect {
     display: none;
 }
 
-.relationship_idef1x{
+.relationship_idef1x {
     width: auto;
 }
 
@@ -445,7 +447,7 @@ button#btn_disconnect {
 .edit_attribute_idef1x {
     width: 24px;
     height: 23px;
-    background: url("../dashboard/css/icons/edit.svg");
+    background: url("../../dashboard/icons/edit.svg");
     z-index: 50;
     cursor: pointer;
 }
@@ -453,7 +455,7 @@ button#btn_disconnect {
 .remove_attribute_idef1x {
     width: 24px;
     height: 23px;
-    background: url("../dashboard/css/icons/close.svg");
+    background: url("../../dashboard/icons/close.svg");
     z-index: 50;
     cursor: pointer;
 }

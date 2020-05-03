@@ -1,18 +1,18 @@
-.background{
+.background {
     background: #f9f9f9 none;
 }
 
-.close-button{
+.close-button {
     align-self: start;
 }
 
-.head_panel{
+.head_panel {
     margin-top: 25px;
     padding: 25px;
 }
 
 
-.main_block{
+.main_block {
     background: white;
     border-radius: 15px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
@@ -24,7 +24,8 @@
     transform: scale(1.03, 1.03);
 }
 
-.head_panel:hover{
+
+.head_panel:hover {
     -webkit-transform: none;
     transform: none;
 }
@@ -36,37 +37,38 @@
     overflow: hidden;
     object-fit: cover;
 }
-img.avatar_size{
+
+img.avatar_size {
     width: 65px;
 }
 
-.create_diagramm{
+.create_diagramm {
     margin: 10px 0;
 }
 
-.logout{
+.logout {
     text-align: center;
 }
 
-.diagram_list{
+.diagram_list {
     margin: 0;
 }
 
-.tile{
+.tile {
     padding: 0px;
     margin-top: 30px;
 }
 
-.diagram_title_block{
+.diagram_title_block {
     padding: 16px 0;
     margin: 0;
 }
 
-.diagram_img_block{
+.diagram_img_block {
     height: 150px;
 }
 
-.diagram_img{
+.diagram_img {
     object-fit: cover;
     object-position: 50% 0;
     height: 150px;
@@ -74,31 +76,40 @@ img.avatar_size{
     border-radius: 20px 20px 0 0;
 }
 
-.diagram_title{
-    display: block;
+.diagram_title {
+    display: flex;
+    height: 65px;
+    align-items: center;
     color: #343a40;
     font-weight: 700;
     font-family: Montserrat, sans-serif;
     padding: 0 0 2em 2em;
     word-break: break-all;
-    overflow-wrap:break-word;
+    overflow-wrap: break-word;
 }
 
-.no_diagrams_title{
+.diagram_name_label{
+    color: #343a40;
+}
+
+.no_diagrams_title {
     height: 400px;
     width: 100%;
 }
 
-.rename_diagramm_button{
+.rename_diagramm_button {
     padding: 0;
     background-color: transparent;
     border: 0;
-    /*-webkit-appearance: none;*/
-    /*-moz-appearance: none;*/
-    /*appearance: none;*/
 }
 
-.rename_diagramm_icon{
+.edit_diagram_button {
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+}
+
+.rename_diagramm_icon {
     height: 32px;
     width: 17px;
     float: right;
@@ -108,10 +119,10 @@ img.avatar_size{
     color: #000;
     text-shadow: 0 1px 0 #fff;
     opacity: .5;
-    background: url('./icons/edit.svg') no-repeat center;
+    background: url('../icons/edit.svg') no-repeat center;
 }
 
-.delete_diagramm_icon{
+.delete_diagramm_icon {
     height: 32px;
     width: 17px;
     float: right;
@@ -121,5 +132,11 @@ img.avatar_size{
     color: #000;
     text-shadow: 0 1px 0 #fff;
     /*opacity: .5;*/
-    background: url('./icons/close.svg') no-repeat center;
+    background: url('../icons/close.svg') no-repeat center;
+}
+
+.diagram_type_label {
+    margin: 0 0 0 10px;
+    padding: 5px 10px;
+
 }
