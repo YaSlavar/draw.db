@@ -1,6 +1,18 @@
 <?
-require_once 'lib/SocialAuther/autoload.php';
 require_once 'config.php';
+
+include 'lib/hybridauth/autoload.php';
+use Hybridauth\Hybridauth;
+
+try {
+    $hybridauth = new Hybridauth($auth_config);
+    $adapters = $hybridauth->getConnectedAdapters();
+} catch (\Hybridauth\Exception\InvalidArgumentException $e) {
+    print_r($e);
+} catch (\Hybridauth\Exception\UnexpectedValueException $e) {
+    print_r($e);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +43,7 @@ require_once 'config.php';
     <link rel="stylesheet" href="lib/bootstrap/bootstrap.css?version=<?echo ($version)?>">
     <script type="text/javascript" src="lib/jquery_3.5.0/jquery_3.5.0.js?version=<?echo ($version)?>"></script>
     <script type="text/javascript" src="lib/popper_js_1.16.0.js?version=<?echo ($version)?>"></script>
-
+    <script type="text/javascript" src="lib/crypto-js.js?version=<?echo ($version)?>"></script>
 
 
     <? if (isset($_GET['edit']) and is_array($_SESSION['user'])) { ?>
@@ -89,24 +101,24 @@ require_once 'config.php';
 
 <?php
 
-
-$adapters = array();
-foreach ($adapterConfigs as $adapter => $settings) {
-    $class = 'SocialAuther\Adapter\\' . ucfirst($adapter);
-    $adapters[$adapter] = new $class($settings);
-}
-
-
 if (isset($_GET['registration'])) {
     include_once('registration.php');
 } elseif (!isset($_SESSION['user'])) {
     include_once('login.php');
 } elseif (isset($_GET['edit'])) {
     include_once('editor/editor.php');
-} elseif (isset($_GET['diagram_list'])) {
+} elseif (isset($_GET['diagram_list']) and isset($_SESSION['user'])) {
     include_once('dashboard/diagram_list.php');
 } elseif (isset($_GET['logout'])) {
-    include_once('logout.php');
+
+        foreach ($adapters as $provider_name => $adapter) :
+            $adapter->disconnect();
+        endforeach;
+
+        session_start();
+        unset($_SESSION['user']);
+        header("location: index.php");
+
 } else {
     include_once('dashboard/diagram_list.php');
 }

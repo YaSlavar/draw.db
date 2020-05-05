@@ -70,11 +70,10 @@
                                     </div>
                                     <div class="diagram_title_block row">
                                         <div class="diagram_title col-8">
-                                            <a class="diagram_name_label" href="?edit=<?
-                                            echo($res['diagram_id']); ?>">
-                                                <?
-                                                echo($res['diagram_name']);
-                                                ?>
+                                            <a class="diagram_name_label" diagram_id="<?
+                                            echo($res['diagram_id']); ?>"
+                                               href="?edit=<? echo($res['diagram_id']); ?>">
+                                                <? echo($res['diagram_name']); ?>
                                             </a>
                                             <span class="badge badge-pill badge-primary diagram_type_label">
                                                 <? echo(ucwords($res['diagram_type'])) ?>

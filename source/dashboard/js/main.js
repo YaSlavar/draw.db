@@ -6,16 +6,24 @@ function randInt() {
 
 function create_and_rename_diagram(diagramm_id = NaN) {
 
+    let form_group_type = $(".form_group_type");
+
     let diagram_name_input = $('input[name="diagram_name"]');
-    diagram_name_input.val("");
     let diagram_type_input = $('select[name="diagram_type"]');
     let btn_new_diagram = $('#btn_new_diagram');
 
+    diagram_name_input.val("");
+
     let create_and_rename_diagramm_title = $('#create_and_rename_diagramm_title');
     if (!isNaN(diagramm_id)) {
+        form_group_type.css({'display' : "none"});
+
+        let diagram_name = $('.diagram_name_label[diagram_id="' + diagramm_id + '"]').text().trim();
+        diagram_name_input.val(diagram_name);
         create_and_rename_diagramm_title.text("Переименование диаграммы");
         btn_new_diagram.text('Переименовать');
     } else {
+        form_group_type.css({'display' : "block"});
         create_and_rename_diagramm_title.text("Создание новой диаграммы");
         btn_new_diagram.text('Создать');
     }
@@ -43,14 +51,15 @@ function create_and_rename_diagram(diagramm_id = NaN) {
             Out_JSON['diagram_type'] = diagram_type_input.val();
             $.ajax({
                 type: "POST",
-                url: "editor/save.php",
+                url: "editor/functions/save.php",
                 data: Out_JSON
             }).done(function () {
                 if (!isNaN(diagramm_id)){
                     let diagramm_block = $('.diagram_block[diagram_id="' + diagramm_id + '"]');
-                    let diagramm_block_title = diagramm_block.find('.diagram_title');
+                    let diagramm_block_title = diagramm_block.find('.diagram_name_label');
 
                     diagramm_block_title.text(new_diagramm_name);
+
                     create_new_diagram_window.modal("toggle");
                 } else {
                     window.location.href = "?edit=" + Out_JSON['diagram_id'];
@@ -73,8 +82,6 @@ function delete_diagram(diagram_id) {
         "command": "delete"
     };
 
-
-
     let diagram_info = load_diagram(diagram_id);
 
     let check_delete_modal_window = $('#check_for_deletion');
@@ -89,7 +96,7 @@ function delete_diagram(diagram_id) {
     btn_delete_diagram.off('click').on('click', function (event) {
         $.ajax({
             type: "POST",
-            url: "editor/save.php",
+            url: "editor/functions/save.php",
             data: Out_JSON
         }).done(function (msg) {
 

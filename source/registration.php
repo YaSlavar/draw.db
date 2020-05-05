@@ -1,7 +1,6 @@
 <?php
 
 require_once 'config.php';
-require_once 'lib/SocialAuther/autoload.php';
 
 if (isset($_POST['registration'])) {
     $name = htmlspecialchars(stripslashes($_POST['name']));
@@ -40,56 +39,8 @@ if (isset($_POST['registration'])) {
         echo('{"error": "none"}');
         exit;
     }
-} elseif ($_GET['code']) {
-    $adapters = array();
-    foreach ($adapterConfigs as $adapter => $settings) {
-        $class = 'SocialAuther\Adapter\\' . ucfirst($adapter);
-        $adapters[$adapter] = new $class($settings);
-    }
-    if (isset($_GET['provider']) && array_key_exists($_GET['provider'], $adapters)) {
-        $auther = new SocialAuther\SocialAuther($adapters[$_GET['provider']]);
-    }
-    if ($auther->authenticate()) {
-        $user = new stdClass();
-        $user->provider = $auther->getProvider();
-        $user->social_id = $auther->getSocialId();
-        $user->name = $auther->getName();
-        $user->email = $auther->getEmail();
-        $user->social_page = $auther->getSocialPage();
-        $user->sex = $auther->getSex();
-        $user->birthday = $auther->getBirthday();
-        $user->avatar = $auther->getAvatar();
-    }
-    $stmt = $db->prepare('SELECT * FROM users WHERE social_id = :social_id');
-    $stmt->bindValue(':social_id', $user->social_id);
-    $res = $stmt->execute();
-    $res = $res->fetchArray();
-    // регистрация
-    if (!$res['user_id']) {
-        $stmt = $db->prepare('INSERT INTO users(provider, social_id, name, email, social_page, sex, birthday, avatar) VALUES (:provider, :social_id, :name, :email, :social_page, :sex, :birthday, :avatar)');
-    } else {
-        $stmt = $db->prepare('UPDATE users SET provider = :provider, name = :name, email = :email, social_page = :social_page, sex = :sex, birthday = :birthday, avatar = :avatar WHERE social_id = :social_id');
-    }
-    $stmt->bindValue(':provider', $_GET['provider']);
-    $stmt->bindValue(':social_id', $user->social_id);
-    $stmt->bindValue(':name', $user->name);
-    $stmt->bindValue(':email', $user->email);
-    $stmt->bindValue(':social_page', $user->social_page);
-    $stmt->bindValue(':sex', $user->sex);
-    $stmt->bindValue(':birthday', $user->birthday);
-    $stmt->bindValue(':avatar', $user->avatar);
-    $res = $stmt->execute();
-    // получаем данные пользователя в сессию
-    $stmt = $db->prepare('SELECT * FROM  users WHERE social_id = :social_id');
-    $stmt->bindValue(':social_id', $user->social_id);
-    $res = $stmt->execute();
-    $user = $res->fetchArray();
-    $db->close();
-    $_SESSION['user'] = $user;
-    header("Location:index.php");
-    exit;
-} ?>
-
+}
+?>
 
 <div class="background container-fluid h-100">
     <div class="row h-100 justify-content-center align-items-center">
@@ -97,7 +48,7 @@ if (isset($_POST['registration'])) {
             <div class="main_block">
                 <a href="index.php">
                     <div class="logo">
-                        <img src="dashboard/icons/logo.svg" alt="MSUniversity">
+                        <img class="logo_img" src="dashboard/img/logo.svg" alt="">
                     </div>
                 </a>
                 <form id="registration" action="registration.php" method="post" class="login_form needs-validation"
@@ -142,18 +93,18 @@ if (isset($_POST['registration'])) {
 
 <script>
     $(document).ready(function () {
-        $("#registration").submit(function (event) {
+        $("#registration").submit(function () {
 
-            var RegJSON = {};
-            var name_new_user = $('input[name="name"]').val();
-            var email_new_user = $('input[name="login"]').val();
-            var password_new_user = $('input[name="password"]').val();
+            let RegJSON = {};
+            let name_new_user = $('input[name="name"]').val();
+            let email_new_user = $('input[name="login"]').val();
+            let password_new_user = $('input[name="password"]').val();
 
             if (name_new_user !== '' && email_new_user !== '' && password_new_user !== '') {
 
                 RegJSON['name'] = name_new_user;
                 RegJSON['login'] = email_new_user;
-                RegJSON['password'] = password_new_user;
+                RegJSON['password'] = CryptoJS.SHA256(password_new_user).toString();
                 RegJSON['registration'] = true;
 
                 $.ajax({
@@ -163,7 +114,7 @@ if (isset($_POST['registration'])) {
                 }).done(function (msg) {
                     let status = JSON.parse(msg);
                     if (status["error"] === "user_registred") {
-                        $('#email_invalid_feedback').html('Пользователь с таким адресом электронной почты уже зарегистрирован!')
+                        $('#email_invalid_feedback').html('Пользователь с таким адресом электронной почты уже зарегистрирован!');
                         $('input#login').addClass('is-invalid');
                     } else if (status["error"] === "none") {
                         window.location.href = 'index.php';

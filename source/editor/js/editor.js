@@ -92,6 +92,7 @@ function get_diagram_info() {
         };
         links[id]['position_num'] = $(elem).attr('position_num');
     });
+
     Out_JSON['links'] = links;
     Out_JSON['diagram_id'] = get_diagram_id();
     Out_JSON['diagram_name'] = $('div#diagram_name').text();
@@ -511,10 +512,15 @@ function draggable_box() {
                     "left": main_start_position.left - ui.offset.left
                 };
 
-                attribute.each(function (attr_i, attr_elem) {
-                    $(attr_elem).offset({'top': attribute_position_list[$(attr_elem).attr('id')].top - delta.top});
-                    $(attr_elem).offset({'left': attribute_position_list[$(attr_elem).attr('id')].left - delta.left});
-                });
+                if (DIAGRAM_TYPE === "chen") {
+                    attribute.each(function (attr_i, attr_elem) {
+                        $(attr_elem).offset({'top': attribute_position_list[$(attr_elem).attr('id')].top - delta.top});
+                        $(attr_elem).offset({'left': attribute_position_list[$(attr_elem).attr('id')].left - delta.left});
+                    });
+                }
+                if (DIAGRAM_TYPE === "idef1x") {
+
+                }
 
                 setting_link();
             }
@@ -660,7 +666,7 @@ function add_main_block(main_id, name_new_main) {
     return result;
 }
 
-function add_attribute_block(attribute_id, main_id, name_new_attribute, data_type, len_data, primary_key, foreign_key = false) {
+function add_attribute_block(attribute_id, main_id, name_new_attribute, data_type, len_data, primary_key = false, foreign_key = false) {
     let result;
 
     let is_key = "";
@@ -751,10 +757,8 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
             len_data = "";
         }
 
-        if ((Boolean(primary_key) === true)) {
-            primary_key = "(PK)";
-        } else if (((Boolean(foreign_key) === true))) {
-            primary_key = "(FK)";
+        if (key !== "") {
+            primary_key = "(" + key + ")";
         } else {
             primary_key = "";
         }
@@ -777,7 +781,6 @@ function add_attribute_block(attribute_id, main_id, name_new_attribute, data_typ
                     )
             );
     }
-
     return result;
 }
 
@@ -1090,12 +1093,12 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         function check() {
             let _PK = null;
             jQuery.each(diagram_data['attributes'], function (index, elem) {
-                if (elem['key'] === 'PK' && Number(index) !== edit_attr_id && Number(elem['parent']) === main_id) {
+                if (elem['key'] === 'PK' && Number(index) !== edit_attr_id && Number(elem['parent']) === Number(main_id)) {
                     _PK = Number(index);
                     return false;
                 }
             });
-            if (_PK !== null && _PK !== edit_attr_id) {
+            if (_PK !== null && _PK !== Number(edit_attr_id)) {
                 primary_key_checkbox.prop('disabled', true);
                 PK_invalid_feedback.html("Для данной сущности уже существует атрибут с превичным ключом");
             } else {
@@ -1136,6 +1139,9 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         let attribute_name = input_name_attribute.val();
         let data_type = input_attr_data_type.val();
         let primary_key = primary_key_checkbox.prop("checked");
+        if (primary_key === true) {
+            primary_key = "PK";
+        }
 
         let len_data;
 
@@ -1151,20 +1157,28 @@ function add_attribute(main_id, edit_attr_id = NaN) {
 
             if ($('div').is(edited_attribute)) {
 
-
                 let edited_attribute_text = edited_attribute.children(".attribute_text");
                 edited_attribute_text.text(attribute_name);
                 edited_attribute.attr("data_type", data_type);
                 edited_attribute.attr("len_data", len_data);
-                edited_attribute.attr("primary_key", primary_key);
+                edited_attribute.attr("key", primary_key);
 
-                if (primary_key === true) {
+                if (primary_key === "PK") {
                     edited_attribute_text.addClass("is_primary_key");
                 } else {
                     edited_attribute_text.removeClass("is_primary_key");
                 }
 
                 if (DIAGRAM_TYPE === 'idef1x') {
+                    let main = $(".main#" + edited_attribute.attr("parent"));
+                    let PK_block = main.children(".main_PK_block");
+
+                    if (primary_key === "PK") {
+                        PK_block.append(edited_attribute);
+                    } else {
+                        main.append(edited_attribute);
+                    }
+
                     if (len_data !== null) {
                         len_data = "(" + len_data + ")";
                     } else {
@@ -1199,7 +1213,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
                     let attribute_block_result = add_attribute_block(attribute_id, main_id, attribute_name, data_type, len_data, Boolean(primary_key), false);
                     let main = $(".main#" + main_id);
                     let PK_block = main.children(".main_PK_block");
-                    if (primary_key === true) {
+                    if (primary_key === "PK") {
                         PK_block.append(attribute_block_result);
                     } else {
                         main.append(attribute_block_result);
@@ -1254,7 +1268,7 @@ function add_attribute(main_id, edit_attr_id = NaN) {
         new_attribute_title.text("Изменение атрибута");
         attribute_name_label.text("Название атрибута:");
         button_new_attribute.text("Изменить");
-        input_name_attribute.val(edited_attribute.attr("text")); ///////////////////////////////////////////////////////
+        input_name_attribute.val(edited_attribute.attr("text"));
         input_attr_data_type.val(edited_attribute.attr("data_type"));
         input_len_data_type.val(edited_attribute.attr("len_data"));
 
@@ -1307,8 +1321,13 @@ function add_relationship(edit_rel_id) {
 
     // Действия над формами модального окна
     let work_zone_container = $(".work_zone_container");
-    let main = work_zone_container.children('.main');
+    let main = work_zone_container.children('.main').sort(function (a, b) {
+        let compA = $(a).children(".main_name").text().toUpperCase();
+        let compB = $(b).children(".main_name").text().toUpperCase();
+        return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+    });
 
+    // СортировОЧКА
     main.each(function (i, elem) {
         let main_name = $(elem).children(".main_name").text();
         let main_id = $(elem).attr("id");
@@ -1350,7 +1369,7 @@ function add_relationship(edit_rel_id) {
         rel_second_main.val(edited_relationship.attr("second"));
         rel_type.val(edited_relationship.attr("rel_type"));
         rel_identity.val(edited_relationship.attr("rel_identity"));
-        console.log(edited_relationship.attr("rel_desc"));
+
     } else {
         $('#new_relationship_title').text("Добавление новой связи");
         $('#btn_new_relationship').text("Добавить");
@@ -1462,7 +1481,7 @@ function add_relationship(edit_rel_id) {
                 $(this).off(event);
                 draggable_box();
                 new_relationship_window.modal("toggle");
-
+                return false;
             } else {
                 set_error("У какой-то из сущностей нет первичного ключа");
             }
@@ -1598,18 +1617,22 @@ function remove_relationship(rel_id) {
 
 // SAVE
 function save_diagram() {
-    let diagram_data = get_diagram_info();
+    let diagram_data = {};
 
     diagram_data['command'] = "save";
+    diagram_data['data'] = get_diagram_info();
+    diagram_data['diagram_id'] = diagram_data['data']['diagram_id'];
+    diagram_data['diagram_name'] = diagram_data['data']['diagram_name'];
 
     console.log(diagram_data);
 
     $.ajax({
         type: "POST",
-        url: "editor/save.php",
+        url: "editor/functions/save.php",
         data: diagram_data
     }).done(function (msg) {
         raise_notification("Диаграмма успешно сохранена");
+        // console.log(msg);
         console.log("Изменения в диаграмме id:'" + msg + "' сохранены");
     });
 
@@ -1637,7 +1660,7 @@ function save_diagram_img() {
 
             $.ajax({
                 type: "POST",
-                url: "editor/save_diagram_img.php",
+                url: "editor/functions/save_diagram_img.php",
                 async: false,
                 data: REQUEST_DATA,
                 success: function () {
@@ -1753,7 +1776,7 @@ function load_diagram(diagram_id) {
 
         let result = $.ajax({
             type: "POST",
-            url: "editor/load.php",
+            url: "editor/functions/load.php",
             async: false,
             data: Out_JSON
         }).responseText;
@@ -1764,7 +1787,7 @@ function load_diagram(diagram_id) {
 
         $.ajax({
             type: "POST",
-            url: "editor/load.php",
+            url: "editor/functions/load.php",
             data: Out_JSON
         }).done(function (msg) {
             let JSON_answer = JSON.parse(msg);
@@ -1788,7 +1811,7 @@ function mssql_connect_check() {
 
     let result = $.ajax({
         type: "POST",
-        url: "editor/MSSQL_Connect.php",
+        url: "editor/functions/MSSQL_Connect.php",
         async: false,
         data: REQUEST_DATA
     }).responseText;
@@ -1807,7 +1830,7 @@ function mssql_connect(server_name, database, login, password) {
 
     let result = $.ajax({
         type: "POST",
-        url: "editor/MSSQL_Connect.php",
+        url: "editor/functions/MSSQL_Connect.php",
         async: false,
         data: REQUEST_DATA
     }).responseText;
@@ -1822,7 +1845,7 @@ function mssql_disconnect() {
 
     let result = $.ajax({
         type: "POST",
-        url: "editor/MSSQL_Connect.php",
+        url: "editor/functions/MSSQL_Connect.php",
         async: false,
         data: REQUEST_DATA
     }).responseText;
@@ -1838,7 +1861,7 @@ function mssql_query(sql_query) {
 
     let result = $.ajax({
         type: "POST",
-        url: "editor/MSSQL_Connect.php",
+        url: "editor/functions/MSSQL_Connect.php",
         async: false,
         data: REQUEST_DATA
     }).responseText;
@@ -1865,7 +1888,6 @@ function open_server_connect_window() {
         return check['connect'];
     }
 
-
     function disconnect() {
         $('#btn_disconnect').off('click').on('click', function () {
             mssql_disconnect();
@@ -1873,7 +1895,6 @@ function open_server_connect_window() {
         });
 
     }
-
 
     function format_server_result(server_result) {
 
@@ -1908,7 +1929,6 @@ function open_server_connect_window() {
         });
         return {columns: columns, dataset: dataset};
     }
-
 
     function connect_and_insert_to_server(editor, result_viewer) {
         $('#insert_sql_to_server').off('click').on('click', function () {
@@ -1999,7 +2019,6 @@ function open_server_connect_window() {
         });
     }
 
-
     function get_sql_code(data_diagram) {
 
         function get_main_PK(data_diagram, main_id) {
@@ -2080,7 +2099,7 @@ function open_server_connect_window() {
     }
 
 
-    let data_diagram = save_diagram();
+    let data_diagram = save_diagram()['data'];
 
     let get_sql_code_window = $("#get_sql_code");
     let mssql_connect_window = $('#new_mssql_connect');

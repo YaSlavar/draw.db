@@ -76,7 +76,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary no_draggable" data-dismiss="modal">Закрыть</button>
-                    <button type="button" id="btn_new_attribute no_draggable" class="btn btn-primary btn_bg_color">
+                    <button type="button" id="btn_new_attribute" class="btn btn-primary btn_bg_color no_draggable">
                         Добавить
                     </button>
                 </div>

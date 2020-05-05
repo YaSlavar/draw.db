@@ -48,6 +48,9 @@ RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer \
     && chmod a+x /usr/local/bin/composer
 
+RUN curl -sS https://getcomposer.org/installer | php \
+    && php composer.phar require socialconnect/auth
+
 #RUN chmod +x /opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.3.so.1.1
 
 WORKDIR /usr/share/nginx/html

@@ -5,11 +5,11 @@ CREATE TABLE users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     social_page VARCHAR(1024),
-    sex VARCHAR(10),
+    gender VARCHAR(10),
     birthday DATE,
-    avatar VARCHAR(1024),
-		last_login_time DATETIME,
-		password VARCHAR(1024)
+    avatar VARCHAR(2048),
+	last_login_time DATETIME,
+	password VARCHAR(1024)
 );
 
 CREATE TABLE diagrams (

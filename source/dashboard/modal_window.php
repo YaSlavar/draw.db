@@ -21,13 +21,13 @@
                 </div>
                 <form id="form_new_diagram" method="post">
                     <div class="modal-body">
-                        <div class="form-group">
+                        <div class="form-group form_group_name">
                             <input type="hidden" name="edit" value="" id="diagram_id">
                             <label for="diagram_name">Название диаграммы:</label>
                             <input type="text" name="diagram_name" class="form-control"
                                    placeholder="Введите название диаграммы">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group form_group_type">
                             <label for="diagram_type">Нотация:</label>
                             <select class="form-control" id="diagram_type" name="diagram_type">
                                 <option value="chen">Нотация Питера Чена</option>

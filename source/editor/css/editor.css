@@ -281,6 +281,19 @@ button:active, button:focus {
 }
 
 .box:hover .box_option_bottom {
+     width: 170px;
+     text-align: left;
+     font-size: 12px;
+     display: inline-block;
+     margin-left: 15px;
+     float: right;
+ }
+
+.box:hover .options {
+    display: block;
+}
+
+.relationship:hover .box_option_bottom {
     width: 170px;
     text-align: left;
     font-size: 12px;
@@ -289,7 +302,7 @@ button:active, button:focus {
     float: right;
 }
 
-.box:hover .options {
+.relationship:hover .options {
     display: block;
 }
 
@@ -331,7 +344,7 @@ button#btn_disconnect {
 }
 
 /* export-img-window */
-.preview_image{
+.preview_image {
     height: 450px;
     width: 100%;
     background-image: url("../img/load.svg");
